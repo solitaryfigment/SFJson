@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SFJson
 {
-    public class Parser
+	public class Parser
     {
         private static Stack<JsonToken> _stack = new Stack<JsonToken>();
         private static JsonToken _currentToken = null;
@@ -12,7 +12,7 @@ namespace SFJson
         private static string _tokenName = string.Empty;
         private static StringBuilder _tokenText = new StringBuilder();
 
-        public static JsonToken Parse(string jsonString)
+        public static JsonToken Tokenize(string jsonString)
         {
 	        _tokenText.Length = 0;
             for(int i = 0; i < jsonString.Length; i++)

@@ -39,9 +39,7 @@ namespace SFJson
             else
             {
                 sb.Append("{");
-                var typeStringSplit = obj.GetType().AssemblyQualifiedName.Split(',');
-//                Console.WriteLine("Here: " + typeStringSplit);
-                sb.AppendFormat("\"$Type\":\"{0}\"", typeStringSplit[0] + "," + typeStringSplit[1]);
+                sb.AppendFormat("\"$Type\":\"{0}\"", obj.GetType().GetTypeAsString());
                 SerializeProperties(sb, obj);
                 sb.Append("}");
             }
@@ -64,6 +62,14 @@ namespace SFJson
                 {
                     sb.AppendFormat(",\"{0}\":{1}", propertyInfo.Name, propertyInfo.GetValue(obj));
                 }
+                else if(propertyInfo.PropertyType.IsEnum)
+                {
+                    sb.AppendFormat(",\"{0}\":{1}", propertyInfo.Name, propertyInfo.GetValue(obj).ToString());
+                }
+                else if(propertyInfo.PropertyType == typeof(string))
+                {
+                    sb.AppendFormat(",\"{0}\":\"{1}\"", propertyInfo.Name, propertyInfo.GetValue(obj));
+                }
                 else if(propertyInfo.PropertyType.IsArray)
                 {
                     // TODO
@@ -71,6 +77,7 @@ namespace SFJson
                 }
                 else
                 {
+                    Console.WriteLine("Type: " + propertyInfo.PropertyType);
                     sb.AppendFormat(",\"{0}\":", propertyInfo.Name);
                     SerializeObject(sb, propertyInfo.GetValue(obj));
                 }

@@ -130,7 +130,17 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            return Value;
+            if(type.IsEnum)
+            {
+                Console.WriteLine("Name: " + Name);
+                Console.WriteLine("Value: " + Value);
+                Console.WriteLine("Type: " + type);
+                var blah = Enum.Parse(type, Value.ToString());
+                Console.WriteLine("Blah: " + blah);
+                return blah;
+            }
+            
+            return Convert.ChangeType(Value, type);
         }
     }
 
@@ -152,7 +162,7 @@ namespace SFJson
 
         public T Deserialize<T>()
         {
-            var token = Parser.Parse(StringToDeserialize);
+            var token = Parser.Tokenize(StringToDeserialize);
             PrintTokens(token);
 
             var obj = token.GetValue<T>();
