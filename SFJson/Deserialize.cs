@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -65,7 +64,6 @@ namespace SFJson
 
             foreach(var child in ChildElements)
             {
-                Console.WriteLine("Here");
                 if(child.Name == "$Type")
                 {
                     continue;
@@ -132,12 +130,7 @@ namespace SFJson
         {
             if(type.IsEnum)
             {
-                Console.WriteLine("Name: " + Name);
-                Console.WriteLine("Value: " + Value);
-                Console.WriteLine("Type: " + type);
-                var blah = Enum.Parse(type, Value.ToString());
-                Console.WriteLine("Blah: " + blah);
-                return blah;
+                return Enum.Parse(type, Value.ToString());
             }
             
             return Convert.ChangeType(Value, type);

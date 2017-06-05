@@ -1,5 +1,3 @@
-using System;
-
 namespace SFJsonTest
 {
     public interface ISimpleInterface
