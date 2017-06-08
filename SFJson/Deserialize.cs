@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -72,8 +73,8 @@ namespace SFJson
                 Console.WriteLine("Name: " + child.Name);
                 var propertyInfo = properties.First(p => p.Name == child.Name);
                 Console.WriteLine("Name: " + propertyInfo.Name);
-                propertyInfo.SetValue(obj, child.GetValue(propertyInfo.PropertyType));
                 Console.WriteLine(propertyInfo.GetValue(obj));
+                propertyInfo.SetValue(obj, child.GetValue(propertyInfo.PropertyType));
             }
             return obj;
         }
@@ -85,7 +86,7 @@ namespace SFJson
         {
             get
             {
-                return JsonType.Object;
+                return JsonType.Array;
             }
         }
 
@@ -96,7 +97,56 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            return null;
+            Console.WriteLine("Get Value: " + type);
+            IList obj;
+            var list = ChildElements[1];
+            if(ChildElements[0].Name == "$Type")
+            {
+                Console.WriteLine("Has $Type");
+                var typestring = ChildElements[0].GetValue<string>();
+                Console.WriteLine(typestring);
+                type = Type.GetType(typestring);
+                Console.WriteLine(type);
+                if(type.IsArray)
+                {
+                    obj = Array.CreateInstance(type.GetElementType(), list.ChildElements.Count) as IList;
+                }
+                else
+                {
+                    obj = Activator.CreateInstance(type) as IList;
+                }
+            }
+            else
+            {
+                if(type.IsArray)
+                {
+                    obj = Array.CreateInstance(type.GetElementType(), list.ChildElements.Count) as IList;
+                }
+                else
+                {
+                    obj = Activator.CreateInstance(type) as IList;
+                }
+            }
+
+            if(list.Name == "$Values")
+            {
+                Console.WriteLine("List: " + " : " + obj + " : " + type + " : " + list.JsonType + " : " + list.Name + " : " + list.ChildElements.Count);
+                for(int i = 0; i < list.ChildElements.Count; i++)
+                {
+                    var child = list.ChildElements[i];
+                    var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
+                    Console.WriteLine("Name: " + child.Name + " : " + child.GetValue(elementType));
+                    if(type.IsArray)
+                    {
+                        obj[i] = child.GetValue(elementType);
+                    }
+                    else
+                    {
+                        obj.Add(child.GetValue(elementType));
+                    }
+                }
+            }
+            return obj;
         }
     }
 
@@ -156,7 +206,9 @@ namespace SFJson
         public T Deserialize<T>()
         {
             var token = Parser.Tokenize(StringToDeserialize);
+            Console.WriteLine("Start");
             PrintTokens(token);
+            Console.WriteLine("End");
 
             var obj = token.GetValue<T>();
             
@@ -167,10 +219,10 @@ namespace SFJson
         {
             Console.WriteLine(token.JsonType);
             Console.WriteLine(token.ChildElements.Count);
+            Console.WriteLine("{0} : {1}", token.Name, token.GetValue<object>());
             foreach(var child in token.ChildElements)
             {
                 PrintTokens(child);
-                Console.WriteLine("{0} : {1}", child.Name, child.GetValue<object>());
             }
         }
     }

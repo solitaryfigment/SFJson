@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Reflection;
 using System.Text;
 
@@ -44,43 +45,71 @@ namespace SFJson
                 sb.Append("}");
             }
         }
+        
+        private void SerializeList(StringBuilder sb, IList list)
+        {
+            if(list == null)
+            {
+                sb.Append("null");
+            }
+            else
+            {
+                Console.WriteLine("List: " + list.Count);
+                sb.Append("[");
+                sb.AppendFormat("\"$Type\":\"{0}\"", list.GetType().GetTypeAsString());
+                sb.Append(",\"$Values\":[");
+                for(int i = 0; i < list.Count; i++)
+                {
+                    if(i > 0)
+                    {
+                        sb.Append(",");
+                    }
+                    SerializeObject(sb, list[i].GetType(), list[i]);
+                }
+                sb.Append("]]");
+            }
+        }
 
         private void SerializeProperties(StringBuilder sb, object obj)
         {
             var properties = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach(var propertyInfo in properties)
             {
-                SerializeProperty(sb, propertyInfo, obj);
+                if(propertyInfo.CanWrite && propertyInfo.CanRead)
+                {
+                    sb.AppendFormat(",\"{0}\":", propertyInfo.Name);
+                    SerializeObject(sb, propertyInfo.PropertyType, propertyInfo.GetValue(obj));
+                }
             }
         }
 
-        private void SerializeProperty(StringBuilder sb, PropertyInfo propertyInfo, object obj)
+        private void SerializeObject(StringBuilder sb, Type type, object value)
         {
-            if(propertyInfo.CanWrite && propertyInfo.CanRead)
+            Console.WriteLine(type);
+            if(type.IsPrimitive)
             {
-                if(propertyInfo.PropertyType.IsPrimitive)
-                {
-                    sb.AppendFormat(",\"{0}\":{1}", propertyInfo.Name, propertyInfo.GetValue(obj));
-                }
-                else if(propertyInfo.PropertyType.IsEnum)
-                {
-                    sb.AppendFormat(",\"{0}\":{1}", propertyInfo.Name, propertyInfo.GetValue(obj).ToString());
-                }
-                else if(propertyInfo.PropertyType == typeof(string))
-                {
-                    sb.AppendFormat(",\"{0}\":\"{1}\"", propertyInfo.Name, propertyInfo.GetValue(obj));
-                }
-                else if(propertyInfo.PropertyType.IsArray)
-                {
-                    // TODO
-                    sb.AppendFormat(",\"{0}\":{1}", propertyInfo.Name, propertyInfo.GetValue(obj));
-                }
-                else
-                {
-                    Console.WriteLine("Type: " + propertyInfo.PropertyType);
-                    sb.AppendFormat(",\"{0}\":", propertyInfo.Name);
-                    SerializeObject(sb, propertyInfo.GetValue(obj));
-                }
+                Console.WriteLine("IsPrimitive");
+                sb.AppendFormat("{0}", value);
+            }
+            else if(type.IsEnum)
+            {
+                Console.WriteLine("IsEnum");
+                sb.AppendFormat("{0}", value.ToString());
+            }
+            else if(type == typeof(string))
+            {
+                Console.WriteLine("string");
+                sb.AppendFormat("\"{0}\"", value);
+            }
+            else if(type.IsArray || type.GetInterface("IList") != null)
+            {
+                Console.WriteLine("IList");
+                SerializeList(sb, (IList)value);
+            }
+            else
+            {
+                Console.WriteLine("Else");
+                SerializeObject(sb, value);
             }
         }
     }

@@ -20,56 +20,87 @@ namespace SFJson
                 var currentChar = jsonString[i];
                 switch(currentChar)
                 {
-                    case '{':
+	                case '{':
+		                if(_isQuote)
+		                {
+			                _tokenText.Append(currentChar);
+		                }
+		                else
+		                {
+			                Console.WriteLine("Object");
+			                var token = new JsonObject();
+			                if(_stack.Count > 0)
+			                {
+				                Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.ChildElements.Count + 1));
+				                token.Name = _tokenName;
+				                _currentToken.ChildElements.Add(token);
+			                }
+			                _currentToken = token;
+			                _stack.Push(token);
+			                ResetTokenText();
+		                }
+		                break;
+	                case '[':
+		                if(_isQuote)
+		                {
+			                _tokenText.Append(currentChar);
+		                }
+		                else
+		                {
+			                Console.WriteLine("Array");
+			                var token = new JsonArray();
+			                if(_stack.Count > 0)
+			                {
+				                Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.ChildElements.Count + 1));
+				                token.Name = _tokenName;
+				                _currentToken.ChildElements.Add(token);
+			                }
+			                _currentToken = token;
+			                _stack.Push(token);
+			                ResetTokenText();
+		                }
+		                break;
+	                case ']':
+	                case '}':
                         if(_isQuote)
                         {
                             _tokenText.Append(currentChar);
                         }
                         else
                         {
-                            var token = new JsonObject();
+	                        _stack.Pop();
+	                        ParseElement();
 	                        if(_stack.Count > 0)
 	                        {
-		                        token.Name = _tokenName;
-		                        _currentToken.ChildElements.Add(token);
+		                        _currentToken = _stack.Peek();
 	                        }
-                            _currentToken = token;
-                            _stack.Push(token);
+	                        ResetTokenText();
                         }
-                        break;
-                    case '}':
-                        if(_isQuote)
-                        {
-                            _tokenText.Append(currentChar);
-                        }
-                        _stack.Pop();
-	                    ParseElement();
-                        if(_stack.Count > 0)
-                        {
-                            _currentToken = _stack.Peek();
-                        }
-	                    ResetTokenText();
                         break;
                     case '"':
                         _isQuote = !_isQuote;
                         _currentToken.IsQuoted |= _isQuote;
                         break;
                     case ':':
-                        if(_isQuote)
-                        {
-                            _tokenText.Append(currentChar);
-                            break;
-                        }
-	                    ResetTokenText();
-                        break;
+	                    if(_isQuote)
+	                    {
+		                    _tokenText.Append(currentChar);
+	                    }
+	                    else
+	                    {
+		                    ResetTokenText();
+	                    }
+	                    break;
 					case ',':
 						if(_isQuote)
 						{
 							_tokenText.Append(currentChar);
-							break;
 						}
-						ParseElement();
-						ResetTokenText();
+						else
+						{
+							ParseElement();
+							ResetTokenText();
+						}
 						break;
                     default:
                         _tokenText.Append(currentChar);
@@ -95,9 +126,11 @@ namespace SFJson
 		    double val;
 		    if(_tokenText.Length <= 0)
 		    {
+			    Console.Write("Did not Append");
 			    return;
 		    }
-		    
+		    Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.ChildElements.Count + 1));
+
 		    if(_currentToken.IsQuoted)
 		    {
 			    _currentToken.ChildElements.Add(new JsonValue(_tokenName, _tokenText.ToString(), JsonType.Value));

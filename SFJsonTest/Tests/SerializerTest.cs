@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SFJson;
 
@@ -179,7 +180,170 @@ namespace SFJsonTest
 
             Console.WriteLine(str);
             Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":Test2}", str);
-        
+        }
+
+        [Test]
+        public void CanSerializeNestedObjects()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithNestedType.NestedClass()
+            {
+                PropString = "Nested"
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithNestedType+NestedClass, SFJsonTest\",\"PropString\":\"Nested\"}", str);   
+        }
+
+        [Test]
+        public void CanSerializeReferenceNestedObjects()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithNestedType()
+            {
+                PropInt = 100,
+                PropNested = new ObjectWithNestedType.NestedClass()
+                {
+                    PropString = "Nested"
+                }
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithNestedType, SFJsonTest\",\"PropNested\":{\"$Type\":\"SFJsonTest.ObjectWithNestedType+NestedClass, SFJsonTest\",\"PropString\":\"Nested\"},\"PropInt\":100}", str);
+        }
+
+        [Test]
+        public void CanSerializeNestedNestedObjects()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithNestedNestedType.NestedClass.NestedNestedClass()
+            {
+                PropString = "Nested"
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithNestedNestedType+NestedClass+NestedNestedClass, SFJsonTest\",\"PropString\":\"Nested\"}", str);   
+        }
+
+        [Test]
+        public void CanSerializeReferenceNestedNestedObjects()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithNestedNestedType()
+            {
+                PropNested = new ObjectWithNestedNestedType.NestedClass()
+                {
+                    PropNested = new ObjectWithNestedNestedType.NestedClass.NestedNestedClass()
+                    {
+                        PropString = "Nested"
+                    }
+                }
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithNestedNestedType, SFJsonTest\",\"PropNested\":{\"$Type\":\"SFJsonTest.ObjectWithNestedNestedType+NestedClass, SFJsonTest\",\"PropNested\":{\"$Type\":\"SFJsonTest.ObjectWithNestedNestedType+NestedClass+NestedNestedClass, SFJsonTest\",\"PropString\":\"Nested\"}}}", str);
+        }
+
+        [Test]
+        public void CanSerializeObjectWithList()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithList()
+            {
+                List = new List<int>()
+                {
+                    1, 2, 3, 4, 5
+                }
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithList, SFJsonTest\",\"List\":[\"$Type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$Values\":[1,2,3,4,5]]}", str);
+        }
+
+        [Test]
+        public void CanSerializeObjectWithListOfObjects()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithListOfObjects()
+            {
+                List = new List<PrimitiveHolder>()
+                {
+                    new PrimitiveHolder
+                    {
+                        PropBool = true,
+                        PropDouble = 100.2,
+                        PropFloat = 1.2f,
+                        PropInt = 26,
+                        PropString = "String"
+                    },
+                    new PrimitiveHolder
+                    {
+                        PropBool = false,
+                        PropDouble = 100.1,
+                        PropFloat = 1.1f,
+                        PropInt = 25,
+                        PropString = "String2"
+                    }
+                }
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithListOfObjects, SFJsonTest\",\"List\":[\"$Type\":\"System.Collections.Generic.List`1[[SFJsonTest.PrimitiveHolder, SFJsonTest]], mscorlib\",\"$Values\":[{\"$Type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"$Type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]]}", str);
+        }
+
+        [Test]
+        public void CanSerializeObjectWithArray()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithArray()
+            {
+                Array = new int[]
+                {
+                    1, 2, 3, 4, 5
+                }
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithArray, SFJsonTest\",\"Array\":[\"$Type\":\"System.Int32[], mscorlib\",\"$Values\":[1,2,3,4,5]]}", str);
+        }
+
+        [Test]
+        public void CanSerializeObjectWithArrayOfObjects()
+        {
+            _serializer.ObjectToSerialize = new ObjectWithArrayOfObjects()
+            {
+                Array = new PrimitiveHolder[]
+                {
+                    new PrimitiveHolder
+                    {
+                        PropBool = true,
+                        PropDouble = 100.2,
+                        PropFloat = 1.2f,
+                        PropInt = 26,
+                        PropString = "String"
+                    },
+                    new PrimitiveHolder
+                    {
+                        PropBool = false,
+                        PropDouble = 100.1,
+                        PropFloat = 1.1f,
+                        PropInt = 25,
+                        PropString = "String2"
+                    }
+                }
+            };
+            
+            var str = _serializer.Serialize();
+
+            Console.WriteLine(str);
+            Assert.AreEqual("{\"$Type\":\"SFJsonTest.ObjectWithArrayOfObjects, SFJsonTest\",\"Array\":[\"$Type\":\"SFJsonTest.PrimitiveHolder[], SFJsonTest\",\"$Values\":[{\"$Type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"$Type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]]}", str);
         }
     }
 }
