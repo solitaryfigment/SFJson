@@ -5,9 +5,22 @@ using System.Text;
 
 namespace SFJson
 {
+    public enum TypeHandler
+    {
+        None,
+        Collections,
+        Objects,
+        All
+    }
+    public class SerializerSettings
+    {
+        public TypeHandler TypeHandler { get; set; }
+    }
+    
     public class Serializer
     {
         public object ObjectToSerialize { get; set; }
+        private SerializerSettings _serializerSettings;
 
         public Serializer()
         {
@@ -21,11 +34,17 @@ namespace SFJson
 
         public override string ToString()
         {
-            return Serialize();
+            return Serialize(new SerializerSettings { TypeHandler = TypeHandler.None });
         }
 
         public string Serialize()
         {
+            return Serialize(new SerializerSettings { TypeHandler = TypeHandler.None });
+        }
+
+        public string Serialize(SerializerSettings serializerSettings)
+        {
+            _serializerSettings = serializerSettings;
             var sb = new StringBuilder();
             SerializeObject(sb, ObjectToSerialize);
             return sb.ToString();
@@ -40,8 +59,15 @@ namespace SFJson
             else
             {
                 sb.Append("{");
-                sb.AppendFormat("\"$Type\":\"{0}\"", obj.GetType().GetTypeAsString());
-                SerializeProperties(sb, obj);
+                if(_serializerSettings.TypeHandler == TypeHandler.All || _serializerSettings.TypeHandler == TypeHandler.Objects)
+                {
+                    sb.AppendFormat("\"$type\":\"{0}\"", obj.GetType().GetTypeAsString());
+                    SerializeProperties(sb, obj);
+                }
+                else
+                {
+                    SerializeProperties(sb, obj);
+                }
                 sb.Append("}");
             }
         }
@@ -56,8 +82,12 @@ namespace SFJson
             {
                 Console.WriteLine("List: " + list.Count);
                 sb.Append("[");
-                sb.AppendFormat("\"$Type\":\"{0}\"", list.GetType().GetTypeAsString());
-                sb.Append(",\"$Values\":[");
+
+                if(_serializerSettings.TypeHandler == TypeHandler.All || _serializerSettings.TypeHandler == TypeHandler.Collections)
+                {
+                    sb.AppendFormat("\"$type\":\"{0}\"", list.GetType().GetTypeAsString());
+                    sb.Append(",\"$values\":[");
+                }
                 for(int i = 0; i < list.Count; i++)
                 {
                     if(i > 0)
@@ -66,18 +96,27 @@ namespace SFJson
                     }
                     SerializeObject(sb, list[i].GetType(), list[i]);
                 }
-                sb.Append("]]");
+                if(_serializerSettings.TypeHandler == TypeHandler.All || _serializerSettings.TypeHandler == TypeHandler.Collections)
+                {
+                    sb.Append("]");
+                }
+                sb.Append("]");
             }
         }
 
         private void SerializeProperties(StringBuilder sb, object obj)
         {
             var properties = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            foreach(var propertyInfo in properties)
+            for(int i = 0; i < properties.Length; i++)
             {
+                var propertyInfo = properties[i];
+                if(i > 0 || (_serializerSettings.TypeHandler == TypeHandler.All || _serializerSettings.TypeHandler == TypeHandler.Objects))
+                {
+                    sb.Append(",");
+                }
                 if(propertyInfo.CanWrite && propertyInfo.CanRead)
                 {
-                    sb.AppendFormat(",\"{0}\":", propertyInfo.Name);
+                    sb.AppendFormat("\"{0}\":", propertyInfo.Name);
                     SerializeObject(sb, propertyInfo.PropertyType, propertyInfo.GetValue(obj));
                 }
             }

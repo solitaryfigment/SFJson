@@ -17,7 +17,7 @@ namespace SFJson
 
     public abstract class JsonToken
     {
-        public bool IsQuoted;
+        internal bool IsQuoted;
         public string Name;
         public List<JsonToken> ChildElements = new List<JsonToken>();
 
@@ -44,12 +44,12 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            Console.WriteLine("Get Value");
+            Console.WriteLine("Get Value: " + type);
             object obj;
             PropertyInfo[] properties;
-            if(ChildElements[0].Name == "$Type")
+            if(ChildElements.Count > 0 && ChildElements[0].Name == "$type")
             {
-                Console.WriteLine("Has $Type");
+                Console.WriteLine("Has $type");
                 var typestring = ChildElements[0].GetValue<string>();
                 Console.WriteLine(typestring);
                 var inheiritedType = Type.GetType(typestring);
@@ -60,20 +60,20 @@ namespace SFJson
             else
             {
                 obj = Activator.CreateInstance(type);
-                properties = type.GetType().GetProperties();
+                properties = type.GetProperties();
             }
 
             foreach(var child in ChildElements)
             {
-                if(child.Name == "$Type")
+                if(child.Name == "$type")
                 {
                     continue;
                 }
 
                 Console.WriteLine("Name: " + child.Name);
-                var propertyInfo = properties.First(p => p.Name == child.Name);
+                var propertyInfo = properties.FirstOrDefault(p => p.Name == child.Name);
                 Console.WriteLine("Name: " + propertyInfo.Name);
-                Console.WriteLine(propertyInfo.GetValue(obj));
+                Console.WriteLine("Value: " + child.GetValue(propertyInfo.PropertyType));
                 propertyInfo.SetValue(obj, child.GetValue(propertyInfo.PropertyType));
             }
             return obj;
@@ -99,17 +99,24 @@ namespace SFJson
         {
             Console.WriteLine("Get Value: " + type);
             IList obj;
-            var list = ChildElements[1];
-            if(ChildElements[0].Name == "$Type")
+            JsonToken list = ChildElements.FirstOrDefault(c => c.Name == "$values");
+            if(ChildElements.Count > 0 && ChildElements[0].Name == "$type")
             {
-                Console.WriteLine("Has $Type");
+                Console.WriteLine("Has $type");
                 var typestring = ChildElements[0].GetValue<string>();
                 Console.WriteLine(typestring);
                 type = Type.GetType(typestring);
                 Console.WriteLine(type);
                 if(type.IsArray)
                 {
-                    obj = Array.CreateInstance(type.GetElementType(), list.ChildElements.Count) as IList;
+                    if(list != null)
+                    {
+                        obj = Array.CreateInstance(type.GetElementType(), list.ChildElements.Count) as IList;
+                    }
+                    else
+                    {
+                        obj = Array.CreateInstance(type.GetElementType(), ChildElements.Count) as IList;
+                    }
                 }
                 else
                 {
@@ -120,7 +127,14 @@ namespace SFJson
             {
                 if(type.IsArray)
                 {
-                    obj = Array.CreateInstance(type.GetElementType(), list.ChildElements.Count) as IList;
+                    if(list != null)
+                    {
+                        obj = Array.CreateInstance(type.GetElementType(), list.ChildElements.Count) as IList;
+                    }
+                    else
+                    {
+                        obj = Array.CreateInstance(type.GetElementType(), ChildElements.Count) as IList;
+                    }
                 }
                 else
                 {
@@ -128,12 +142,30 @@ namespace SFJson
                 }
             }
 
-            if(list.Name == "$Values")
+            if(list != null && list.Name == "$values")
             {
                 Console.WriteLine("List: " + " : " + obj + " : " + type + " : " + list.JsonType + " : " + list.Name + " : " + list.ChildElements.Count);
                 for(int i = 0; i < list.ChildElements.Count; i++)
                 {
                     var child = list.ChildElements[i];
+                    var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
+                    Console.WriteLine("Name: " + child.Name + " : " + child.GetValue(elementType));
+                    if(type.IsArray)
+                    {
+                        obj[i] = child.GetValue(elementType);
+                    }
+                    else
+                    {
+                        obj.Add(child.GetValue(elementType));
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("List: " + " : " + obj + " : " + type);
+                for(int i = 0; i < ChildElements.Count; i++)
+                {
+                    var child = ChildElements[i];
                     var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
                     Console.WriteLine("Name: " + child.Name + " : " + child.GetValue(elementType));
                     if(type.IsArray)
@@ -217,13 +249,13 @@ namespace SFJson
 
         private void PrintTokens(JsonToken token)
         {
-            Console.WriteLine(token.JsonType);
-            Console.WriteLine(token.ChildElements.Count);
-            Console.WriteLine("{0} : {1}", token.Name, token.GetValue<object>());
-            foreach(var child in token.ChildElements)
-            {
-                PrintTokens(child);
-            }
+//            Console.WriteLine(token.JsonType);
+//            Console.WriteLine(token.ChildElements.Count);
+//            Console.WriteLine("{0} : {1}", token.Name, token.GetValue<object>());
+//            foreach(var child in token.ChildElements)
+//            {
+//                PrintTokens(child);
+//            }
         }
     }
 }

@@ -12,95 +12,89 @@ namespace SFJson
         private static string _tokenName = string.Empty;
         private static StringBuilder _tokenText = new StringBuilder();
 
+	    private static string _jsonString;
+	    private static int _index;
+
+	    private static bool HandleIfQuoted()
+	    {
+		    var currentChar = _jsonString[_index];
+			switch(currentChar)
+			{
+				// TODO: Handle Escape Characters & Unicode		
+				case '"':
+					_isQuote = !_isQuote;
+					_currentToken.IsQuoted |= _isQuote;
+					return true;
+			}
+		    if(_isQuote)
+		    {
+			    _tokenText.Append(currentChar);
+			    return true;
+		    }
+		    return false;
+	    }
+
+	    private static void PushToken<T>() where T : JsonToken, new()
+	    {
+		    T token = new T();
+		    if(_stack.Count > 0)
+		    {
+			    Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.ChildElements.Count + 1));
+			    token.Name = _tokenName;
+			    _currentToken.ChildElements.Add(token);
+		    }
+		    _currentToken = token;
+		    _stack.Push(token);
+	    }
+
+	    private static void PopToken<T>()
+	    {
+		    Console.WriteLine("Is: " + (_currentToken is T));
+		    // TODO: Validate TokenType
+		    _stack.Pop();
+		    ParseElement();
+		    if(_stack.Count > 0)
+		    {
+			    _currentToken = _stack.Peek();
+		    }
+	    }
+	    
         public static JsonToken Tokenize(string jsonString)
         {
 	        _tokenText.Length = 0;
-            for(int i = 0; i < jsonString.Length; i++)
+	        _jsonString = jsonString;
+            for(_index = 0; _index < _jsonString.Length; _index++)
             {
-                var currentChar = jsonString[i];
+	            if(HandleIfQuoted())
+	            {
+		            continue;
+	            }
+	            
+                var currentChar = _jsonString[_index];
                 switch(currentChar)
                 {
 	                case '{':
-		                if(_isQuote)
-		                {
-			                _tokenText.Append(currentChar);
-		                }
-		                else
-		                {
-			                Console.WriteLine("Object");
-			                var token = new JsonObject();
-			                if(_stack.Count > 0)
-			                {
-				                Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.ChildElements.Count + 1));
-				                token.Name = _tokenName;
-				                _currentToken.ChildElements.Add(token);
-			                }
-			                _currentToken = token;
-			                _stack.Push(token);
-			                ResetTokenText();
-		                }
+		                PushToken<JsonObject>();
+						ResetTokenText();
+		                break;
+	                case '}':
+		                PopToken<JsonObject>();
+		                ResetTokenText();
 		                break;
 	                case '[':
-		                if(_isQuote)
-		                {
-			                _tokenText.Append(currentChar);
-		                }
-		                else
-		                {
-			                Console.WriteLine("Array");
-			                var token = new JsonArray();
-			                if(_stack.Count > 0)
-			                {
-				                Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.ChildElements.Count + 1));
-				                token.Name = _tokenName;
-				                _currentToken.ChildElements.Add(token);
-			                }
-			                _currentToken = token;
-			                _stack.Push(token);
-			                ResetTokenText();
-		                }
+		                PushToken<JsonArray>();
+						ResetTokenText();
 		                break;
 	                case ']':
-	                case '}':
-                        if(_isQuote)
-                        {
-                            _tokenText.Append(currentChar);
-                        }
-                        else
-                        {
-	                        _stack.Pop();
-	                        ParseElement();
-	                        if(_stack.Count > 0)
-	                        {
-		                        _currentToken = _stack.Peek();
-	                        }
-	                        ResetTokenText();
-                        }
-                        break;
-                    case '"':
-                        _isQuote = !_isQuote;
-                        _currentToken.IsQuoted |= _isQuote;
-                        break;
+		                PopToken<JsonArray>();
+		                ResetTokenText();
+		                break;
                     case ':':
-	                    if(_isQuote)
-	                    {
-		                    _tokenText.Append(currentChar);
-	                    }
-	                    else
-	                    {
-		                    ResetTokenText();
-	                    }
+						ResetTokenText();
 	                    break;
 					case ',':
-						if(_isQuote)
-						{
-							_tokenText.Append(currentChar);
-						}
-						else
-						{
-							ParseElement();
-							ResetTokenText();
-						}
+						ParseElement();
+						ResetTokenText();
 						break;
                     default:
                         _tokenText.Append(currentChar);
@@ -136,6 +130,7 @@ namespace SFJson
 			    _currentToken.ChildElements.Add(new JsonValue(_tokenName, _tokenText.ToString(), JsonType.Value));
 			    return;
 		    }
+		    
 		    string tokenText = _tokenText.ToString().ToLower();
 
 		    if(tokenText == "false" || tokenText == "true")
