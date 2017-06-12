@@ -11,7 +11,6 @@ namespace SFJson
         private string _tokenName = string.Empty;
         private StringBuilder _tokenText = new StringBuilder();
 	    private string _jsonString;
-	    private int _index = 0;
 	    private char _currentChar;
 
 	    public JsonToken Tokenize(string jsonString)
@@ -23,55 +22,54 @@ namespace SFJson
 	    
         private JsonToken Tokenize()
         {
-            for(; _index < _jsonString.Length; _index++)
+            for(int i = 0; i < _jsonString.Length; i++)
             {
-	            _currentChar = _jsonString[_index];
+	            _currentChar = _jsonString[i];
 	            if(HandleIfQuoted())
 	            {
 		            continue;
 	            }
-	            
-                switch(_currentChar)
-                {
-	                case TokenizerConstants.OPEN_CURLY:
-		                PushToken<JsonObject>();
-						ResetTokenText();
-		                break;
-	                case TokenizerConstants.CLOSE_CURLY:
-		                PopToken<JsonObject>();
-		                ResetTokenText();
-		                break;
-	                case TokenizerConstants.OPEN_BRACKET:
-		                PushToken<JsonArray>();
-						ResetTokenText();
-		                break;
-	                case TokenizerConstants.CLOSE_BRACKET:
-		                PopToken<JsonArray>();
-		                ResetTokenText();
-		                break;
-                    case TokenizerConstants.COLON:
-						ResetTokenText();
-	                    break;
-					case TokenizerConstants.COMMA:
-						ParseElement();
-						ResetTokenText();
-						break;
-                    default:
-                        _tokenText.Append(_currentChar);
-                        break;
-                }
+	            HandleNextCharacter();
 	            Console.WriteLine(_tokenText.ToString());
             }
 
             return _currentToken;
         }
 
+	    private void HandleNextCharacter()
+	    {
+		    switch(_currentChar)
+		    {
+			    case TokenizerConstants.OPEN_CURLY:
+				    PushToken<JsonObject>();
+				    break;
+			    case TokenizerConstants.CLOSE_CURLY:
+				    PopToken<JsonObject>();
+				    break;
+			    case TokenizerConstants.OPEN_BRACKET:
+				    PushToken<JsonArray>();
+				    break;
+			    case TokenizerConstants.CLOSE_BRACKET:
+				    PopToken<JsonArray>();
+				    break;
+			    case TokenizerConstants.COLON:
+				    ResetTokenText();
+				    break;
+			    case TokenizerConstants.COMMA:
+				    ParseElement();
+				    ResetTokenText();
+				    break;
+			    default:
+				    _tokenText.Append(_currentChar);
+				    break;
+		    }
+	    }
+
 	    private bool HandleIfQuoted()
 	    {
 			if(_currentChar == TokenizerConstants.QUOTE)
 			{
 				_isQuote = !_isQuote;
-				_currentToken.IsQuoted |= _isQuote;
 				return true;
 			}
 			if(_isQuote)
@@ -88,12 +86,13 @@ namespace SFJson
 		    T token = new T();
 		    if(Count > 0)
 		    {
-			    token.Name = _tokenName;
 			    Console.WriteLine("Appending :" + _tokenName + ":To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.Children.Count + 1));
 			    _currentToken.Children.Add(token);
 		    }
+		    token.Name = _tokenName;
 		    _currentToken = token;
 		    Push(token);
+		    ResetTokenText();
 	    }
 
 	    private void PopToken<T>()
@@ -106,12 +105,12 @@ namespace SFJson
 		    {
 			    _currentToken = Peek();
 		    }
+		    ResetTokenText();
 	    }
 
 	    private void ResetTokenText()
 	    {
 		    _tokenName = _tokenText.ToString();
-		    _currentToken.IsQuoted = false;
 		    _isQuote = false;
 		    _tokenText.Length = 0;
 	    }
@@ -125,12 +124,6 @@ namespace SFJson
 			    return;
 		    }
 		    Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.Children.Count + 1));
-
-		    if(_currentToken.IsQuoted)
-		    {
-			    _currentToken.Children.Add(new JsonValue(_tokenName, _tokenText.ToString()));
-			    return;
-		    }
 		    
 		    string tokenText = _tokenText.ToString().ToLower();
 

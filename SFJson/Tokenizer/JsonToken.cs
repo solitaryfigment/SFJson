@@ -7,7 +7,6 @@ namespace SFJson
 {
     public abstract class JsonToken
     {
-        internal bool IsQuoted;
         public string Name;
         public List<JsonToken> Children = new List<JsonToken>();
 

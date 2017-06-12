@@ -45,7 +45,7 @@ namespace SFJsonTest
                 PropDouble = 100.1,
                 PropFloat = 1.1f,
                 PropInt = 25,
-                PropString = "String"
+                PropString = "1"
             };
             
             var str = _serializer.Serialize(obj);
@@ -53,8 +53,8 @@ namespace SFJsonTest
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}", strWithType);
+            Assert.AreEqual("{\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"1\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"1\"}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<PrimitiveHolder>(str);
             Assert.NotNull(strDeserialized);
