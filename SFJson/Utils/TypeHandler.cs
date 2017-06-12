@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFJson
+﻿namespace SFJson
 {
     public enum TypeHandler
     {

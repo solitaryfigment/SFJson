@@ -11,7 +11,6 @@
             _stringToDeserialize = stringToSerialize;
             LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize);
             var obj = LastTokenization.GetValue<T>();
-            
             return obj;
         }
     }

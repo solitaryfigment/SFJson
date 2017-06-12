@@ -11,7 +11,8 @@ namespace SFJson
         private string _tokenName = string.Empty;
         private StringBuilder _tokenText = new StringBuilder();
 	    private string _jsonString;
-	    private int _index;
+	    private int _index = 0;
+	    private char _currentChar;
 
 	    public JsonToken Tokenize(string jsonString)
 	    {
@@ -22,15 +23,15 @@ namespace SFJson
 	    
         private JsonToken Tokenize()
         {
-            for(_index = 0; _index < _jsonString.Length; _index++)
+            for(; _index < _jsonString.Length; _index++)
             {
+	            _currentChar = _jsonString[_index];
 	            if(HandleIfQuoted())
 	            {
 		            continue;
 	            }
 	            
-                var currentChar = _jsonString[_index];
-                switch(currentChar)
+                switch(_currentChar)
                 {
 	                case TokenizerConstants.OPEN_CURLY:
 		                PushToken<JsonObject>();
@@ -56,10 +57,9 @@ namespace SFJson
 						ResetTokenText();
 						break;
                     default:
-                        _tokenText.Append(currentChar);
+                        _tokenText.Append(_currentChar);
                         break;
                 }
-	            
 	            Console.WriteLine(_tokenText.ToString());
             }
 
@@ -68,8 +68,7 @@ namespace SFJson
 
 	    private bool HandleIfQuoted()
 	    {
-			var currentChar = _jsonString[_index];
-			if(currentChar == TokenizerConstants.QUOTE)
+			if(_currentChar == TokenizerConstants.QUOTE)
 			{
 				_isQuote = !_isQuote;
 				_currentToken.IsQuoted |= _isQuote;
@@ -78,7 +77,7 @@ namespace SFJson
 			if(_isQuote)
 			{
 				// TODO: Handle Escape Characters & Unicode	
-				_tokenText.Append(currentChar);
+				_tokenText.Append(_currentChar);
 				return true;
 			}
 			return false;

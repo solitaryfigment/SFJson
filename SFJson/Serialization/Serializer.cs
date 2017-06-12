@@ -27,14 +27,14 @@ namespace SFJson
         {
             if(obj == null) 
             {
-                _serialized.Append("null");
+                _serialized.Append(TokenizerConstants.NULL);
             }
             else 
             {
-                _serialized.Append("{");
+                _serialized.Append(TokenizerConstants.OPEN_CURLY);
                 AppendType(obj, TypeHandler.Objects);
                 SerializeMembers(obj);
-                _serialized.Append("}");
+                _serialized.Append(TokenizerConstants.CLOSE_CURLY);
             }
         }
         
@@ -44,7 +44,7 @@ namespace SFJson
 
             if(list == null)
             {
-                _serialized.Append("null");
+                _serialized.Append(TokenizerConstants.NULL);
             }
             else
             {
@@ -52,7 +52,7 @@ namespace SFJson
                 {
                     if(appendSeparator)
                     {
-                        _serialized.Append(",");
+                        _serialized.Append(TokenizerConstants.COMMA);
                     }
                     SerializeObject(element.GetType(), element);
                     appendSeparator = true;
@@ -70,7 +70,7 @@ namespace SFJson
             {
                 if(appendSeparator)
                 {
-                    _serialized.Append(",");
+                    _serialized.Append(TokenizerConstants.COMMA);
                 }
                 _serialized.AppendFormat("\"{0}\":", fieldInfo.Name);
                 SerializeObject(fieldInfo.FieldType, fieldInfo.GetValue(obj));
@@ -82,7 +82,7 @@ namespace SFJson
                 {
                     if(appendSeparator)
                     {
-                        _serialized.Append(",");
+                        _serialized.Append(TokenizerConstants.COMMA);
                     }
                     _serialized.AppendFormat("\"{0}\":", propertyInfo.Name);
                     SerializeObject(propertyInfo.PropertyType, propertyInfo.GetValue(obj));
@@ -99,16 +99,16 @@ namespace SFJson
             }
             else if(type.IsArray || type.GetInterface("IList") != null)
             {
-                _serialized.Append("[");
+                _serialized.Append(TokenizerConstants.OPEN_BRACKET);
                 AppendType(value, TypeHandler.Collections, ",\"$values\":[");
                 
                 SerializeList((IList)value);
                 
                 if(_serializerSettings.TypeHandler == TypeHandler.All || _serializerSettings.TypeHandler == TypeHandler.Collections)
                 {
-                    _serialized.Append("]");
+                    _serialized.Append(TokenizerConstants.CLOSE_BRACKET);
                 }
-                _serialized.Append("]");
+                _serialized.Append(TokenizerConstants.CLOSE_BRACKET);
             }
             else if(type.IsEnum)
             {

@@ -24,6 +24,7 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
+            Console.WriteLine("Value: " + _value);
             if(type.IsEnum)
             {
                 return Enum.Parse(type, _value.ToString());
