@@ -20,22 +20,19 @@ namespace SFJsonTest
         [Test]
         public void CanConvertSimpleObjectType()
         {
-            _serializer.ObjectToSerialize = new SimpleTestObject();
-            
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var obj = new SimpleTestObject();
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}", strWithType);
 
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<SimpleTestObject>();
+            var strDeserialized = _deserializer.Deserialize<SimpleTestObject>(str);
             Assert.IsInstanceOf<SimpleTestObject>(strDeserialized);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObject>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObject>(strWithType);
             Assert.IsInstanceOf<SimpleTestObject>(strWithTypeDeserialized);
         }
 
@@ -51,17 +48,15 @@ namespace SFJsonTest
                 PropString = "String"
             };
             
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<PrimitiveHolder>();
+            var strDeserialized = _deserializer.Deserialize<PrimitiveHolder>(str);
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<PrimitiveHolder>(strDeserialized);
             Assert.AreEqual(obj.PropBool, strDeserialized.PropBool);
@@ -70,8 +65,7 @@ namespace SFJsonTest
             Assert.AreEqual(obj.PropInt, strDeserialized.PropInt);
             Assert.AreEqual(obj.PropString, strDeserialized.PropString);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<PrimitiveHolder>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<PrimitiveHolder>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<PrimitiveHolder>(strWithTypeDeserialized);
             Assert.AreEqual(obj.PropBool, strWithTypeDeserialized.PropBool);
@@ -86,29 +80,30 @@ namespace SFJsonTest
         {
             var obj = new SimpleTestObjectWithProperties
             {
+                FieldInt = 20,
                 TestInt = 10
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"TestInt\":10}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"TestInt\":10}", strWithType);
+            Assert.AreEqual("{\"FieldInt\":20,\"TestInt\":10}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":20,\"TestInt\":10}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<SimpleTestObjectWithProperties>();
+            var strDeserialized = _deserializer.Deserialize<SimpleTestObjectWithProperties>(str);
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<SimpleTestObjectWithProperties>(strDeserialized);
             Assert.AreEqual(obj.TestInt, strDeserialized.TestInt);
+            Assert.AreEqual(obj.FieldInt, strDeserialized.FieldInt);
+
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObjectWithProperties>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObjectWithProperties>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<SimpleTestObjectWithProperties>(strWithTypeDeserialized);
             Assert.AreEqual(obj.TestInt, strWithTypeDeserialized.TestInt);
+            Assert.AreEqual(obj.FieldInt, strWithTypeDeserialized.FieldInt);
         }
         
         [Test]
@@ -118,25 +113,22 @@ namespace SFJsonTest
             {
                 Enums = Enums.Test2
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
             
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"Enums\":Test2}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":Test2}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectWithEnum>();
+            var strDeserialized = _deserializer.Deserialize<ObjectWithEnum>(str);
             
             Assert.IsTrue(strDeserialized != null);
             Assert.IsInstanceOf<Enums>(strDeserialized.Enums);
             Assert.AreEqual(obj.Enums, strDeserialized.Enums);
             
-            _deserializer.StringToDeserialize = str;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithEnum>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithEnum>(strWithType);
             
             Assert.IsTrue(strWithTypeDeserialized != null);
             Assert.IsInstanceOf<Enums>(strWithTypeDeserialized.Enums);
@@ -151,29 +143,25 @@ namespace SFJsonTest
                 Inner = new SelfReferencedSimpleObject()
             };
             
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"Inner\":{\"Inner\":null}}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<SelfReferencedSimpleObject>();
+            var strDeserialized = _deserializer.Deserialize<SelfReferencedSimpleObject>(str);
             
             Assert.IsTrue(strDeserialized != null);
             Assert.NotNull(strDeserialized.Inner);
             Assert.Null(strDeserialized.Inner.Inner);
             
-            _deserializer.StringToDeserialize = str;
-            var strWithTypeDeserialized = _deserializer.Deserialize<SelfReferencedSimpleObject>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<SelfReferencedSimpleObject>(strWithType);
             
             Assert.IsTrue(strWithTypeDeserialized != null);
             Assert.NotNull(strWithTypeDeserialized.Inner);
             Assert.Null(strWithTypeDeserialized.Inner.Inner);
         }
-
     }
 }

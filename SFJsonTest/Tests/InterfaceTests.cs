@@ -28,24 +28,21 @@ namespace SFJsonTest
                     PropInt = 100
                 }
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"ObjectImplementingInterface\":{\"InterfacePropInt\":50,\"PropInt\":100}}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithInterface, SFJsonTest\",\"ObjectImplementingInterface\":{\"$type\":\"SFJsonTest.ObjectImplementingInterface, SFJsonTest\",\"InterfacePropInt\":50,\"PropInt\":100}}", strWithType);
 
-            _deserializer.StringToDeserialize = str;
             Assert.Throws<MissingMethodException>(() =>
             {
-                _deserializer.Deserialize<ObjectWithInterface>();
+                _deserializer.Deserialize<ObjectWithInterface>(str);
             });
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithInterface>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithInterface>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<ObjectWithInterface>(strWithTypeDeserialized);
             Assert.AreEqual(obj.ObjectImplementingInterface.InterfacePropInt, strWithTypeDeserialized.ObjectImplementingInterface.InterfacePropInt);
@@ -61,25 +58,22 @@ namespace SFJsonTest
                 InterfacePropInt = 50,
                 PropInt = 100
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"InterfacePropInt\":50,\"PropInt\":100}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectImplementingInterface, SFJsonTest\",\"InterfacePropInt\":50,\"PropInt\":100}", strWithType);
 
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectImplementingInterface>();
+            var strDeserialized = _deserializer.Deserialize<ObjectImplementingInterface>(str);
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<ObjectImplementingInterface>(strDeserialized);
             Assert.AreEqual(obj.InterfacePropInt, strDeserialized.InterfacePropInt);
             Assert.AreEqual(obj.PropInt, strDeserialized.PropInt);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectImplementingInterface>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectImplementingInterface>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<ObjectImplementingInterface>(strWithTypeDeserialized);
             Assert.AreEqual(obj.InterfacePropInt, strWithTypeDeserialized.InterfacePropInt);

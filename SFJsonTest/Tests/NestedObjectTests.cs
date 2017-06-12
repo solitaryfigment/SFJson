@@ -25,23 +25,20 @@ namespace SFJsonTest
                 PropString = "Nested"
             };
             
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"PropString\":\"Nested\"}", str);   
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithNestedType+NestedClass, SFJsonTest\",\"PropString\":\"Nested\"}", strWithType);
 
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedType.NestedClass>();
+            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedType.NestedClass>(str);
             
             Assert.NotNull(strDeserialized);
             Assert.AreEqual(obj.PropString, strDeserialized.PropString);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedType.NestedClass>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedType.NestedClass>(strWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
             Assert.AreEqual(obj.PropString, strWithTypeDeserialized.PropString);
@@ -59,25 +56,22 @@ namespace SFJsonTest
                 }
             };
             
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"PropNested\":{\"PropString\":\"Nested\"},\"PropInt\":100}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithNestedType, SFJsonTest\",\"PropNested\":{\"$type\":\"SFJsonTest.ObjectWithNestedType+NestedClass, SFJsonTest\",\"PropString\":\"Nested\"},\"PropInt\":100}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedType>();
+            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedType>(str);
             
             Assert.NotNull(strDeserialized);
             Assert.AreEqual(obj.PropInt, strDeserialized.PropInt);
             Assert.NotNull(strDeserialized.PropNested);
             Assert.AreEqual(obj.PropNested.PropString, strDeserialized.PropNested.PropString);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedType>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedType>(strWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
             Assert.AreEqual(obj.PropInt, strWithTypeDeserialized.PropInt);
@@ -93,23 +87,20 @@ namespace SFJsonTest
                 PropString = "Nested"
             };
             
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"PropString\":\"Nested\"}", str);   
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithNestedNestedType+NestedClass+NestedNestedClass, SFJsonTest\",\"PropString\":\"Nested\"}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType.NestedClass.NestedNestedClass>();
+            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType.NestedClass.NestedNestedClass>(str);
             
             Assert.NotNull(strDeserialized);
             Assert.AreEqual(obj.PropString, strDeserialized.PropString);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType.NestedClass.NestedNestedClass>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType.NestedClass.NestedNestedClass>(strWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
             Assert.AreEqual(obj.PropString, strWithTypeDeserialized.PropString);
@@ -129,25 +120,22 @@ namespace SFJsonTest
                 }
             };
             
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"PropNested\":{\"PropNested\":{\"PropString\":\"Nested\"}}}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithNestedNestedType, SFJsonTest\",\"PropNested\":{\"$type\":\"SFJsonTest.ObjectWithNestedNestedType+NestedClass, SFJsonTest\",\"PropNested\":{\"$type\":\"SFJsonTest.ObjectWithNestedNestedType+NestedClass+NestedNestedClass, SFJsonTest\",\"PropString\":\"Nested\"}}}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType>();
+            var strDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType>(str);
             
             Assert.NotNull(strDeserialized);
             Assert.NotNull(strDeserialized.PropNested);
             Assert.NotNull(strDeserialized.PropNested.PropNested);
             Assert.AreEqual(obj.PropNested.PropNested.PropString, strDeserialized.PropNested.PropNested.PropString);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithNestedNestedType>(strWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
             Assert.NotNull(strWithTypeDeserialized.PropNested);

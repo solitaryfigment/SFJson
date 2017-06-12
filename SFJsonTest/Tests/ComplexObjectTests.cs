@@ -29,6 +29,7 @@ namespace SFJsonTest
                 SimpleTestObject = new SimpleTestObject(),
                 SimpleTestObjectWithProperties = new SimpleTestObjectWithProperties()
                 {
+                    FieldInt = 20,
                     TestInt = 10
                 },
                 PrimitiveHolder = new PrimitiveHolder
@@ -40,18 +41,16 @@ namespace SFJsonTest
                     PropString = "String"
                 },
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"TestInt\":10},\"PrimitiveHolder\":{\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"TestInt\":10},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}}", strWithType);
+            Assert.AreEqual("{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"FieldInt\":20,\"TestInt\":10},\"PrimitiveHolder\":{\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":20,\"TestInt\":10},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String\"}}", strWithType);
 
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ComplexObject>();
+            var strDeserialized = _deserializer.Deserialize<ComplexObject>(str);
             
             Assert.IsTrue(strDeserialized != null);
             
@@ -70,9 +69,9 @@ namespace SFJsonTest
             
             Assert.IsTrue(strDeserialized.SimpleTestObjectWithProperties != null);
             Assert.AreEqual(obj.SimpleTestObjectWithProperties.TestInt, strDeserialized.SimpleTestObjectWithProperties.TestInt);
+            Assert.AreEqual(obj.SimpleTestObjectWithProperties.FieldInt, strDeserialized.SimpleTestObjectWithProperties.FieldInt);
             
-            _deserializer.StringToDeserialize = str;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ComplexObject>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ComplexObject>(strWithType);
             
             Assert.IsTrue(strWithTypeDeserialized != null);
             
@@ -91,6 +90,8 @@ namespace SFJsonTest
             
             Assert.IsTrue(strWithTypeDeserialized.SimpleTestObjectWithProperties != null);
             Assert.AreEqual(obj.SimpleTestObjectWithProperties.TestInt, strWithTypeDeserialized.SimpleTestObjectWithProperties.TestInt);
+            Assert.AreEqual(obj.SimpleTestObjectWithProperties.FieldInt, strWithTypeDeserialized.SimpleTestObjectWithProperties.FieldInt);
+
         }
 
     }

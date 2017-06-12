@@ -29,17 +29,15 @@ namespace SFJsonTest
                 }
             };
             
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"List\":[1,2,3,4,5]}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithList, SFJsonTest\",\"List\":[\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]]}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectWithList>();
+            var strDeserialized = _deserializer.Deserialize<ObjectWithList>(str);
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<ObjectWithList>(strDeserialized);
             Assert.AreEqual(obj.List.Count, strDeserialized.List.Count);
@@ -48,8 +46,7 @@ namespace SFJsonTest
                 Assert.AreEqual(obj.List[i], strDeserialized.List[i]);
             }
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithList>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithList>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<ObjectWithList>(strWithTypeDeserialized);
             for(int i = 0; i < strWithTypeDeserialized.List.Count; i++)
@@ -83,18 +80,16 @@ namespace SFJsonTest
                     }
                 }
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings() { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"List\":[{\"PropBool\":True,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithListOfObjects, SFJsonTest\",\"List\":[\"$type\":\"System.Collections.Generic.List`1[[SFJsonTest.PrimitiveHolder, SFJsonTest]], mscorlib\",\"$values\":[{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]]}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<ObjectWithListOfObjects>();
+            var strDeserialized = _deserializer.Deserialize<ObjectWithListOfObjects>(str);
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<ObjectWithListOfObjects>(strDeserialized);
             Assert.AreEqual(obj.List.Count, strDeserialized.List.Count);
@@ -107,8 +102,7 @@ namespace SFJsonTest
                 Assert.AreEqual(obj.List[i].PropString, strDeserialized.List[i].PropString);
             }
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithListOfObjects>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithListOfObjects>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<ObjectWithListOfObjects>(strWithTypeDeserialized);
             for(int i = 0; i < strWithTypeDeserialized.List.Count; i++)

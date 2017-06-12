@@ -25,23 +25,20 @@ namespace SFJsonTest
             {
                 GenericProp = "String"
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"GenericProp\":\"String\"}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.GenericObject`1[[System.String, mscorlib]], SFJsonTest\",\"GenericProp\":\"String\"}", strWithType);
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<GenericObject<string>>();
+            var strDeserialized = _deserializer.Deserialize<GenericObject<string>>(str);
             Assert.NotNull(strDeserialized);
             Assert.AreEqual(obj.GenericProp, strDeserialized.GenericProp);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<GenericObject<string>>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<GenericObject<string>>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.AreEqual(obj.GenericProp, strWithTypeDeserialized.GenericProp);
         }
@@ -53,10 +50,9 @@ namespace SFJsonTest
             {
                 GenericProp = 100
             };
-
-            _serializer.ObjectToSerialize = obj;
-            var str = _serializer.Serialize();
-            var strWithType = _serializer.Serialize(new SerializerSettings { TypeHandler = TypeHandler.All });
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -64,13 +60,11 @@ namespace SFJsonTest
             Assert.AreEqual("{\"$type\":\"SFJsonTest.GenericObject`1[[System.Int32, mscorlib]], SFJsonTest\",\"GenericProp\":100}", strWithType);
             
             
-            _deserializer.StringToDeserialize = str;
-            var strDeserialized = _deserializer.Deserialize<GenericObject<int>>();
+            var strDeserialized = _deserializer.Deserialize<GenericObject<int>>(str);
             Assert.NotNull(strDeserialized);
             Assert.AreEqual(obj.GenericProp, strDeserialized.GenericProp);
             
-            _deserializer.StringToDeserialize = strWithType;
-            var strWithTypeDeserialized = _deserializer.Deserialize<GenericObject<int>>();
+            var strWithTypeDeserialized = _deserializer.Deserialize<GenericObject<int>>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.AreEqual(obj.GenericProp, strWithTypeDeserialized.GenericProp);
         }
