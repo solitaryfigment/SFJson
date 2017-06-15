@@ -11,11 +11,6 @@ namespace SFJson
             get { return JsonType.Array; }
         }
 
-        public override T GetValue<T>()
-        {
-            return (T)GetValue(typeof(T));
-        }
-
         public override object GetValue(Type type)
         {
             type = DetermineType(type);

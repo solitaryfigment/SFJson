@@ -12,7 +12,11 @@ namespace SFJson
 
         public abstract JsonType JsonType { get; }
         
-        public abstract T GetValue<T>();
+        public T GetValue<T>()
+        {
+            return (T)GetValue(typeof(T));
+        }
+        
         public abstract object GetValue(Type type);
 
         protected Type DetermineType(Type type)
@@ -36,10 +40,7 @@ namespace SFJson
                 list = (list == null) ? this : list;
                 return Array.CreateInstance(type.GetElementType(), list.Children.Count) as IList;
             }
-            else
-            {
-                return Activator.CreateInstance(type) as IList;
-            }
+            return Activator.CreateInstance(type) as IList;
         }
     }
 }

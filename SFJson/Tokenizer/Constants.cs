@@ -1,6 +1,6 @@
 ﻿namespace SFJson
 {
-    public static class TokenizerConstants
+    public static class Constants
     {
         public const char OPEN_CURLY = '{';
         public const char CLOSE_CURLY = '}';

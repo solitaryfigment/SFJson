@@ -17,11 +17,6 @@ namespace SFJson
             _value = value;
         }
 
-        public override T GetValue<T>()
-        {
-            return (T)_value;
-        }
-
         public override object GetValue(Type type)
         {
             Console.WriteLine("Value: " + _value);

@@ -40,22 +40,22 @@ namespace SFJson
 	    {
 		    switch(_currentChar)
 		    {
-			    case TokenizerConstants.OPEN_CURLY:
+			    case Constants.OPEN_CURLY:
 				    PushToken<JsonObject>();
 				    break;
-			    case TokenizerConstants.CLOSE_CURLY:
+			    case Constants.CLOSE_CURLY:
 				    PopToken<JsonObject>();
 				    break;
-			    case TokenizerConstants.OPEN_BRACKET:
+			    case Constants.OPEN_BRACKET:
 				    PushToken<JsonArray>();
 				    break;
-			    case TokenizerConstants.CLOSE_BRACKET:
+			    case Constants.CLOSE_BRACKET:
 				    PopToken<JsonArray>();
 				    break;
-			    case TokenizerConstants.COLON:
+			    case Constants.COLON:
 				    ResetTokenText();
 				    break;
-			    case TokenizerConstants.COMMA:
+			    case Constants.COMMA:
 				    ParseElement();
 				    ResetTokenText();
 				    break;
@@ -67,7 +67,7 @@ namespace SFJson
 
 	    private bool HandleIfQuoted()
 	    {
-			if(_currentChar == TokenizerConstants.QUOTE)
+			if(_currentChar == Constants.QUOTE)
 			{
 				_isQuote = !_isQuote;
 				return true;
@@ -127,11 +127,11 @@ namespace SFJson
 		    
 		    string tokenText = _tokenText.ToString().ToLower();
 
-		    if(tokenText == TokenizerConstants.FALSE || tokenText == TokenizerConstants.TRUE)
+		    if(tokenText == Constants.FALSE || tokenText == Constants.TRUE)
 		    {
-			    _currentToken.Children.Add(new JsonValue(_tokenName, tokenText == TokenizerConstants.TRUE));
+			    _currentToken.Children.Add(new JsonValue(_tokenName, tokenText == Constants.TRUE));
 		    }
-		    else if(tokenText == TokenizerConstants.NULL)
+		    else if(tokenText == Constants.NULL)
 		    {
 			    _currentToken.Children.Add(new JsonValue(_tokenName, null));
 		    }
