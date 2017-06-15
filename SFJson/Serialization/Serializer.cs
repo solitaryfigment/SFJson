@@ -40,11 +40,7 @@ namespace SFJson
         {
             var appendSeparator = false;
 
-            if(list == null)
-            {
-                _serialized.Append(Constants.NULL);
-            }
-            else
+            if(list != null)
             {
                 foreach(var element in list)
                 {
@@ -55,7 +51,9 @@ namespace SFJson
                     SerializeObject(element.GetType(), element);
                     appendSeparator = true;
                 }
+                return;
             }
+            _serialized.Append(Constants.NULL);
         }
 
         private void SerializeMembers(object obj)

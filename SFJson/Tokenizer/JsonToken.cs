@@ -40,7 +40,7 @@ namespace SFJson
                 list = (list == null) ? this : list;
                 return Array.CreateInstance(type.GetElementType(), list.Children.Count) as IList;
             }
-            return Activator.CreateInstance(type) as IList;
+            return Activator.CreateInstance(type);
         }
     }
 }

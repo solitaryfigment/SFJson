@@ -14,9 +14,23 @@ namespace SFJson
         public override object GetValue(Type type)
         {
             type = DetermineType(type);
-            var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
-            var obj = CreateInstance(type) as IList;
+            var obj = CreateInstance(type);
+            if(type.GetInterface("IList") != null)
+            {
+                obj = GetListValues(type, obj as IList);
+            }
+            else if(type.IsAssignableFrom(typeof(IDictionary)))
+            {
+                //obj = GetListValues(type, obj as IDictionary);
+            }
+            return obj;
+        }
+
+        private object GetListValues(Type type, IList obj)
+        {
             var list = Children.FirstOrDefault(c => c.Name == "$values");
+            var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
+
             list = (list == null) ? this : list;
             
             for(int i = 0; i < list.Children.Count; i++)

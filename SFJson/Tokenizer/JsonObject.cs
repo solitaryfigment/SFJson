@@ -16,7 +16,7 @@ namespace SFJson
         public override object GetValue(Type type)
         {
             type = DetermineType(type);
-            object obj = Activator.CreateInstance(type);
+            var obj = CreateInstance(type);
             _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
             
             foreach(var child in Children)
