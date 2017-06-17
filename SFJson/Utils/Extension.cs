@@ -12,9 +12,20 @@ namespace SFJson
             
             if(type.IsGenericType)
             {
-                sb.AppendFormat("{0}[[{1}]]", type.FullName.Substring(0, type.FullName.IndexOf('[')),
-                    string.Join(", ", type.GetGenericArguments()
-                        .Select(t => t.GetTypeAsString())));
+                var appendSeparator = false;
+                var genericStringBuilder = new StringBuilder();
+                foreach(var genericType in type.GetGenericArguments())
+                {
+                    if(appendSeparator)
+                    {
+                        genericStringBuilder.Append(",");
+                    }
+                    genericStringBuilder.Append("[");
+                    genericStringBuilder.Append(genericType.GetTypeAsString());
+                    genericStringBuilder.Append("]");
+                    appendSeparator = true;
+                }
+                sb.AppendFormat("{0}[{1}]", type.FullName.Substring(0, type.FullName.IndexOf('[')), genericStringBuilder.ToString());
             }
             else if(type.IsNested)
             {
@@ -31,6 +42,14 @@ namespace SFJson
             }
             
             return sb.ToString();
+        }
+        
+        public static bool Implements<I>(this Type type, I s) where I : class  
+        {
+            if(((s as Type)==null) || !(s as Type).IsInterface)
+                throw new ArgumentException("Only interfaces can be 'implemented'.");
+
+            return (s as Type).IsAssignableFrom(type);
         }
     }
 }

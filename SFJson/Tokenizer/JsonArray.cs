@@ -13,15 +13,16 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
+            Console.WriteLine("Here: " + type);
             type = DetermineType(type);
             var obj = CreateInstance(type);
             if(type.GetInterface("IList") != null)
             {
                 obj = GetListValues(type, obj as IList);
             }
-            else if(type.IsAssignableFrom(typeof(IDictionary)))
+            else if(type.Implements(typeof(IDictionary)))
             {
-                //obj = GetListValues(type, obj as IDictionary);
+                obj = GetDictionaryValues(type, obj as IDictionary);
             }
             return obj;
         }

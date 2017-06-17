@@ -33,6 +33,12 @@ namespace SFJson
 	            Console.WriteLine(_tokenText.ToString());
             }
 
+	        if(_currentToken == null)
+	        {
+		        _currentToken = ParseElement();
+		        Console.WriteLine("Just a Value");
+	        }
+
             return _currentToken;
         }
 
@@ -41,22 +47,27 @@ namespace SFJson
 		    switch(_currentChar)
 		    {
 			    case Constants.OPEN_CURLY:
+				    Console.WriteLine("Open Object");
 				    PushToken<JsonObject>();
 				    break;
 			    case Constants.CLOSE_CURLY:
+				    Console.WriteLine("Close Object");
 				    PopToken<JsonObject>();
 				    break;
 			    case Constants.OPEN_BRACKET:
+				    Console.WriteLine("Open Array");
 				    PushToken<JsonArray>();
 				    break;
 			    case Constants.CLOSE_BRACKET:
+				    Console.WriteLine("Close Array");
 				    PopToken<JsonArray>();
 				    break;
 			    case Constants.COLON:
 				    ResetTokenText();
+				    Console.WriteLine(_currentToken);
 				    break;
 			    case Constants.COMMA:
-				    ParseElement();
+				    AddAndParseElement();
 				    ResetTokenText();
 				    break;
 			    default:
@@ -100,7 +111,7 @@ namespace SFJson
 		    Console.WriteLine("Is: " + (_currentToken is T));
 		    // TODO: Validate TokenType
 		    Pop();
-		    ParseElement();
+		    AddAndParseElement();
 		    if(Count > 0)
 		    {
 			    _currentToken = Peek();
@@ -115,34 +126,41 @@ namespace SFJson
 		    _tokenText.Length = 0;
 	    }
 
-	    private void ParseElement()
+	    private JsonToken ParseElement()
 	    {
 		    double val;
+		    JsonToken token;
+		    string tokenText = _tokenText.ToString().ToLower();
+
+		    if(tokenText == Constants.FALSE || tokenText == Constants.TRUE)
+		    {
+			    token = new JsonValue(_tokenName, tokenText == Constants.TRUE);
+		    }
+		    else if(tokenText == Constants.NULL)
+		    {
+			    token = new JsonValue(_tokenName, null);
+		    }
+		    else if(double.TryParse(tokenText, out val))
+		    {
+			    token = new JsonValue(_tokenName, val);
+		    }
+		    else
+		    {
+			    token = new JsonValue(_tokenName, _tokenText.ToString());
+		    }
+		    return token;
+	    }
+
+	    private void AddAndParseElement()
+	    {
 		    if(_tokenText.Length <= 0)
 		    {
 			    Console.Write("Did not Append");
 			    return;
 		    }
-		    Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.Children.Count + 1));
-		    
-		    string tokenText = _tokenText.ToString().ToLower();
+		    Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.Children.Count + 1) + " : " + _tokenName);
 
-		    if(tokenText == Constants.FALSE || tokenText == Constants.TRUE)
-		    {
-			    _currentToken.Children.Add(new JsonValue(_tokenName, tokenText == Constants.TRUE));
-		    }
-		    else if(tokenText == Constants.NULL)
-		    {
-			    _currentToken.Children.Add(new JsonValue(_tokenName, null));
-		    }
-	    	else if(double.TryParse(tokenText, out val))
-		    {
-			    _currentToken.Children.Add(new JsonValue(_tokenName, val));
-		    }
-		    else
-		    {
-			    _currentToken.Children.Add(new JsonValue(_tokenName, _tokenText.ToString()));
-		    }
-		}
+		    _currentToken.Children.Add(ParseElement());
+	    }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
@@ -19,7 +20,7 @@ namespace SFJson
         {
             _serializerSettings = serializerSettings;
             _serialized = new StringBuilder();
-            SerializeObject(objectToSerialize);
+            SerializeObject(objectToSerialize.GetType(), objectToSerialize);
             return _serialized.ToString();
         }
 
@@ -35,7 +36,31 @@ namespace SFJson
             }
             _serialized.Append(Constants.NULL);
         }
-        
+
+        private void SerializeDictionary(IDictionary dictionary)
+        {
+            var appendSeparator = false;
+
+            if(dictionary != null)
+            {
+                foreach(var key in dictionary.Keys)
+                {
+                    if(appendSeparator)
+                    {
+                        _serialized.Append(Constants.COMMA);
+                    }
+                    _serialized.Append("{");
+                    _serialized.AppendFormat("\"{0}\"", new Serializer().Serialize(key, _serializerSettings));
+                    _serialized.Append(":");
+                    SerializeObject(dictionary[key].GetType(), dictionary[key]);
+                    _serialized.Append("}");
+                    appendSeparator = true;
+                }
+                return;
+            }
+            _serialized.Append(Constants.NULL);
+        }
+
         private void SerializeList(IList list)
         {
             var appendSeparator = false;
@@ -86,15 +111,31 @@ namespace SFJson
                 }
             }
         }
-
+        
         private void SerializeObject(Type type, object value)
         {
             if(type.IsPrimitive)
             {
+                Console.WriteLine("Primitive");
                 _serialized.AppendFormat("{0}", value);
+            }
+            else if(type.Implements(typeof(IDictionary)))
+            {
+                Console.WriteLine("Dictionary");
+                _serialized.Append(Constants.OPEN_BRACKET);
+                AppendType(value, TypeHandler.Collections, ",\"$values\":[");
+                
+                SerializeDictionary((IDictionary)value);
+                
+                if(_serializerSettings.TypeHandler == TypeHandler.All || _serializerSettings.TypeHandler == TypeHandler.Collections)
+                {
+                    _serialized.Append(Constants.CLOSE_BRACKET);
+                }
+                _serialized.Append(Constants.CLOSE_BRACKET);
             }
             else if(type.IsArray || type.GetInterface("IList") != null)
             {
+                Console.WriteLine("List");
                 _serialized.Append(Constants.OPEN_BRACKET);
                 AppendType(value, TypeHandler.Collections, ",\"$values\":[");
                 
@@ -108,14 +149,17 @@ namespace SFJson
             }
             else if(type.IsEnum)
             {
+                Console.WriteLine("Enum");
                 _serialized.AppendFormat("{0}", value);
             }
             else if(type == typeof(string))
             {
+                Console.WriteLine("String");
                 _serialized.AppendFormat("\"{0}\"", value);
             }
             else
             {
+                Console.WriteLine("ELSE");
                 SerializeObject(value);
             }
         }

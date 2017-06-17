@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
 
@@ -17,6 +18,12 @@ namespace SFJson
         {
             type = DetermineType(type);
             var obj = CreateInstance(type);
+            
+            if(type.Implements(typeof(IDictionary)))
+            {
+                return GetDictionaryValues(type, obj as IDictionary);
+            }
+            
             _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
             
             foreach(var child in Children)

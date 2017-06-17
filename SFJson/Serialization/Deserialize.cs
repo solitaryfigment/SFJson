@@ -1,4 +1,6 @@
-﻿namespace SFJson
+﻿using System;
+
+namespace SFJson
 {
     public class Deserializer
     {
@@ -11,6 +13,14 @@
             _stringToDeserialize = stringToSerialize;
             LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize);
             var obj = LastTokenization.GetValue<T>();
+            return obj;
+        }
+
+        public object Deserialize(Type type, string stringToSerialize)
+        {
+            _stringToDeserialize = stringToSerialize;
+            LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize);
+            var obj = LastTokenization.GetValue(type);
             return obj;
         }
     }
