@@ -18,6 +18,22 @@ namespace SFJsonTest
         }
 
         [Test]
+        public void CanDeserializeStringWithExtraProperties()
+        {
+            var obj = new SimpleTestObject();
+            var str = "{\"Extra\":12}";
+            var strWithType = "{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\",\"Extra\":12}";
+
+            var strDeserialized = _deserializer.Deserialize<SimpleTestObject>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<SimpleTestObject>(strDeserialized);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObject>(strWithType);
+            Assert.IsInstanceOf<SimpleTestObject>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized);
+        }
+
+        [Test]
         public void CanConvertSimpleObjectType()
         {
             var obj = new SimpleTestObject();
@@ -30,10 +46,34 @@ namespace SFJsonTest
             Assert.AreEqual("{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<SimpleTestObject>(str);
+            Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<SimpleTestObject>(strDeserialized);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObject>(strWithType);
             Assert.IsInstanceOf<SimpleTestObject>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized);
+        }
+
+        [Test]
+        public void CanConvertComplexString()
+        {
+            var obj = new StringObject();
+            obj.String = "{[This:\"is \"\" a\",string]}";
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            Assert.AreEqual("{\"String\":\"{[This:\\\"is \\\"\\\" a\\\",string]}\"}", str);
+//            Assert.AreEqual("{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}", strWithType);
+
+            var strDeserialized = _deserializer.Deserialize<StringObject>(str);
+            Assert.IsInstanceOf<StringObject>(strDeserialized);
+            Console.WriteLine(strDeserialized.String);
+            Assert.AreEqual("{[This:\"is \"\" a\",string]}", strDeserialized.String);
+            
+//            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObject>(strWithType);
+//            Assert.IsInstanceOf<SimpleTestObject>(strWithTypeDeserialized);
         }
 
         [Test]

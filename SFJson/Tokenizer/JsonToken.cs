@@ -24,7 +24,6 @@ namespace SFJson
             if(Children.Count > 0 && Children[0].Name == "$type")
             {
                 var typestring = Children[0].GetValue<string>();
-                Console.WriteLine("Type String: " + typestring);
                 var inheiritedType = Type.GetType(typestring);
                 return inheiritedType;
             }
@@ -51,14 +50,11 @@ namespace SFJson
             
             elementList = (elementList == null) ? this : elementList;
             
-            Console.WriteLine("{0}{3} : {1} : {2}", elementList.Name, keyType, valueType, elementList.Children.Count);
             
             for(int i = 0; i < elementList.Children.Count; i++)
             {
                 var key = elementList.Children[i].Children[0].Name;
-                Console.WriteLine("KVP: {0}:{1}", key, elementList.Children[i].Children[0].GetValue(valueType));
                 var token = new Tokenizer().Tokenize(key);
-                Console.WriteLine("Token: {0}:{1}", token.Name, token.Children.Count);
                 obj.Add(token.GetValue(keyType), elementList.Children[i].Children[0].GetValue(valueType));
             }
             

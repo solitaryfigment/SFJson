@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
@@ -45,12 +44,17 @@ namespace SFJson
             {
                 foreach(var key in dictionary.Keys)
                 {
+                    var s = new SerializerSettings()
+                    {
+                        TypeHandler = _serializerSettings.TypeHandler,
+                        PropertyStringEscape = true
+                    };
                     if(appendSeparator)
                     {
                         _serialized.Append(Constants.COMMA);
                     }
                     _serialized.Append("{");
-                    _serialized.AppendFormat("\"{0}\"", new Serializer().Serialize(key, _serializerSettings));
+                    _serialized.AppendFormat("\"{0}\"", new Serializer().Serialize(key, s));
                     _serialized.Append(":");
                     SerializeObject(dictionary[key].GetType(), dictionary[key]);
                     _serialized.Append("}");
@@ -93,7 +97,14 @@ namespace SFJson
                 {
                     _serialized.Append(Constants.COMMA);
                 }
-                _serialized.AppendFormat("\"{0}\":", fieldInfo.Name);
+                if (_serializerSettings.PropertyStringEscape)
+                {
+                    _serialized.AppendFormat("\\\"{0}\\\":", fieldInfo.Name);
+                }
+                else
+                {
+                    _serialized.AppendFormat("\"{0}\":", fieldInfo.Name);
+                }
                 SerializeObject(fieldInfo.FieldType, fieldInfo.GetValue(obj));
                 appendSeparator = true;
             }
@@ -105,7 +116,14 @@ namespace SFJson
                     {
                         _serialized.Append(Constants.COMMA);
                     }
-                    _serialized.AppendFormat("\"{0}\":", propertyInfo.Name);
+                    if (_serializerSettings.PropertyStringEscape)
+                    {
+                        _serialized.AppendFormat("\\\"{0}\\\":", propertyInfo.Name);
+                    }
+                    else
+                    {
+                        _serialized.AppendFormat("\"{0}\":", propertyInfo.Name);
+                    }
                     SerializeObject(propertyInfo.PropertyType, propertyInfo.GetValue(obj));
                     appendSeparator = true;
                 }
@@ -116,12 +134,10 @@ namespace SFJson
         {
             if(type.IsPrimitive)
             {
-                Console.WriteLine("Primitive");
                 _serialized.AppendFormat("{0}", value);
             }
             else if(type.Implements(typeof(IDictionary)))
             {
-                Console.WriteLine("Dictionary");
                 _serialized.Append(Constants.OPEN_BRACKET);
                 AppendType(value, TypeHandler.Collections, ",\"$values\":[");
                 
@@ -135,7 +151,6 @@ namespace SFJson
             }
             else if(type.IsArray || type.GetInterface("IList") != null)
             {
-                Console.WriteLine("List");
                 _serialized.Append(Constants.OPEN_BRACKET);
                 AppendType(value, TypeHandler.Collections, ",\"$values\":[");
                 
@@ -149,26 +164,76 @@ namespace SFJson
             }
             else if(type.IsEnum)
             {
-                Console.WriteLine("Enum");
                 _serialized.AppendFormat("{0}", value);
+            }
+            else if(value is TimeSpan)
+            {
+                if(_serializerSettings.PropertyStringEscape)
+                {
+                    _serialized.AppendFormat("\\\"{0}\\\"", value.ToString());
+                }
+                else
+                {
+                    _serialized.AppendFormat("\"{0}\"", value.ToString());
+                }
+            }
+            else if (value is DateTime || value is DateTimeOffset)
+            {
+                if(_serializerSettings.PropertyStringEscape)
+                {
+                    _serialized.AppendFormat("\\\"{0}\\\"", value.ToString());
+                }
+                else
+                {
+                    _serialized.AppendFormat("\"{0}\"", value.ToString());
+                }
             }
             else if(type == typeof(string))
             {
-                Console.WriteLine("String");
-                _serialized.AppendFormat("\"{0}\"", value);
+                if (_serializerSettings.PropertyStringEscape)
+                {
+                    _serialized.AppendFormat("\\\"{0}\\\"", EscapeString((string) value));
+                }
+                else
+                {
+                    _serialized.AppendFormat("\"{0}\"", EscapeString((string) value));
+                }
             }
             else
             {
-                Console.WriteLine("ELSE");
                 SerializeObject(value);
             }
+        }
+
+        private string EscapeString(string value)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in value)
+            {
+                if (c == Constants.QUOTE)
+                {
+                    sb.AppendFormat(@"\""");
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
         }
 
         private void AppendType(object obj, TypeHandler typeHandler, string appendString = "")
         {
             if(_serializerSettings.TypeHandler == TypeHandler.All || _serializerSettings.TypeHandler == typeHandler)
             {
-                _serialized.AppendFormat("\"$type\":\"{0}\"", obj.GetType().GetTypeAsString());
+                if (_serializerSettings.PropertyStringEscape)
+                {
+                    _serialized.AppendFormat("\\\"$type\\\":\\\"{0}\\\"", obj.GetType().GetTypeAsString());
+                }
+                else
+                {
+                    _serialized.AppendFormat("\"$type\":\"{0}\"", obj.GetType().GetTypeAsString());
+                }
                 _serialized.Append(appendString);
             }
         }

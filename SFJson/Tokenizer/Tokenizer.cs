@@ -12,6 +12,7 @@ namespace SFJson
         private StringBuilder _tokenText = new StringBuilder();
 	    private string _jsonString;
 	    private char _currentChar;
+	    private int _index;
 
 	    public JsonToken Tokenize(string jsonString)
 	    {
@@ -22,21 +23,19 @@ namespace SFJson
 	    
         private JsonToken Tokenize()
         {
-            for(int i = 0; i < _jsonString.Length; i++)
+            for(_index = 0; _index < _jsonString.Length; _index++)
             {
-	            _currentChar = _jsonString[i];
+	            _currentChar = _jsonString[_index];
 	            if(HandleIfQuoted())
 	            {
 		            continue;
 	            }
 	            HandleNextCharacter();
-	            Console.WriteLine(_tokenText.ToString());
             }
 
 	        if(_currentToken == null)
 	        {
 		        _currentToken = ParseElement();
-		        Console.WriteLine("Just a Value");
 	        }
 
             return _currentToken;
@@ -47,24 +46,19 @@ namespace SFJson
 		    switch(_currentChar)
 		    {
 			    case Constants.OPEN_CURLY:
-				    Console.WriteLine("Open Object");
 				    PushToken<JsonObject>();
 				    break;
 			    case Constants.CLOSE_CURLY:
-				    Console.WriteLine("Close Object");
 				    PopToken<JsonObject>();
 				    break;
 			    case Constants.OPEN_BRACKET:
-				    Console.WriteLine("Open Array");
 				    PushToken<JsonArray>();
 				    break;
 			    case Constants.CLOSE_BRACKET:
-				    Console.WriteLine("Close Array");
 				    PopToken<JsonArray>();
 				    break;
 			    case Constants.COLON:
 				    ResetTokenText();
-				    Console.WriteLine(_currentToken);
 				    break;
 			    case Constants.COMMA:
 				    AddAndParseElement();
@@ -76,6 +70,7 @@ namespace SFJson
 		    }
 	    }
 
+	    
 	    private bool HandleIfQuoted()
 	    {
 			if(_currentChar == Constants.QUOTE)
@@ -83,9 +78,53 @@ namespace SFJson
 				_isQuote = !_isQuote;
 				return true;
 			}
+
+		    if (_currentChar == '\\')
+		    {
+			    _index++;
+			    var nextChar = _jsonString[_index];
+				switch (nextChar)
+				{
+					case '\"':
+						_tokenText.Append('\"');
+						if(!_isQuote)
+						{
+							_isQuote = true;
+						}
+						break;
+					case 't':
+						_tokenText.Append('\t');
+						break;
+					case 'r':
+						_tokenText.Append('\r');
+						break;
+					case 'n':
+						_tokenText.Append('\n');
+						break;
+					case 'b':
+						_tokenText.Append('\b');
+						break;
+					case 'f':
+						_tokenText.Append('\f');
+						break;
+					case 'u':
+					{
+						string s = _jsonString.Substring(_index + 1, 4);
+						_tokenText.Append((char)int.Parse(
+							s,
+							System.Globalization.NumberStyles.AllowHexSpecifier));
+						_index += 4;
+						break;
+					}
+					default:
+						_tokenText.Append(_currentChar);
+						break;
+				}
+			    return true;
+		    }
+		    
 			if(_isQuote)
 			{
-				// TODO: Handle Escape Characters & Unicode	
 				_tokenText.Append(_currentChar);
 				return true;
 			}
@@ -97,7 +136,6 @@ namespace SFJson
 		    T token = new T();
 		    if(Count > 0)
 		    {
-			    Console.WriteLine("Appending :" + _tokenName + ":To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.Children.Count + 1));
 			    _currentToken.Children.Add(token);
 		    }
 		    token.Name = _tokenName;
@@ -155,10 +193,8 @@ namespace SFJson
 	    {
 		    if(_tokenText.Length <= 0)
 		    {
-			    Console.Write("Did not Append");
 			    return;
 		    }
-		    Console.WriteLine("Appending To: " + _currentToken.Name + " : " + _currentToken.JsonType + " : " + (_currentToken.Children.Count + 1) + " : " + _tokenName);
 
 		    _currentToken.Children.Add(ParseElement());
 	    }

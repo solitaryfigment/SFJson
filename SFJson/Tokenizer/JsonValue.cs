@@ -19,10 +19,19 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            Console.WriteLine("Value: " + _value);
             if(type.IsEnum)
             {
                 return Enum.Parse(type, _value.ToString());
+            }
+            
+            if(type == typeof(DateTimeOffset))
+            {
+                return DateTimeOffset.Parse((string)_value);
+            }
+            
+            if(type == typeof(TimeSpan))
+            {
+                return TimeSpan.Parse((string)_value);
             }
             
             return Convert.ChangeType(_value, type);

@@ -21,9 +21,4 @@ namespace SFJsonTest
     {
         public PrimitiveHolder[] Array { get; set; }
     }
-    
-    public class ObjectWithDictionary
-    {
-        public Dictionary<int, int> Dictionary { get; set; }
-    }
 }

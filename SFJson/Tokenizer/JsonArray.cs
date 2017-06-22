@@ -13,7 +13,6 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            Console.WriteLine("Here: " + type);
             type = DetermineType(type);
             var obj = CreateInstance(type);
             if(type.GetInterface("IList") != null)
