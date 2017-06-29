@@ -34,7 +34,7 @@ namespace SFJsonTest
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"Array\":[1,2,3,4,5]}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithArray, SFJsonTest\",\"Array\":[\"$type\":\"System.Int32[], mscorlib\",\"$values\":[1,2,3,4,5]]}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithArray, SFJsonTest\",\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[1,2,3,4,5]}}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<ObjectWithArray>(str);
             Assert.NotNull(strDeserialized);
@@ -86,7 +86,7 @@ namespace SFJsonTest
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"Array\":[{\"PropBool\":True,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithArrayOfObjects, SFJsonTest\",\"Array\":[\"$type\":\"SFJsonTest.PrimitiveHolder[], SFJsonTest\",\"$values\":[{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]]}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithArrayOfObjects, SFJsonTest\",\"Array\":{\"$type\":\"SFJsonTest.PrimitiveHolder[], SFJsonTest\",\"$values\":[{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":False,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]}}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<ObjectWithArrayOfObjects>(str);
             Assert.NotNull(strDeserialized);

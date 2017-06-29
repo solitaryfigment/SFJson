@@ -44,18 +44,39 @@ namespace SFJson
         
         protected object GetDictionaryValues(Type type, IDictionary obj)
         {
-            var elementList = Children.FirstOrDefault(c => c.Name == "$values");
             var keyType = type.GetGenericArguments()[0];
             var valueType = type.GetGenericArguments()[1];
             
-            elementList = (elementList == null) ? this : elementList;
-            
-            
-            for(int i = 0; i < elementList.Children.Count; i++)
+            for(int i = 0; i < Children.Count; i++)
             {
-                var key = elementList.Children[i].Children[0].Name;
-                var token = new Tokenizer().Tokenize(key);
-                obj.Add(token.GetValue(keyType), elementList.Children[i].Children[0].GetValue(valueType));
+                if(Children[i].Name != "$type")
+                {
+                    var key = Children[i].Name;
+                    var token = new Tokenizer().Tokenize(key);
+                    obj.Add(token.GetValue(keyType), Children[i].GetValue(valueType));
+                }
+            }
+            
+            return obj;
+        }
+
+        protected object GetListValues(Type type, IList obj)
+        {
+            var list = Children.FirstOrDefault(c => c.Name == "$values");
+            var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
+
+            list = (list == null) ? this : list;
+            
+            for(int i = 0; i < list.Children.Count; i++)
+            {
+                if(type.IsArray)
+                {
+                    obj[i] = list.Children[i].GetValue(elementType);
+                }
+                else
+                {
+                    obj.Add(list.Children[i].GetValue(elementType));
+                }
             }
             
             return obj;

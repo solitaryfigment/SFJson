@@ -52,10 +52,10 @@ namespace SFJson
 				    PopToken<JsonObject>();
 				    break;
 			    case Constants.OPEN_BRACKET:
-				    PushToken<JsonArray>();
+				    PushToken<JsonCollection>();
 				    break;
 			    case Constants.CLOSE_BRACKET:
-				    PopToken<JsonArray>();
+				    PopToken<JsonCollection>();
 				    break;
 			    case Constants.COLON:
 				    ResetTokenText();
@@ -69,7 +69,6 @@ namespace SFJson
 				    break;
 		    }
 	    }
-
 	    
 	    private bool HandleIfQuoted()
 	    {
@@ -109,10 +108,8 @@ namespace SFJson
 						break;
 					case 'u':
 					{
-						string s = _jsonString.Substring(_index + 1, 4);
-						_tokenText.Append((char)int.Parse(
-							s,
-							System.Globalization.NumberStyles.AllowHexSpecifier));
+						string unicodeString = _jsonString.Substring(_index + 1, 4);
+						_tokenText.Append((char)int.Parse(unicodeString, System.Globalization.NumberStyles.AllowHexSpecifier));
 						_index += 4;
 						break;
 					}
@@ -146,15 +143,21 @@ namespace SFJson
 
 	    private void PopToken<T>()
 	    {
-		    Console.WriteLine("Is: " + (_currentToken is T));
-		    // TODO: Validate TokenType
-		    Pop();
-		    AddAndParseElement();
-		    if(Count > 0)
+		    if(_currentToken is T)
 		    {
-			    _currentToken = Peek();
+				Pop();
+				AddAndParseElement();
+				if(Count > 0)
+				{
+					_currentToken = Peek();
+				}
+				ResetTokenText();
 		    }
-		    ResetTokenText();
+		    else
+		    {
+			    var expectedCharacter = (_currentToken.JsonType == JsonType.Object) ? "\'}\'" : "\']\'";
+			    throw new Exception(string.Format("Malformed input: Expected {0} but was \'{1}\' at position {2}.", expectedCharacter, _currentChar.ToString().ToLiteral(), _index));
+		    }
 	    }
 
 	    private void ResetTokenText()

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using SFJson.Attributes;
 
 namespace SFJson
 {
@@ -24,6 +25,11 @@ namespace SFJson
                 return GetDictionaryValues(type, obj as IDictionary);
             }
             
+            if(type.Implements(typeof(IList)))
+            {
+                return GetListValues(type, obj as IList);
+            }
+            
             _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
             
             foreach(var child in Children)
@@ -39,7 +45,7 @@ namespace SFJson
 
         private void SetValue(JsonToken child, object obj)
         {
-            var memberInfo = _memberInfos.FirstOrDefault(p => p.Name == child.Name);
+            var memberInfo = _memberInfos.FirstOrDefault(m => ((m.GetCustomAttributes().Any(a => a is JsonValueName && ((JsonValueName)a).Name == child.Name))) || (m.Name == child.Name));
             if(memberInfo is PropertyInfo)
             {
                 var propertyInfo = (PropertyInfo)memberInfo;
