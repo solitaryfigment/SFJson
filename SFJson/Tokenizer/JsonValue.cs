@@ -20,7 +20,11 @@ namespace SFJson
         public override object GetValue(Type type)
         {
             object value;
-            if(!TryParseValue(type, out value))
+            if(type == typeof(Type))
+            {
+                value = type;
+            }
+            else if(!TryParseValue(type, out value))
             {
                 value = Convert.ChangeType(_value, type);
             }
@@ -49,6 +53,13 @@ namespace SFJson
             {
                 Console.WriteLine("TimeSpan");
                 var v = TimeSpan.Parse((string)_value);
+                Console.WriteLine("Done");
+                value = v;
+            }
+            else if(type == typeof(Guid))
+            {
+                Console.WriteLine("TimeSpan");
+                var v = Guid.Parse((string)_value);
                 Console.WriteLine("Done");
                 value = v;
             }

@@ -220,7 +220,9 @@ namespace SFJsonTest
                 PropUInt = 4294967295,
                 PropUInt16 = 65535,
                 PropUInt32 = 4294967295,
-                PropUInt64 = 18446744073709551615
+                PropUInt64 = 18446744073709551615,
+                PropGuid = Guid.NewGuid(),
+                PropType = typeof(long)
             };
             
             var str = _serializer.Serialize(obj);

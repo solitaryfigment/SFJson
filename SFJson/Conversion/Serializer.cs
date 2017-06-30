@@ -131,6 +131,10 @@ namespace SFJson
             {
                 AppendAsString(((string)value).EscapeQuotes());
             }
+            else if (type == typeof(Guid) || type == typeof(Type))
+            {
+                AppendAsString(value.ToString());
+            }
             else if (type.Implements(typeof(IDictionary)))
             {
                 _serialized.Append(Constants.OPEN_CURLY);
