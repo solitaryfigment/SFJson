@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 
 namespace SFJson
 {
@@ -15,7 +14,7 @@ namespace SFJson
         {
             type = DetermineType(type);
             var obj = CreateInstance(type);
-            if(type.GetInterface("IList") != null)
+            if(type.Implements(typeof(IList)))
             {
                 obj = GetListValues(type, obj as IList);
             }

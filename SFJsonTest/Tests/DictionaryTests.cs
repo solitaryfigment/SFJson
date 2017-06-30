@@ -210,7 +210,6 @@ namespace SFJsonTest
             
             var strDeserialized = _deserializer.Deserialize<ObjectWithComplexObjectDictionary>(str);
             Assert.NotNull(strDeserialized);
-            Assert.NotNull(strDeserialized.Dictionary);
             Assert.IsInstanceOf<ObjectWithComplexObjectDictionary>(strDeserialized);
             Assert.AreEqual(obj.Dictionary.Count, strDeserialized.Dictionary.Count);
             var objKeys = obj.Dictionary.Keys.ToArray();

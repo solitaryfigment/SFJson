@@ -65,15 +65,17 @@ namespace SFJsonTest
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"String\":\"{[This:\\\"is \\\"\\\" a\\\",string]}\"}", str);
-//            Assert.AreEqual("{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.StringObject, SFJsonTest\",\"String\":\"{[This:\\\"is \\\"\\\" a\\\",string]}\"}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<StringObject>(str);
             Assert.IsInstanceOf<StringObject>(strDeserialized);
             Console.WriteLine(strDeserialized.String);
             Assert.AreEqual("{[This:\"is \"\" a\",string]}", strDeserialized.String);
             
-//            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObject>(strWithType);
-//            Assert.IsInstanceOf<SimpleTestObject>(strWithTypeDeserialized);
+            var strWithTypeDeserialized = _deserializer.Deserialize<StringObject>(strWithType);
+            Assert.IsInstanceOf<StringObject>(strWithTypeDeserialized);
+            Console.WriteLine(strWithTypeDeserialized.String);
+            Assert.AreEqual("{[This:\"is \"\" a\",string]}", strWithTypeDeserialized.String);
         }
 
         [Test]
@@ -202,6 +204,61 @@ namespace SFJsonTest
             Assert.IsTrue(strWithTypeDeserialized != null);
             Assert.NotNull(strWithTypeDeserialized.Inner);
             Assert.Null(strWithTypeDeserialized.Inner.Inner);
+        }
+
+        [Test]
+        public void CanConvertNumberPrimitiveProperties()
+        {
+            var obj = new PrimitiveHolder2()
+            {
+                PropDecimal = 3.2m,
+                PropByte = 255,
+                PropSByte = 127,
+                PropInt16 = 32767,
+                PropInt32 = 2147483647,
+                PropInt64 = 9223372036854775807,
+                PropUInt = 4294967295,
+                PropUInt16 = 65535,
+                PropUInt32 = 4294967295,
+                PropUInt64 = 18446744073709551615
+            };
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+//            Assert.AreEqual("{\"PropDecimal\":3.2,\"PropByte\":255,\"PropSByte\":2,\"PropUInt\":4000000000,\"PropUInt16\":60000,\"PropInt16\":12,\"PropUInt32\":3000000000,\"PropInt32\":345234455,\"PropUInt64\":18440000000000000000,\"PropInt64\":4958726349875698237}", str);
+//            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder2, SFJsonTest\",\"PropDecimal\":3.2,\"PropByte\":255,\"PropSByte\":2,\"PropUInt\":4000000000,\"PropUInt16\":60000,\"PropInt16\":12,\"PropUInt32\":3000000000,\"PropInt32\":345234455,\"PropUInt64\":18440000000000000000,\"PropInt64\":4958726349875698237}", strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<PrimitiveHolder2>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<PrimitiveHolder2>(strDeserialized);
+            Assert.AreEqual(obj.PropDecimal, strDeserialized.PropDecimal);
+            Assert.AreEqual(obj.PropByte, strDeserialized.PropByte);
+            Assert.AreEqual(obj.PropSByte, strDeserialized.PropSByte);
+            Assert.AreEqual(obj.PropInt16, strDeserialized.PropInt16);
+            Assert.AreEqual(obj.PropInt32, strDeserialized.PropInt32);
+            Assert.AreEqual(obj.PropInt64, strDeserialized.PropInt64);
+            Assert.AreEqual(obj.PropUInt, strDeserialized.PropUInt);
+            Assert.AreEqual(obj.PropUInt16, strDeserialized.PropUInt16);
+            Assert.AreEqual(obj.PropUInt32, strDeserialized.PropUInt32);
+            Assert.AreEqual(obj.PropUInt64, strDeserialized.PropUInt64);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<PrimitiveHolder2>(str);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<PrimitiveHolder2>(strWithTypeDeserialized);
+            Assert.AreEqual(obj.PropDecimal, strWithTypeDeserialized.PropDecimal);
+            Assert.AreEqual(obj.PropByte, strWithTypeDeserialized.PropByte);
+            Assert.AreEqual(obj.PropSByte, strWithTypeDeserialized.PropSByte);
+            Assert.AreEqual(obj.PropInt16, strWithTypeDeserialized.PropInt16);
+            Assert.AreEqual(obj.PropInt32, strWithTypeDeserialized.PropInt32);
+            Assert.AreEqual(obj.PropInt64, strWithTypeDeserialized.PropInt64);
+            Assert.AreEqual(obj.PropUInt, strWithTypeDeserialized.PropUInt);
+            Assert.AreEqual(obj.PropUInt16, strWithTypeDeserialized.PropUInt16);
+            Assert.AreEqual(obj.PropUInt32, strWithTypeDeserialized.PropUInt32);
+            Assert.AreEqual(obj.PropUInt64, strWithTypeDeserialized.PropUInt64);
         }
     }
 }

@@ -59,8 +59,6 @@ namespace SFJsonTest
             Assert.AreEqual(obj.PropFloat, strWithTypeDeserialized.PropFloat);
             Assert.AreEqual(obj.PropInt, strWithTypeDeserialized.PropInt);
             Assert.AreEqual(obj.PropString, strWithTypeDeserialized.PropString);
-            
-            
         }
     }
 }

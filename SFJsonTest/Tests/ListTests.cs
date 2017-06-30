@@ -114,6 +114,5 @@ namespace SFJsonTest
                 Assert.AreEqual(obj.List[i].PropString, strWithTypeDeserialized.List[i].PropString);
             }
         }
-
     }
 }
