@@ -19,22 +19,44 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
+            object value;
+            if(!TryParseValue(type, out value))
+            {
+                value = Convert.ChangeType(_value, type);
+            }
+            return value;
+        }
+
+        private bool TryParseValue(Type type, out object value)
+        {
+            bool didParse = true;
+            value = null;
             if(type.IsEnum)
             {
-                return Enum.Parse(type, _value.ToString());
+                Console.WriteLine("Enum");
+                var v = Enum.Parse(type, _value.ToString());
+                Console.WriteLine("Done");
+                value = v;
             }
-            
-            if(type == typeof(DateTimeOffset))
+            else if(type == typeof(DateTimeOffset))
             {
-                return DateTimeOffset.Parse((string)_value);
+                Console.WriteLine("DateTimeOffset");
+                var v = DateTimeOffset.Parse((string)_value);
+                Console.WriteLine("Done");
+                value = v;
             }
-            
-            if(type == typeof(TimeSpan))
+            else if(type == typeof(TimeSpan))
             {
-                return TimeSpan.Parse((string)_value);
+                Console.WriteLine("TimeSpan");
+                var v = TimeSpan.Parse((string)_value);
+                Console.WriteLine("Done");
+                value = v;
             }
-            
-            return Convert.ChangeType(_value, type);
+            else
+            {
+                didParse = false;
+            }
+            return didParse;
         }
     }
 }

@@ -169,7 +169,6 @@ namespace SFJson
 
 	    private JsonToken ParseElement()
 	    {
-		    double val;
 		    JsonToken token;
 		    string tokenText = _tokenText.ToString().ToLower();
 
@@ -180,10 +179,6 @@ namespace SFJson
 		    else if(tokenText == Constants.NULL)
 		    {
 			    token = new JsonValue(_tokenName, null);
-		    }
-		    else if(double.TryParse(tokenText, out val))
-		    {
-			    token = new JsonValue(_tokenName, val);
 		    }
 		    else
 		    {
