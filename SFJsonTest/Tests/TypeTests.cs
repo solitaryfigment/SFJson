@@ -100,6 +100,33 @@ namespace SFJsonTest
         }
         
         [Test]
+        public void ConvertsNullType()
+        {
+            var obj = new TypeHolder()
+            {
+                PropType = null
+            };
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            Assert.AreEqual("{\"PropType\":null}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.TypeHolder, SFJsonTest\",\"PropType\":null}", strWithType);
+
+            var strDeserialized = _deserializer.Deserialize<TypeHolder>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<TypeHolder>(strDeserialized);
+            Assert.IsNull(strDeserialized.PropType);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<TypeHolder>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<TypeHolder>(strWithTypeDeserialized);
+            Assert.IsNull(strWithTypeDeserialized.PropType);
+        }
+        
+        [Test]
         public void ConvertsTypeWhichDoesNotExistToNull()
         {
             var str = "{\"PropType\":\"TypeThatIsNotThere, mscorlib\"}";
