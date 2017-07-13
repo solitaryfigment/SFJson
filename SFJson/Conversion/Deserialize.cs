@@ -8,18 +8,18 @@ namespace SFJson
 
         public JsonToken LastTokenization { get; private set; }
 
-        public T Deserialize<T>(string stringToSerialize)
+        public T Deserialize<T>(string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             _stringToDeserialize = stringToSerialize;
-            LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize);
+            LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings ?? new DeserializerSettings());
             var obj = LastTokenization.GetValue<T>();
             return obj;
         }
 
-        public object Deserialize(Type type, string stringToSerialize)
+        public object Deserialize(Type type, string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             _stringToDeserialize = stringToSerialize;
-            LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize);
+            LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings ?? new DeserializerSettings());
             var obj = LastTokenization.GetValue(type);
             return obj;
         }

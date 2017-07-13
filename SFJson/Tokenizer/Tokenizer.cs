@@ -7,17 +7,20 @@ namespace SFJson
 	public class Tokenizer : Stack<JsonToken>
     {
         private JsonToken _currentToken = null;
-        private bool _isQuote = false;
+	    private bool _isQuote = false;
+	    private bool _isTokenQuoted = false;
         private string _tokenName = string.Empty;
         private StringBuilder _tokenText = new StringBuilder();
 	    private string _jsonString;
 	    private char _currentChar;
 	    private int _index;
+	    private DeserializerSettings _deserializerSettings;
 
-	    public JsonToken Tokenize(string jsonString)
+	    public JsonToken Tokenize(string jsonString, DeserializerSettings deserializerSettings)
 	    {
 		    _tokenText.Length = 0;
 		    _jsonString = jsonString;
+		    _deserializerSettings = deserializerSettings;
 		    return Tokenize();
 	    }
 	    
@@ -25,6 +28,7 @@ namespace SFJson
         {
             for(_index = 0; _index < _jsonString.Length; _index++)
             {
+	            Console.WriteLine(_tokenText.ToString());
 	            _currentChar = _jsonString[_index];
 	            if(HandleIfQuoted())
 	            {
@@ -75,6 +79,7 @@ namespace SFJson
 			if(_currentChar == Constants.QUOTE)
 			{
 				_isQuote = !_isQuote;
+				_isTokenQuoted = true;
 				return true;
 			}
 
@@ -131,6 +136,7 @@ namespace SFJson
 	    private void PushToken<T>() where T : JsonToken, new()
 	    {
 		    T token = new T();
+		    token.DeserializerSettings = _deserializerSettings;
 		    if(Count > 0)
 		    {
 			    _currentToken.Children.Add(token);
@@ -164,6 +170,7 @@ namespace SFJson
 	    {
 		    _tokenName = _tokenText.ToString();
 		    _isQuote = false;
+		    _isTokenQuoted = false;
 		    _tokenText.Length = 0;
 	    }
 
@@ -184,17 +191,16 @@ namespace SFJson
 		    {
 			    token = new JsonValue(_tokenName, _tokenText.ToString());
 		    }
+		    token.DeserializerSettings = _deserializerSettings;
 		    return token;
 	    }
 
 	    private void AddAndParseElement()
 	    {
-		    if(_tokenText.Length <= 0)
+		    if(_isTokenQuoted || _tokenText.Length > 0)
 		    {
-			    return;
+			    _currentToken.Children.Add(ParseElement());
 		    }
-
-		    _currentToken.Children.Add(ParseElement());
 	    }
     }
 }

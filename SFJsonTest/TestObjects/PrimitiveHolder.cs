@@ -23,7 +23,15 @@ namespace SFJsonTest
         public Int32 PropInt32 { get; set; }
         public UInt64 PropUInt64 { get; set; }
         public Int64 PropInt64 { get; set; }
+    }
+
+    public class TypeHolder
+    {
         public Type PropType { get; set; }
+    }
+    
+    public class GuidHolder
+    {
         public Guid PropGuid { get; set; }
     }
 }

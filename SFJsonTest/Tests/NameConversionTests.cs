@@ -34,8 +34,8 @@ namespace SFJsonTest
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"b\":True,\"d\":100.1,\"f\":1.1,\"i\":25,\"s\":\"1\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolderWithNameConversion, SFJsonTest\",\"b\":True,\"d\":100.1,\"f\":1.1,\"i\":25,\"s\":\"1\"}", strWithType);
+            Assert.AreEqual("{\"b\":true,\"d\":100.1,\"f\":1.1,\"i\":25,\"s\":\"1\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolderWithNameConversion, SFJsonTest\",\"b\":true,\"d\":100.1,\"f\":1.1,\"i\":25,\"s\":\"1\"}", strWithType);
             
             
             var strDeserialized = _deserializer.Deserialize<PrimitiveHolderWithNameConversion>(str);

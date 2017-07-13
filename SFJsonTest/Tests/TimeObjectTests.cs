@@ -22,8 +22,8 @@ namespace SFJsonTest
         {
             var obj = new DateTimeObject()
             {
-                DateTimeOffset = new DateTimeOffset(new DateTime(2010, 10, 9), new TimeSpan(1, 1, 0)),
-                DateTime = new DateTime(2010, 10, 9)
+                DateTimeOffset = new DateTimeOffset(new DateTime(2010, 10, 9, 1, 2, 3, 500), new TimeSpan(1, 1, 0)),
+                DateTime = new DateTime(2010, 10, 9, 1, 2, 3, 500)
             };
             
             var str = _serializer.Serialize(obj);
@@ -32,8 +32,8 @@ namespace SFJsonTest
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             
-            Assert.AreEqual("{\"DateTime\":\"10/9/2010 12:00:00 AM\",\"DateTimeOffset\":\"10/9/2010 12:00:00 AM +01:01\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.DateTimeObject, SFJsonTest\",\"DateTime\":\"10/9/2010 12:00:00 AM\",\"DateTimeOffset\":\"10/9/2010 12:00:00 AM +01:01\"}", strWithType);
+            Assert.AreEqual("{\"DateTime\":\"2010-10-09T01:02:03.500\",\"DateTimeOffset\":\"2010-10-09T01:02:03.500 +01:01\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.DateTimeObject, SFJsonTest\",\"DateTime\":\"2010-10-09T01:02:03.500\",\"DateTimeOffset\":\"2010-10-09T01:02:03.500 +01:01\"}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<DateTimeObject>(str);
             Assert.IsInstanceOf<DateTimeObject>(strDeserialized);

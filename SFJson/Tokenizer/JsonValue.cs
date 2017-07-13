@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 
 namespace SFJson
 {
@@ -19,49 +20,60 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            object value;
-            if(type == typeof(Type))
+            try
             {
-                value = type;
+                object value = null;
+                if (_value == null && OnNullValue != null)
+                {
+                    Console.WriteLine("OnNull");
+                    value = OnNullValue(type);
+                }
+                else if (_value == null && type.IsValueType)
+                {
+                    value = type.GetDefault();
+                }
+                else if(!TryParseValue(type, out value))
+                {
+                    value = Convert.ChangeType(_value, type);
+                }
+                return value;
             }
-            else if(!TryParseValue(type, out value))
+            catch (Exception e)
             {
-                value = Convert.ChangeType(_value, type);
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Token - {0} : {1}", Name, _value);
+                throw;
             }
-            return value;
         }
 
         private bool TryParseValue(Type type, out object value)
         {
             bool didParse = true;
             value = null;
-            if(type.IsEnum)
+            
+            if (_value == null)
             {
-                Console.WriteLine("Enum");
-                var v = Enum.Parse(type, _value.ToString());
-                Console.WriteLine("Done");
-                value = v;
+                didParse = false;
+            }
+            else if(type.IsEnum)
+            {
+                value = Enum.Parse(type, _value.ToString());
             }
             else if(type == typeof(DateTimeOffset))
             {
-                Console.WriteLine("DateTimeOffset");
-                var v = DateTimeOffset.Parse((string)_value);
-                Console.WriteLine("Done");
-                value = v;
+                value = DateTimeOffset.Parse((string)_value);
             }
             else if(type == typeof(TimeSpan))
             {
-                Console.WriteLine("TimeSpan");
-                var v = TimeSpan.Parse((string)_value);
-                Console.WriteLine("Done");
-                value = v;
+                value = TimeSpan.Parse((string)_value);
+            }
+            else if (type == typeof(Type))
+            {
+                value = Type.GetType(_value.ToString());
             }
             else if(type == typeof(Guid))
             {
-                Console.WriteLine("TimeSpan");
-                var v = Guid.Parse((string)_value);
-                Console.WriteLine("Done");
-                value = v;
+                value = new Guid((string)_value);
             }
             else
             {

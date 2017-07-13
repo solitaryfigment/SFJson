@@ -6,4 +6,9 @@
         
         internal bool PropertyStringEscape { get; set; }
     }
+
+    public class DeserializerSettings
+    {
+        public bool SkipNullKeysInDictionary { get; set; }
+    }
 }

@@ -9,7 +9,9 @@ namespace SFJson
     {
         public string Name;
         public List<JsonToken> Children = new List<JsonToken>();
-
+        public Func<Type, object> OnNullValue;
+        internal DeserializerSettings DeserializerSettings;
+        
         public abstract JsonType JsonType { get; }
         
         public T GetValue<T>()
@@ -25,7 +27,10 @@ namespace SFJson
             {
                 var typestring = Children[0].GetValue<string>();
                 var inheiritedType = Type.GetType(typestring);
-                return inheiritedType;
+                if (inheiritedType != null)
+                {
+                    return inheiritedType;
+                }
             }
 
             return type;
@@ -52,14 +57,25 @@ namespace SFJson
                 if(Children[i].Name != "$type")
                 {
                     var key = Children[i].Name;
-                    var token = new Tokenizer().Tokenize(key);
-                    obj.Add(token.GetValue(keyType), Children[i].GetValue(valueType));
+                    var token = new Tokenizer().Tokenize(key, DeserializerSettings);
+                    token.OnNullValue = ReturnNull;
+                    var keyValue = token.GetValue(keyType);
+                    if (keyValue == null && DeserializerSettings.SkipNullKeysInDictionary)
+                    {
+                        continue;
+                    }
+                    obj.Add(keyValue, Children[i].GetValue(valueType));
                 }
             }
             
             return obj;
         }
 
+        private object ReturnNull(Type type)
+        {
+            return null;
+        }
+        
         protected object GetListValues(Type type, IList obj)
         {
             var list = Children.FirstOrDefault(c => c.Name == "$values");

@@ -1,12 +1,33 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace SFJson
 {
-    public static class Extension
+    internal class DefaultExtension
     {
+        public static MethodInfo DefaultMethod;
+        
+        static DefaultExtension()
+        {
+            DefaultMethod = typeof(DefaultExtension).GetMethod("GetDefault");
+        }
+
+        public T GetDefault<T>()
+        {
+            return default(T);
+        }
+    }
+    
+    internal static class Extension
+    {
+        public static object GetDefault(this Type type)
+        {
+            return DefaultExtension.DefaultMethod.MakeGenericMethod(type).Invoke(new DefaultExtension(), null);
+        }
+        
         public static string GetTypeAsString(this Type type, bool appendAssembly = true)
         {
             var sb = new StringBuilder();
@@ -55,6 +76,10 @@ namespace SFJson
 
         public static string EscapeQuotes(this string value)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
             var sb = new StringBuilder();
             foreach (var c in value)
             {

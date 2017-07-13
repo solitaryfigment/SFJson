@@ -95,8 +95,8 @@ namespace SFJsonTest
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"1\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":True,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"1\"}", strWithType);
+            Assert.AreEqual("{\"PropBool\":true,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"1\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":true,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"1\"}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<PrimitiveHolder>(str);
             Assert.NotNull(strDeserialized);
@@ -176,6 +176,33 @@ namespace SFJsonTest
             Assert.IsInstanceOf<Enums>(strWithTypeDeserialized.Enums);
             Assert.AreEqual(obj.Enums, strWithTypeDeserialized.Enums);
         }
+        
+        [Test]
+        public void CanConvertGuid()
+        {
+            var obj = new GuidHolder()
+            {
+                PropGuid = Guid.NewGuid()
+            };
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            Assert.AreEqual(string.Format("{0}\"PropGuid\":\"{1}\"{2}",'{',obj.PropGuid,'}'), str);
+            Assert.AreEqual(string.Format("{0}\"$type\":\"SFJsonTest.GuidHolder, SFJsonTest\",\"PropGuid\":\"{1}\"{2}",'{',obj.PropGuid,'}'), strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<GuidHolder>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<GuidHolder>(strDeserialized);
+            Assert.AreEqual(obj.PropGuid, strDeserialized.PropGuid);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<GuidHolder>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<GuidHolder>(strWithTypeDeserialized);
+            Assert.AreEqual(obj.PropGuid, strWithTypeDeserialized.PropGuid);
+        }
 
         [Test]
         public void CanConvertSelfReferencedSimpleObjectType()
@@ -207,6 +234,60 @@ namespace SFJsonTest
         }
 
         [Test]
+        public void CanConvertNullString()
+        {
+            var obj = new StringHolder()
+            {
+                PropString = null
+            };
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            Assert.AreEqual("{\"PropString\":null}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.StringHolder, SFJsonTest\",\"PropString\":null}", strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<StringHolder>(str);
+            
+            Assert.NotNull(strDeserialized);
+            Assert.IsNull(strDeserialized.PropString);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<StringHolder>(strWithType);
+            
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsNull(strWithTypeDeserialized.PropString);
+        }
+
+        [Test]
+        public void CanConvertEmptyString()
+        {
+            var obj = new StringHolder()
+            {
+                PropString = string.Empty
+            };
+            
+            var str = _serializer.Serialize(obj);
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            Assert.AreEqual("{\"PropString\":\"\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.StringHolder, SFJsonTest\",\"PropString\":\"\"}", strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<StringHolder>(str);
+            
+            Assert.NotNull(strDeserialized);
+            Assert.AreEqual(string.Empty, strDeserialized.PropString);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<StringHolder>(strWithType);
+            
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.AreEqual(string.Empty, strWithTypeDeserialized.PropString);
+        }
+
+        [Test]
         public void CanConvertNumberPrimitiveProperties()
         {
             var obj = new PrimitiveHolder2()
@@ -220,9 +301,7 @@ namespace SFJsonTest
                 PropUInt = 4294967295,
                 PropUInt16 = 65535,
                 PropUInt32 = 4294967295,
-                PropUInt64 = 18446744073709551615,
-                PropGuid = Guid.NewGuid(),
-                PropType = typeof(long)
+                PropUInt64 = 18446744073709551615
             };
             
             var str = _serializer.Serialize(obj);
@@ -231,8 +310,8 @@ namespace SFJsonTest
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             
-//            Assert.AreEqual("{\"PropDecimal\":3.2,\"PropByte\":255,\"PropSByte\":2,\"PropUInt\":4000000000,\"PropUInt16\":60000,\"PropInt16\":12,\"PropUInt32\":3000000000,\"PropInt32\":345234455,\"PropUInt64\":18440000000000000000,\"PropInt64\":4958726349875698237}", str);
-//            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder2, SFJsonTest\",\"PropDecimal\":3.2,\"PropByte\":255,\"PropSByte\":2,\"PropUInt\":4000000000,\"PropUInt16\":60000,\"PropInt16\":12,\"PropUInt32\":3000000000,\"PropInt32\":345234455,\"PropUInt64\":18440000000000000000,\"PropInt64\":4958726349875698237}", strWithType);
+            Assert.AreEqual("{\"PropDecimal\":3.2,\"PropByte\":255,\"PropSByte\":127,\"PropUInt\":4294967295,\"PropUInt16\":65535,\"PropInt16\":32767,\"PropUInt32\":4294967295,\"PropInt32\":2147483647,\"PropUInt64\":18446744073709551615,\"PropInt64\":9223372036854775807}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.PrimitiveHolder2, SFJsonTest\",\"PropDecimal\":3.2,\"PropByte\":255,\"PropSByte\":127,\"PropUInt\":4294967295,\"PropUInt16\":65535,\"PropInt16\":32767,\"PropUInt32\":4294967295,\"PropInt32\":2147483647,\"PropUInt64\":18446744073709551615,\"PropInt64\":9223372036854775807}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<PrimitiveHolder2>(str);
             Assert.NotNull(strDeserialized);

@@ -12,13 +12,22 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            type = DetermineType(type);
-            var obj = CreateInstance(type);
-            if(type.Implements(typeof(IList)))
+            try
             {
-                obj = GetListValues(type, obj as IList);
+                type = DetermineType(type);
+                var obj = CreateInstance(type);
+                if(type.Implements(typeof(IList)))
+                {
+                    obj = GetListValues(type, obj as IList);
+                }
+                return obj;
             }
-            return obj;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Token - {0} : {1}", Name, type);
+                throw;
+            }
         }
     }
 }

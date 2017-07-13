@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using SFJson.Attributes;
@@ -101,7 +102,7 @@ namespace SFJson
             {
                 if(propertyInfo.CanWrite && propertyInfo.CanRead)
                 {
-                    SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj), appendSeparator);
+                    SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj, null), appendSeparator);
                     appendSeparator = true;
                 }
             }
@@ -109,7 +110,7 @@ namespace SFJson
 
         private void SerializeMember(MemberInfo memberInfo, Type type, object value, bool appendSeparator)
         {
-            var attribute = memberInfo.GetCustomAttribute<JsonValueName>();
+            var attribute = (JsonValueName)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonValueName));
             var memberName = (attribute != null) ? attribute.Name : memberInfo.Name;
             AppendSeparator(appendSeparator);
             AppendAsString(memberName);
@@ -119,19 +120,44 @@ namespace SFJson
         
         private void SerializeObject(Type type, object value)
         {
-            if(type.IsPrimitive || type.IsEnum || value is decimal)
+            if (value == null)
             {
-                _serialized.AppendFormat("{0}", value);
+                _serialized.AppendFormat("null");
             }
-            else if (value is TimeSpan || value is DateTime || value is DateTimeOffset)
+            else if(type.IsPrimitive || type.IsEnum || value is decimal)
+            {
+                var writeValue = value.ToString();
+                if (value is bool)
+                {
+                    writeValue = writeValue.ToLower();
+                }
+                _serialized.AppendFormat("{0}", writeValue);
+            }
+            else if (value is DateTimeOffset)
+            {
+                var format = "yyyy-MM-ddTHH:mm:ss.fff zzz";
+                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", format, "}");
+                AppendAsString(string.Format(indexAndFormat, value));
+            }
+            else if (value is DateTime)
+            {
+                var format = "yyyy-MM-ddTHH:mm:ss.fff";
+                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", format, "}");
+                AppendAsString(string.Format(indexAndFormat, value));
+            }
+            else if (value is TimeSpan)
             {
                 AppendAsString(value.ToString());
             }
+            else if (value is Type)
+            {
+                AppendAsString(((Type) value).GetTypeAsString());
+            }
             else if (type == typeof(string))
             {
-                AppendAsString(((string)value).EscapeQuotes());
+                AppendAsString(((string) value).EscapeQuotes());
             }
-            else if (type == typeof(Guid) || type == typeof(Type))
+            else if (type == typeof(Guid))
             {
                 AppendAsString(value.ToString());
             }
@@ -161,7 +187,7 @@ namespace SFJson
             }
             else
             {
-               SerializeObject(value);
+                SerializeObject(value);
             }
         }
 
