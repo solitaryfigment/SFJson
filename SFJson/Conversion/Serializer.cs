@@ -135,14 +135,12 @@ namespace SFJson
             }
             else if (value is DateTimeOffset)
             {
-                var format = "yyyy-MM-ddTHH:mm:ss.fff zzz";
-                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", format, "}");
+                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _serializerSettings.DateTimeOffsetFormat, "}");
                 AppendAsString(string.Format(indexAndFormat, value));
             }
             else if (value is DateTime)
             {
-                var format = "yyyy-MM-ddTHH:mm:ss.fff";
-                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", format, "}");
+                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _serializerSettings.DateTimeFormat, "}");
                 AppendAsString(string.Format(indexAndFormat, value));
             }
             else if (value is TimeSpan)
