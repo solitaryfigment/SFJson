@@ -1,4 +1,5 @@
 ﻿using System;
+using SFJson.Exceptions;
 
 namespace SFJson
 {
@@ -12,16 +13,38 @@ namespace SFJson
         {
             _stringToDeserialize = stringToSerialize;
             LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings ?? new DeserializerSettings());
-            var obj = LastTokenization.GetValue<T>();
-            return obj;
+            try
+            {
+                var obj = LastTokenization.GetValue<T>();
+                return obj;
+            }
+            catch (DeserializationException de)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new DeserializationException("An error occured during deserialization.", LastTokenization, e);
+            }
         }
 
         public object Deserialize(Type type, string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             _stringToDeserialize = stringToSerialize;
             LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings ?? new DeserializerSettings());
-            var obj = LastTokenization.GetValue(type);
-            return obj;
+            try
+            {
+                var obj = LastTokenization.GetValue(type);
+                return obj;
+            }
+            catch (DeserializationException de)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new DeserializationException("An error occured during deserialization.", LastTokenization, e);
+            }
         }
     }
 }

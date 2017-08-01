@@ -1,6 +1,7 @@
 using System;
 using NUnit.Framework;
 using SFJson;
+using SFJson.Exceptions;
 
 namespace SFJsonTest
 {
@@ -37,7 +38,7 @@ namespace SFJsonTest
             Assert.AreEqual("{\"ObjectImplementingInterface\":{\"InterfacePropInt\":50,\"PropInt\":100}}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithInterface, SFJsonTest\",\"ObjectImplementingInterface\":{\"$type\":\"SFJsonTest.ObjectImplementingInterface, SFJsonTest\",\"InterfacePropInt\":50,\"PropInt\":100}}", strWithType);
 
-            Assert.Throws<MissingMethodException>(() =>
+            Assert.Throws<DeserializationException>(() =>
             {
                 _deserializer.Deserialize<ObjectWithInterface>(str);
             });

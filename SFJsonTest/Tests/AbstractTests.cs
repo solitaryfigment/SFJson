@@ -1,6 +1,8 @@
 using System;
+using System.IO.Ports;
 using NUnit.Framework;
 using SFJson;
+using SFJson.Exceptions;
 
 namespace SFJsonTest
 {
@@ -37,7 +39,7 @@ namespace SFJsonTest
             Assert.AreEqual("{\"ObjectImplementingAbstractClass\":{\"AbstractPropInt\":50,\"PropInt\":100}}", str);
             Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithAbstractClass, SFJsonTest\",\"ObjectImplementingAbstractClass\":{\"$type\":\"SFJsonTest.ObjectImplementingAbstractClass, SFJsonTest\",\"AbstractPropInt\":50,\"PropInt\":100}}", strWithType);
 
-            Assert.Throws<MissingMethodException>(() =>
+            Assert.Throws<DeserializationException>(() =>
             {
                 _deserializer.Deserialize<ObjectWithAbstractClass>(str);
             });

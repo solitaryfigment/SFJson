@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SFJson.Exceptions;
 
 namespace SFJson
 {
@@ -18,10 +19,21 @@ namespace SFJson
 
 	    public JsonToken Tokenize(string jsonString, DeserializerSettings deserializerSettings)
 	    {
-		    _tokenText.Length = 0;
-		    _jsonString = jsonString;
-		    _deserializerSettings = deserializerSettings;
-		    return Tokenize();
+		    try
+		    {
+				_tokenText.Length = 0;
+				_jsonString = jsonString;
+				_deserializerSettings = deserializerSettings;
+				return Tokenize();
+		    }
+		    catch (TokenizationException te)
+		    {
+			    throw;
+		    }
+		    catch (Exception e)
+		    {
+			    throw new TokenizationException(string.Format("Tokenization Error occured on character {0} at position {1}", _currentChar, _index), e);
+		    }
 	    }
 	    
         private JsonToken Tokenize()
@@ -162,7 +174,7 @@ namespace SFJson
 		    else
 		    {
 			    var expectedCharacter = (_currentToken.JsonType == JsonType.Object) ? "\'}\'" : "\']\'";
-			    throw new Exception(string.Format("Malformed input: Expected {0} but was \'{1}\' at position {2}.", expectedCharacter, _currentChar.ToString().ToLiteral(), _index));
+			    throw new TokenizationException(string.Format("Malformed input: Expected {0} but was \'{1}\' at position {2}.", expectedCharacter, _currentChar.ToString().ToLiteral(), _index));
 		    }
 	    }
 

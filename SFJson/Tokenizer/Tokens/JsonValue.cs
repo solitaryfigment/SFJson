@@ -20,30 +20,20 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            try
+            object value = null;
+            if (_value == null && OnNullValue != null)
             {
-                object value = null;
-                if (_value == null && OnNullValue != null)
-                {
-                    Console.WriteLine("OnNull");
-                    value = OnNullValue(type);
-                }
-                else if (_value == null && type.IsValueType)
-                {
-                    value = type.GetDefault();
-                }
-                else if(!TryParseValue(type, out value))
-                {
-                    value = Convert.ChangeType(_value, type);
-                }
-                return value;
+                value = OnNullValue(type);
             }
-            catch (Exception e)
+            else if (_value == null && type.IsValueType)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Token - {0} : {1}", Name, _value);
-                throw;
+                value = type.GetDefault();
             }
+            else if(!TryParseValue(type, out value))
+            {
+                value = Convert.ChangeType(_value, type);
+            }
+            return value;
         }
 
         private bool TryParseValue(Type type, out object value)

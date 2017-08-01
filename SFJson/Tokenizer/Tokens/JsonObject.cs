@@ -17,39 +17,30 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            try
+            type = DetermineType(type);
+            var obj = CreateInstance(type);
+        
+            if(type.Implements(typeof(IDictionary)))
             {
-                type = DetermineType(type);
-                var obj = CreateInstance(type);
-            
-                if(type.Implements(typeof(IDictionary)))
-                {
-                    return GetDictionaryValues(type, obj as IDictionary);
-                }
-            
-                if(type.Implements(typeof(IList)))
-                {
-                    return GetListValues(type, obj as IList);
-                }
-            
-                _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
-            
-                foreach(var child in Children)
-                {
-                    if(child.Name != "$type")
-                    {
-                        SetValue(child, obj);
-                    }
-                }
-            
-                return obj;
+                return GetDictionaryValues(type, obj as IDictionary);
             }
-            catch (Exception e)
+        
+            if(type.Implements(typeof(IList)))
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Token - {0} : {1}", Name, type);
-                throw;
+                return GetListValues(type, obj as IList);
             }
+        
+            _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
+        
+            foreach(var child in Children)
+            {
+                if(child.Name != "$type")
+                {
+                    SetValue(child, obj);
+                }
+            }
+        
+            return obj;
         }
 
         private void SetValue(JsonToken child, object obj)
