@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Assets.Editor.FileWatcher;
 using NUnit.Framework;
 using SFJson;
+using SFJson.Conversion;
+using SFJson.Utils;
 
 namespace Assets.Editor.FileWatcher
 {

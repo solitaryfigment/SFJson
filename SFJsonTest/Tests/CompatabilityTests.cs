@@ -2,6 +2,7 @@ using System;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFJson;
+using SFJson.Conversion;
 
 namespace SFJsonTest
 {

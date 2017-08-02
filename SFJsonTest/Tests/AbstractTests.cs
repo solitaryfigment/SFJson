@@ -1,8 +1,9 @@
 using System;
-using System.IO.Ports;
 using NUnit.Framework;
 using SFJson;
+using SFJson.Conversion;
 using SFJson.Exceptions;
+using SFJson.Utils;
 
 namespace SFJsonTest
 {
@@ -51,6 +52,5 @@ namespace SFJsonTest
             Assert.AreEqual(((ObjectImplementingAbstractClass)obj.ObjectImplementingAbstractClass).PropInt, ((ObjectImplementingAbstractClass)strWithTypeDeserialized.ObjectImplementingAbstractClass).PropInt);
             Assert.AreEqual(((ObjectImplementingAbstractClass)obj.ObjectImplementingAbstractClass).AbstractPropInt, ((ObjectImplementingAbstractClass)strWithTypeDeserialized.ObjectImplementingAbstractClass).AbstractPropInt);
         }
-
     }
 }

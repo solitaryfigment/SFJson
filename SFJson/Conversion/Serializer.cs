@@ -4,8 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using SFJson.Attributes;
+using SFJson.Utils;
 
-namespace SFJson
+namespace SFJson.Conversion
 {
     public class Serializer
     {

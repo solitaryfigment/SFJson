@@ -1,6 +1,7 @@
 ﻿using System;
+using SFJson.Utils;
 
-namespace SFJson
+namespace SFJson.Conversion
 {
     public class SerializerSettings
     {

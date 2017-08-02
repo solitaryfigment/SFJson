@@ -1,7 +1,9 @@
 using System;
 using NUnit.Framework;
 using SFJson;
+using SFJson.Conversion;
 using SFJson.Exceptions;
+using SFJson.Utils;
 
 namespace SFJsonTest
 {

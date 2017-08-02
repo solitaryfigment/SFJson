@@ -3,8 +3,9 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using SFJson.Attributes;
+using SFJson.Utils;
 
-namespace SFJson
+namespace SFJson.Tokenization.Tokens
 {
     public class JsonObject : JsonToken
     {

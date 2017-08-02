@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using SFJson.Conversion;
 
-namespace SFJson
+namespace SFJson.Tokenization.Tokens
 {
     public abstract class JsonToken
     {
@@ -38,11 +39,17 @@ namespace SFJson
 
         protected object CreateInstance(Type type)
         {
-            if(type.IsArray)
+            if (type == null)
+            {
+                return null;
+            }
+
+            var elementType = type.GetElementType();
+            if(type.IsArray && elementType != null)
             {
                 JsonToken list = Children.FirstOrDefault(c => c.Name == "$values");
-                list = (list == null) ? this : list;
-                return Array.CreateInstance(type.GetElementType(), list.Children.Count) as IList;
+                list = list ?? this;
+                return Array.CreateInstance(elementType, list.Children.Count);
             }
             return Activator.CreateInstance(type);
         }
@@ -51,21 +58,26 @@ namespace SFJson
         {
             var keyType = type.GetGenericArguments()[0];
             var valueType = type.GetGenericArguments()[1];
-            
-            for(int i = 0; i < Children.Count; i++)
+
+            foreach (var child in Children)
             {
-                if(Children[i].Name != "$type")
+                if (child.Name == "$type")
                 {
-                    var key = Children[i].Name;
-                    var token = new Tokenizer().Tokenize(key, DeserializerSettings);
-                    token.OnNullValue = ReturnNull;
-                    var keyValue = token.GetValue(keyType);
-                    if (keyValue == null && DeserializerSettings.SkipNullKeysInDictionary)
+                    continue;
+                }
+                var key = child.Name;
+                var token = new Tokenizer().Tokenize(key, DeserializerSettings);
+                token.OnNullValue = ReturnNull;
+                var keyValue = token.GetValue(keyType);
+                if (keyValue == null)
+                {
+                    if (DeserializerSettings.SkipNullKeysInDictionary)
                     {
                         continue;
                     }
-                    obj.Add(keyValue, Children[i].GetValue(valueType));
+                    throw new NullReferenceException("Cannot add null key to dictionary.");
                 }
+                obj.Add(keyValue, child.GetValue(valueType));
             }
             
             return obj;
@@ -81,7 +93,7 @@ namespace SFJson
             var list = Children.FirstOrDefault(c => c.Name == "$values");
             var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
 
-            list = (list == null) ? this : list;
+            list = list ?? this;
             
             for(int i = 0; i < list.Children.Count; i++)
             {

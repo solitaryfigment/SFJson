@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace SFJson
+namespace SFJson.Utils
 {
     internal class DefaultExtension
     {
@@ -47,7 +46,7 @@ namespace SFJson
                     genericStringBuilder.Append("]");
                     appendSeparator = true;
                 }
-                sb.AppendFormat("{0}[{1}]", type.FullName.Substring(0, type.FullName.IndexOf('[')), genericStringBuilder.ToString());
+                sb.AppendFormat("{0}[{1}]", type.FullName.Substring(0, type.FullName.IndexOf('[')), genericStringBuilder);
             }
             else if(type.IsNested)
             {
@@ -66,12 +65,12 @@ namespace SFJson
             return sb.ToString();
         }
         
-        public static bool Implements<I>(this Type type, I s) where I : class  
+        public static bool Implements<T>(this Type type, T @interface) where T : class  
         {
-            if(((s as Type)==null) || !(s as Type).IsInterface)
+            if(((@interface as Type)==null) || !(@interface as Type).IsInterface)
                 throw new ArgumentException("Only interfaces can be 'implemented'.");
 
-            return (s as Type).IsAssignableFrom(type);
+            return (@interface as Type).IsAssignableFrom(type);
         }
 
         public static string EscapeQuotes(this string value)

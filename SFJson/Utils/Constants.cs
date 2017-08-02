@@ -1,4 +1,4 @@
-﻿namespace SFJson
+﻿namespace SFJson.Utils
 {
     public static class Constants
     {

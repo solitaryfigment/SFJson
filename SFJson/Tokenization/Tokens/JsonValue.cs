@@ -1,7 +1,7 @@
 ﻿using System;
-using System.CodeDom;
+using SFJson.Utils;
 
-namespace SFJson
+namespace SFJson.Tokenization.Tokens
 {
     public class JsonValue : JsonToken
     {
@@ -20,7 +20,7 @@ namespace SFJson
 
         public override object GetValue(Type type)
         {
-            object value = null;
+            object value;
             if (_value == null && OnNullValue != null)
             {
                 value = OnNullValue(type);

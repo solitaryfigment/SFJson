@@ -1,4 +1,4 @@
-﻿namespace SFJson
+﻿namespace SFJson.Tokenization.Tokens
 {
     public enum JsonType
     {

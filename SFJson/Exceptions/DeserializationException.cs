@@ -1,4 +1,5 @@
 ﻿using System;
+using SFJson.Tokenization.Tokens;
 
 namespace SFJson.Exceptions
 {

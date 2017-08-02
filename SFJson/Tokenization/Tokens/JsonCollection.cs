@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections;
+using SFJson.Utils;
 
-namespace SFJson
+namespace SFJson.Tokenization.Tokens
 {
     public class JsonCollection : JsonToken
     {

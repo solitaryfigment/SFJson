@@ -1,7 +1,9 @@
 ﻿using System;
 using SFJson.Exceptions;
+using SFJson.Tokenization;
+using SFJson.Tokenization.Tokens;
 
-namespace SFJson
+namespace SFJson.Conversion
 {
     public class Deserializer
     {
@@ -18,7 +20,7 @@ namespace SFJson
                 var obj = LastTokenization.GetValue<T>();
                 return obj;
             }
-            catch (DeserializationException de)
+            catch (DeserializationException)
             {
                 throw;
             }
@@ -37,7 +39,7 @@ namespace SFJson
                 var obj = LastTokenization.GetValue(type);
                 return obj;
             }
-            catch (DeserializationException de)
+            catch (DeserializationException)
             {
                 throw;
             }

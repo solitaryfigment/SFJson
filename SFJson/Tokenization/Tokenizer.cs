@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SFJson.Conversion;
 using SFJson.Exceptions;
+using SFJson.Tokenization.Tokens;
+using SFJson.Utils;
 
-namespace SFJson
+namespace SFJson.Tokenization
 {
 	public class Tokenizer : Stack<JsonToken>
     {
-        private JsonToken _currentToken = null;
-	    private bool _isQuote = false;
-	    private bool _isTokenQuoted = false;
+        private JsonToken _currentToken;
+	    private bool _isQuote;
+	    private bool _isTokenQuoted;
         private string _tokenName = string.Empty;
         private StringBuilder _tokenText = new StringBuilder();
 	    private string _jsonString;
@@ -26,7 +29,7 @@ namespace SFJson
 				_deserializerSettings = deserializerSettings;
 				return Tokenize();
 		    }
-		    catch (TokenizationException te)
+		    catch (TokenizationException)
 		    {
 			    throw;
 		    }

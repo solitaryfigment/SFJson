@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SFJson;
+using SFJson.Conversion;
+using SFJson.Utils;
 
 namespace SFJsonTest
 {
