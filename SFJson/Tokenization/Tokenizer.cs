@@ -43,7 +43,6 @@ namespace SFJson.Tokenization
         {
             for(_index = 0; _index < _jsonString.Length; _index++)
             {
-	            Console.WriteLine(_tokenText.ToString());
 	            _currentChar = _jsonString[_index];
 	            if(HandleIfQuoted())
 	            {

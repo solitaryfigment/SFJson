@@ -123,7 +123,7 @@ namespace SFJson.Conversion
         {
             if (value == null)
             {
-                _serialized.AppendFormat("null");
+                _serialized.AppendFormat(Constants.NULL);
             }
             else if(type.IsPrimitive || type.IsEnum || value is decimal)
             {
