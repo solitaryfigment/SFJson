@@ -52,7 +52,7 @@ namespace SFJsonTest
             Assert.AreEqual(obj.PropString, strDeserialized.PropString);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<PrimitiveHolderWithNameConversion>(strWithType);
-            var afterstrWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { TypeHandler = TypeHandler.All });
             Console.WriteLine(afterstrWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<PrimitiveHolderWithNameConversion>(strWithTypeDeserialized);

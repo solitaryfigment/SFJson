@@ -96,27 +96,38 @@ namespace SFJson.Conversion
             
             foreach(var fieldInfo in fieldInfos)
             {
-                SerializeMember(fieldInfo, fieldInfo.FieldType, fieldInfo.GetValue(obj), appendSeparator);
-                appendSeparator = true;
+                if (SerializeMember(fieldInfo, fieldInfo.FieldType, fieldInfo.GetValue(obj), appendSeparator))
+                {
+                    appendSeparator = true;
+                }
             }
             foreach(var propertyInfo in propertyInfos)
             {
-                if(propertyInfo.CanWrite && propertyInfo.CanRead)
+                if (!(propertyInfo.CanWrite && propertyInfo.CanRead))
                 {
-                    SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj, null), appendSeparator);
+                    continue;
+                }
+                if(SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj, null), appendSeparator))
+                {
                     appendSeparator = true;
                 }
             }
         }
 
-        private void SerializeMember(MemberInfo memberInfo, Type type, object value, bool appendSeparator)
+        private bool SerializeMember(MemberInfo memberInfo, Type type, object value, bool appendSeparator)
         {
-            var attribute = (JsonValueName)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonValueName));
-            var memberName = (attribute != null) ? attribute.Name : memberInfo.Name;
-            AppendSeparator(appendSeparator);
-            AppendAsString(memberName);
-            _serialized.Append(Constants.COLON);
-            SerializeObject(type, value);
+            var ignoreAttribute = (JsonIgnore)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
+            if (ignoreAttribute == null)
+            {
+                var attribute = (JsonValueName)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonValueName));
+                var memberName = (attribute != null) ? attribute.Name : memberInfo.Name;
+                AppendSeparator(appendSeparator);
+                AppendAsString(memberName);
+                _serialized.Append(Constants.COLON);
+                SerializeObject(type, value);
+                return true;
+            }
+            return false;
         }
         
         private void SerializeObject(Type type, object value)

@@ -46,7 +46,8 @@ namespace SFJson.Tokenization.Tokens
 
         private void SetValue(JsonToken child, object obj)
         {
-            var memberInfo = _memberInfos.FirstOrDefault(m => ((m.GetCustomAttributes(true).Any(a => a is JsonValueName && ((JsonValueName)a).Name == child.Name))) || (m.Name == child.Name));
+            var memberInfo = FindMemberInfoOfToken(child);
+
             if(memberInfo is PropertyInfo)
             {
                 var propertyInfo = (PropertyInfo)memberInfo;
@@ -57,6 +58,23 @@ namespace SFJson.Tokenization.Tokens
                 var fieldInfo = (FieldInfo)memberInfo;
                 fieldInfo.SetValue(obj, child.GetValue(fieldInfo.FieldType));
             }
+        }
+
+        private MemberInfo FindMemberInfoOfToken(JsonToken child)
+        {
+            var memberInfo = _memberInfos.FirstOrDefault(m => ((m.GetCustomAttributes(true).Any(a => a is JsonValueName && ((JsonValueName)a).Name == child.Name))) || (m.Name == child.Name));
+
+            if(memberInfo != null)
+            {
+                var ignoreAttribute = (JsonIgnore)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
+
+                if (ignoreAttribute == null)
+                {
+                    return memberInfo;
+                }
+            }
+            
+            return null;
         }
     }
 }
