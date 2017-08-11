@@ -4,7 +4,7 @@ Temp/
 Obj/
 UnityGenerated/
 Library/
- 
+
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
@@ -12,14 +12,12 @@ packages/
 ExportedObj/
 *.svd
 *.userprefs
-*.csproj
 *.pidb
 *.suo
-*.sln
 *.user
 *.unityproj
 *.booproj
- 
+
 # ============ #
 # OS generated #
 # ============ #
