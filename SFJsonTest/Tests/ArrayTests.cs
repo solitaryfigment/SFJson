@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
-using SFJson;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
 namespace SFJsonTest
@@ -17,6 +17,50 @@ namespace SFJsonTest
         {
             _deserializer = new Deserializer();
             _serializer = new Serializer();
+        }
+        
+        [Test]
+        public void CanDeserializeEmptyObjectIntoEmptyArray()
+        {
+            var str = "{\"Array\":{}}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithArray, SFJsonTest\",\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[]}}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithArray>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithArray>(strDeserialized);
+            Assert.NotNull(strDeserialized.Array);
+            Assert.AreEqual(0, strDeserialized.Array.Length);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithArray>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithArray>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.Array);
+            Assert.AreEqual(0, strWithTypeDeserialized.Array.Length);
+        }
+        
+        [Test]
+        public void CanDeserializeEmptyArrayIntoEmptyArray()
+        {
+            var str = "{\"Array\":[]}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithArray, SFJsonTest\",\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[]}}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithArray>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithArray>(strDeserialized);
+            Assert.NotNull(strDeserialized.Array);
+            Assert.AreEqual(0, strDeserialized.Array.Length);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithArray>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithArray>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.Array);
+            Assert.AreEqual(0, strWithTypeDeserialized.Array.Length);
         }
         
         [Test]

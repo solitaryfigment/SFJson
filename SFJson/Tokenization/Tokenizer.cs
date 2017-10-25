@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Tokenization.Tokens;
 using SFJson.Utils;

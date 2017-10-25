@@ -2,6 +2,7 @@ using System;
 using NUnit.Framework;
 using SFJson;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Utils;
 

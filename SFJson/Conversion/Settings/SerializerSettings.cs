@@ -1,7 +1,7 @@
 ﻿using System;
 using SFJson.Utils;
 
-namespace SFJson.Conversion
+namespace SFJson.Conversion.Settings
 {
     public class SerializerSettings
     {
@@ -26,7 +26,6 @@ namespace SFJson.Conversion
             {
                 _dateTimeFormat = value;
             }
-            
         }
 
         public string DateTimeOffsetFormat
@@ -46,10 +45,5 @@ namespace SFJson.Conversion
         }
 
         internal bool PropertyStringEscape { get; set; }
-    }
-
-    public class DeserializerSettings
-    {
-        public bool SkipNullKeysInDictionary { get; set; }
     }
 }

@@ -38,7 +38,10 @@
     <Compile Include="Attributes\JsonValueName.cs" />
     <Compile Include="Conversion\Deserialize.cs" />
     <Compile Include="Conversion\Serializer.cs" />
-    <Compile Include="Conversion\SerializerSettings.cs" />
+    <Compile Include="Conversion\Settings\DeserializerSettings.cs" />
+    <Compile Include="Conversion\Settings\GlobalTypeBindings.cs" />
+    <Compile Include="Conversion\Settings\SerializerSettings.cs" />
+    <Compile Include="Conversion\Settings\TypeBindings.cs" />
     <Compile Include="Exceptions\DeserializationException.cs" />
     <Compile Include="Exceptions\TokenizationException.cs" />
     <Compile Include="Tokenization\Tokenizer.cs" />

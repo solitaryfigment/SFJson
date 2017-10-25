@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 
 namespace SFJson.Tokenization.Tokens
 {
@@ -30,11 +30,20 @@ namespace SFJson.Tokenization.Tokens
                 var inheiritedType = Type.GetType(typestring);
                 if (inheiritedType != null)
                 {
-                    return inheiritedType;
+                    return CheckForBoundTypes(inheiritedType);
                 }
             }
 
-            return type;
+            return CheckForBoundTypes(type);
+        }
+
+        private Type CheckForBoundTypes(Type type)
+        {
+            var returnType = DeserializerSettings.TypeBindings?.TryGetValue(type);
+            Console.WriteLine("Type: " + returnType);
+            returnType = returnType ?? GlobalTypeBindings.TryGetValue(type);
+            Console.WriteLine("Type: " + returnType);
+            return returnType ?? type;
         }
 
         protected object CreateInstance(Type type)

@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using SFJson;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
 namespace SFJsonTest
@@ -19,6 +20,50 @@ namespace SFJsonTest
         {
             _deserializer = new Deserializer();
             _serializer = new Serializer();
+        }
+        
+        [Test]
+        public void CanDeserializeEmptyObjectIntoEmptyDictionary()
+        {
+            var str = "{\"Dictionary\":{}}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib\"}}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strDeserialized);
+            Assert.NotNull(strDeserialized.Dictionary);
+            Assert.AreEqual(0, strDeserialized.Dictionary.Count);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.Dictionary);
+            Assert.AreEqual(0, strWithTypeDeserialized.Dictionary.Count);
+        }
+        
+        [Test]
+        public void CanDeserializeEmptyArrayIntoEmptyDictionary()
+        {
+            var str = "{\"Dictionary\":[]}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":[\"$type\":\"System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib\"]}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strDeserialized);
+            Assert.NotNull(strDeserialized.Dictionary);
+            Assert.AreEqual(0, strDeserialized.Dictionary.Count);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.Dictionary);
+            Assert.AreEqual(0, strWithTypeDeserialized.Dictionary.Count);
         }
         
         [Test]

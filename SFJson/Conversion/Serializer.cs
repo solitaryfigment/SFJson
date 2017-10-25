@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using SFJson.Attributes;
+using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
 namespace SFJson.Conversion
@@ -103,13 +104,22 @@ namespace SFJson.Conversion
             }
             foreach(var propertyInfo in propertyInfos)
             {
+                
                 if (!(propertyInfo.CanWrite && propertyInfo.CanRead))
                 {
                     continue;
                 }
-                if(SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj, null), appendSeparator))
+                
+                try
                 {
-                    appendSeparator = true;
+                    if(SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj, null), appendSeparator))
+                    {
+                        appendSeparator = true;
+                    }
+                }
+                catch
+                {
+                    // Ignore
                 }
             }
         }
