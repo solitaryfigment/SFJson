@@ -5,8 +5,8 @@ namespace SFJson.Tokenization.Tokens
 {
     public class JsonValue : JsonToken
     {
-        private object _value;
-        
+        private readonly object _value;
+
         public override JsonType JsonType
         {
             get { return JsonType.Value; }
@@ -21,11 +21,11 @@ namespace SFJson.Tokenization.Tokens
         public override object GetValue(Type type)
         {
             object value;
-            if (_value == null && OnNullValue != null)
+            if(_value == null && OnNullValue != null)
             {
                 value = OnNullValue(type);
             }
-            else if (_value == null && type.IsValueType)
+            else if(_value == null && type.IsValueType)
             {
                 value = type.GetDefault();
             }
@@ -38,10 +38,9 @@ namespace SFJson.Tokenization.Tokens
 
         private bool TryParseValue(Type type, out object value)
         {
-            bool didParse = true;
+            var didParse = true;
             value = null;
-            
-            if (_value == null)
+            if(_value == null)
             {
                 didParse = false;
             }
@@ -57,7 +56,7 @@ namespace SFJson.Tokenization.Tokens
             {
                 value = TimeSpan.Parse((string)_value);
             }
-            else if (type == typeof(Type))
+            else if(type == typeof(Type))
             {
                 value = Type.GetType(_value.ToString());
             }

@@ -31,7 +31,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationType = SerializationType.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -50,7 +50,7 @@ namespace SFJsonTest
             Assert.AreEqual(0, strDeserialized.FieldIgnoredInt);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithIgnoredMembers>(strWithType);
-            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { SerializationType = SerializationType.All });
             Console.WriteLine(afterstrWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
@@ -79,7 +79,7 @@ namespace SFJsonTest
             Assert.AreEqual(0, strDeserialized.FieldIgnoredInt);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithIgnoredMembers>(strWithType);
-            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { SerializationType = SerializationType.All });
             Console.WriteLine(afterstrWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
@@ -112,7 +112,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationType = SerializationType.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -134,7 +134,7 @@ namespace SFJsonTest
             Assert.AreEqual(0, strDeserialized.PropObject.PropIgnoredInt);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithIgnoredObjectMembers>(strWithType);
-            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { SerializationType = SerializationType.All });
             Console.WriteLine(afterstrWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
@@ -169,7 +169,7 @@ namespace SFJsonTest
             Assert.AreEqual(0, strDeserialized.PropObject.PropIgnoredInt);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithIgnoredObjectMembers>(strWithType);
-            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { SerializationType = SerializationType.All });
             Console.WriteLine(afterstrWithType);
             
             Assert.NotNull(strWithTypeDeserialized);

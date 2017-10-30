@@ -4,6 +4,7 @@ using SFJson.Conversion;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Utils;
+using GlobalSettings = SFJson.Conversion.Settings.GlobalSettings;
 
 namespace SFJsonTest
 {
@@ -33,7 +34,7 @@ namespace SFJsonTest
         [Test]
         public void CanConvertInterfaceWithDeserializerBinding()
         {
-            GlobalTypeBindings.Remove<ITestObject>();
+            GlobalSettings.RemoveTypeBinding<ITestObject>();
 
             var deserializerSettings = new DeserializerSettings();
             deserializerSettings.TypeBindings.Add<ITestObject, TestObject>();
@@ -59,7 +60,7 @@ namespace SFJsonTest
         [Test]
         public void CanConvertInterfaceWithGlobalBinding()
         {
-            GlobalTypeBindings.Add<ITestObject, TestObject>();
+            GlobalSettings.AddTypeBinding<ITestObject, TestObject>();
             
             var str = "{\"Integer\":12}";
             var strWithType = "{\"$type\":\"SFJsonTest.ITestObject, SFJsonTest\",\"Integer\":12}";
@@ -92,7 +93,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationType = SerializationType.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -122,7 +123,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationType = SerializationType.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);

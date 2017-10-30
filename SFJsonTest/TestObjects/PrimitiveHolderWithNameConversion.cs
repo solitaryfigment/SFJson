@@ -5,19 +5,19 @@ namespace SFJsonTest
 {
     public class PrimitiveHolderWithNameConversion
     {
-        [JsonValueName("b")]
+        [JsonNamedValue("b")]
         [JsonProperty("b")]
         public bool PropBool { get; set; }
-        [JsonValueName("d")]
+        [JsonNamedValue("d")]
         [JsonProperty("d")]
         public double PropDouble { get; set; }
-        [JsonValueName("f")]
+        [JsonNamedValue("f")]
         [JsonProperty("f")]
         public float PropFloat { get; set; }
-        [JsonValueName("i")]
+        [JsonNamedValue("i")]
         [JsonProperty("i")]
         public int PropInt { get; set; }
-        [JsonValueName("s")]
+        [JsonNamedValue("s")]
         [JsonProperty("s")]
         public string PropString { get; set; }
     }

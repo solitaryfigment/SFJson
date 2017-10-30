@@ -10,7 +10,7 @@ namespace SFJson.Tokenization.Tokens
     public class JsonObject : JsonToken
     {
         private MemberInfo[] _memberInfos;
-        
+
         public override JsonType JsonType
         {
             get { return JsonType.Collection; }
@@ -20,19 +20,16 @@ namespace SFJson.Tokenization.Tokens
         {
             type = DetermineType(type);
             var obj = CreateInstance(type);
-        
             if(type.Implements(typeof(IDictionary)))
             {
                 return GetDictionaryValues(type, obj as IDictionary);
             }
-        
             if(type.Implements(typeof(IList)))
             {
                 return GetListValues(type, obj as IList);
             }
-        
+
             _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
-        
             foreach(var child in Children)
             {
                 if(child.Name != "$type")
@@ -40,14 +37,13 @@ namespace SFJson.Tokenization.Tokens
                     SetValue(child, obj);
                 }
             }
-        
+
             return obj;
         }
 
         private void SetValue(JsonToken child, object obj)
         {
             var memberInfo = FindMemberInfoOfToken(child);
-
             if(memberInfo is PropertyInfo)
             {
                 var propertyInfo = (PropertyInfo)memberInfo;
@@ -62,19 +58,14 @@ namespace SFJson.Tokenization.Tokens
 
         private MemberInfo FindMemberInfoOfToken(JsonToken child)
         {
-            var memberInfo = _memberInfos.FirstOrDefault(m => ((m.GetCustomAttributes(true).Any(a => a is JsonValueName && ((JsonValueName)a).Name == child.Name))) || (m.Name == child.Name));
-
-            if(memberInfo != null)
+            var memberInfo = _memberInfos.FirstOrDefault(m => m.GetCustomAttributes(true).Any(a => a is JsonNamedValue && ((JsonNamedValue)a).Name == child.Name) || m.Name == child.Name);
+            if(memberInfo == null)
             {
-                var ignoreAttribute = (JsonIgnore)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
-
-                if (ignoreAttribute == null)
-                {
-                    return memberInfo;
-                }
+                return null;
             }
-            
-            return null;
+
+            var ignoreAttribute = (JsonIgnore)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
+            return (ignoreAttribute == null) ? memberInfo : null;
         }
     }
 }

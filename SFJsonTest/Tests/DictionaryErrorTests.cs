@@ -42,7 +42,7 @@ namespace SFJsonTest
             var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib\",null:2,\"3\":4,\"5\":6}}";
             var deserializerSettings = new DeserializerSettings()
             {
-                SkipNullKeysInDictionary = true
+                SkipNullKeysInKeyValuedCollections = true
             };
             
             var strDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(str, deserializerSettings);

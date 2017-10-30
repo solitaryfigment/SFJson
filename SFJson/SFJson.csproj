@@ -35,14 +35,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Attributes\JsonIgnore.cs" />
-    <Compile Include="Attributes\JsonValueName.cs" />
+    <Compile Include="Attributes\JsonNamedValue.cs" />
     <Compile Include="Conversion\Deserialize.cs" />
     <Compile Include="Conversion\Serializer.cs" />
     <Compile Include="Conversion\Settings\DeserializerSettings.cs" />
-    <Compile Include="Conversion\Settings\GlobalTypeBindings.cs" />
+    <Compile Include="Conversion\Settings\GlobalSettings.cs" />
     <Compile Include="Conversion\Settings\SerializerSettings.cs" />
     <Compile Include="Conversion\Settings\TypeBindings.cs" />
     <Compile Include="Exceptions\DeserializationException.cs" />
+    <Compile Include="Exceptions\SerializationException.cs" />
     <Compile Include="Exceptions\TokenizationException.cs" />
     <Compile Include="Tokenization\Tokenizer.cs" />
     <Compile Include="Tokenization\Tokens\JsonCollection.cs" />
@@ -52,7 +53,7 @@
     <Compile Include="Tokenization\Tokens\JsonValue.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\Extension.cs" />
-    <Compile Include="Utils\TypeHandler.cs" />
+    <Compile Include="Utils\SerializationType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

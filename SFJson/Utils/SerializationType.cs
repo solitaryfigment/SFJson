@@ -1,6 +1,6 @@
 ﻿namespace SFJson.Utils
 {
-    public enum TypeHandler
+    public enum SerializationType
     {
         None,
         Collections,

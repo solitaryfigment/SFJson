@@ -9,44 +9,43 @@ namespace SFJson.Conversion
     public class Deserializer
     {
         private string _stringToDeserialize;
-
-        public JsonToken LastTokenization { get; private set; }
+        private JsonToken _lastTokenization;
 
         public T Deserialize<T>(string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             _stringToDeserialize = stringToSerialize;
-            LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings ?? new DeserializerSettings());
+            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings);
             try
             {
-                var obj = LastTokenization.GetValue<T>();
+                var obj = _lastTokenization.GetValue<T>();
                 return obj;
             }
-            catch (DeserializationException)
+            catch(DeserializationException)
             {
                 throw;
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                throw new DeserializationException("An error occured during deserialization.", LastTokenization, e);
+                throw new DeserializationException("An error occured during deserialization.", _lastTokenization, e);
             }
         }
 
         public object Deserialize(Type type, string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             _stringToDeserialize = stringToSerialize;
-            LastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings ?? new DeserializerSettings());
+            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings);
             try
             {
-                var obj = LastTokenization.GetValue(type);
+                var obj = _lastTokenization.GetValue(type);
                 return obj;
             }
-            catch (DeserializationException)
+            catch(DeserializationException)
             {
                 throw;
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                throw new DeserializationException("An error occured during deserialization.", LastTokenization, e);
+                throw new DeserializationException("An error occured during deserialization.", _lastTokenization, e);
             }
         }
     }

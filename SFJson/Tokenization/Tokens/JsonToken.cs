@@ -10,16 +10,17 @@ namespace SFJson.Tokenization.Tokens
     {
         public string Name;
         public List<JsonToken> Children = new List<JsonToken>();
-        public Func<Type, object> OnNullValue;
         internal DeserializerSettings DeserializerSettings;
         
+        protected Func<Type, object> OnNullValue;
+
         public abstract JsonType JsonType { get; }
-        
+
         public T GetValue<T>()
         {
-            return (T)GetValue(typeof(T));
+            return (T) GetValue(typeof(T));
         }
-        
+
         public abstract object GetValue(Type type);
 
         protected Type DetermineType(Type type)
@@ -28,7 +29,7 @@ namespace SFJson.Tokenization.Tokens
             {
                 var typestring = Children[0].GetValue<string>();
                 var inheiritedType = Type.GetType(typestring);
-                if (inheiritedType != null)
+                if(inheiritedType != null)
                 {
                     return CheckForBoundTypes(inheiritedType);
                 }
@@ -39,16 +40,14 @@ namespace SFJson.Tokenization.Tokens
 
         private Type CheckForBoundTypes(Type type)
         {
-            var returnType = DeserializerSettings.TypeBindings?.TryGetValue(type);
-            Console.WriteLine("Type: " + returnType);
-            returnType = returnType ?? GlobalTypeBindings.TryGetValue(type);
-            Console.WriteLine("Type: " + returnType);
+            var returnType = DeserializerSettings?.TypeBindings?.TryGetValue(type);
+            returnType = returnType ?? GlobalSettings.TryGetTypeBinding(type);
             return returnType ?? type;
         }
 
         protected object CreateInstance(Type type)
         {
-            if (type == null)
+            if(type == null)
             {
                 return null;
             }
@@ -60,35 +59,38 @@ namespace SFJson.Tokenization.Tokens
                 list = list ?? this;
                 return Array.CreateInstance(elementType, list.Children.Count);
             }
+
             return Activator.CreateInstance(type);
         }
-        
+
         protected object GetDictionaryValues(Type type, IDictionary obj)
         {
             var keyType = type.GetGenericArguments()[0];
             var valueType = type.GetGenericArguments()[1];
-
-            foreach (var child in Children)
+            foreach(var child in Children)
             {
-                if (child.Name == "$type")
+                if(child.Name == "$type")
                 {
                     continue;
                 }
+
                 var key = child.Name;
                 var token = new Tokenizer().Tokenize(key, DeserializerSettings);
                 token.OnNullValue = ReturnNull;
                 var keyValue = token.GetValue(keyType);
-                if (keyValue == null)
+                if(keyValue == null)
                 {
-                    if (DeserializerSettings.SkipNullKeysInDictionary)
+                    if(DeserializerSettings != null && DeserializerSettings.SkipNullKeysInKeyValuedCollections)
                     {
                         continue;
                     }
+
                     throw new NullReferenceException("Cannot add null key to dictionary.");
                 }
+
                 obj.Add(keyValue, child.GetValue(valueType));
             }
-            
+
             return obj;
         }
 
@@ -96,15 +98,13 @@ namespace SFJson.Tokenization.Tokens
         {
             return null;
         }
-        
+
         protected object GetListValues(Type type, IList obj)
         {
             var list = Children.FirstOrDefault(c => c.Name == "$values");
             var elementType = (type.IsArray) ? type.GetElementType() : type.GetGenericArguments()[0];
-
             list = list ?? this;
-            
-            for(int i = 0; i < list.Children.Count; i++)
+            for(var i = 0; i < list.Children.Count; i++)
             {
                 if(type.IsArray)
                 {
@@ -115,7 +115,7 @@ namespace SFJson.Tokenization.Tokens
                     obj.Add(list.Children[i].GetValue(elementType));
                 }
             }
-            
+
             return obj;
         }
     }

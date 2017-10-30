@@ -1,6 +1,6 @@
 ﻿namespace SFJson.Utils
 {
-    public static class Constants
+    internal static class Constants
     {
         public const char OPEN_CURLY = '{';
         public const char CLOSE_CURLY = '}';
