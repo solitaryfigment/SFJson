@@ -53,7 +53,7 @@
     <Compile Include="Tokenization\Tokens\JsonValue.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\Extension.cs" />
-    <Compile Include="Utils\SerializationType.cs" />
+    <Compile Include="Utils\SerializationTypeHandle.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

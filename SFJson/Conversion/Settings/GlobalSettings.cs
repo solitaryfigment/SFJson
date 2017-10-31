@@ -21,12 +21,12 @@ namespace SFJson.Conversion.Settings
         #region Serializer Settings
 
         /// <summary>
-        /// <see cref="SerializerSettings.SerializationType"/>
+        /// <see cref="SerializerSettings.SerializationTypeHandle"/>
         /// </summary>
-        public static SerializationType SerializationType
+        public static SerializationTypeHandle SerializationTypeHandle
         {
-            get { return _serializationSettings.SerializationType; }
-            set { _serializationSettings.SerializationType = value; }
+            get { return _serializationSettings.SerializationTypeHandle; }
+            set { _serializationSettings.SerializationTypeHandle = value; }
         }
 
         /// <summary>

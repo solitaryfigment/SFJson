@@ -17,7 +17,7 @@ namespace SFJson.Conversion
 
         public string Serialize(object objectToSerialize)
         {
-            return Serialize(objectToSerialize, new SerializerSettings {SerializationType = SerializationType.None});
+            return Serialize(objectToSerialize, new SerializerSettings {SerializationTypeHandle = SerializationTypeHandle.None});
         }
 
         public string Serialize(object objectToSerialize, SerializerSettings serializerSettings)
@@ -41,7 +41,7 @@ namespace SFJson.Conversion
             if(obj != null)
             {
                 _serialized.Append(Constants.OPEN_CURLY);
-                AppendType(obj, SerializationType.Objects);
+                AppendType(obj, SerializationTypeHandle.Objects);
                 SerializeMembers(obj);
                 _serialized.Append(Constants.CLOSE_CURLY);
                 return;
@@ -59,7 +59,7 @@ namespace SFJson.Conversion
                 {
                     var s = new SerializerSettings()
                     {
-                        SerializationType = _serializerSettings.SerializationType,
+                        SerializationTypeHandle = _serializerSettings.SerializationTypeHandle,
                         PropertyStringEscape = true
                     };
                     AppendSeparator(appendSeparator);
@@ -105,7 +105,7 @@ namespace SFJson.Conversion
         {
             var fieldInfos = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
             var propertyInfos = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            var appendSeparator = _serializerSettings.SerializationType == SerializationType.All || _serializerSettings.SerializationType == SerializationType.Objects;
+            var appendSeparator = _serializerSettings.SerializationTypeHandle == SerializationTypeHandle.All || _serializerSettings.SerializationTypeHandle == SerializationTypeHandle.Objects;
             foreach(var fieldInfo in fieldInfos)
             {
                 if(SerializeMember(fieldInfo, fieldInfo.FieldType, fieldInfo.GetValue(obj), appendSeparator))
@@ -195,16 +195,16 @@ namespace SFJson.Conversion
             else if(type.Implements(typeof(IDictionary)))
             {
                 _serialized.Append(Constants.OPEN_CURLY);
-                AppendType(value, SerializationType.Collections, Constants.COMMA.ToString());
+                AppendType(value, SerializationTypeHandle.Collections, Constants.COMMA.ToString());
                 SerializeDictionary((IDictionary) value);
                 _serialized.Append(Constants.CLOSE_CURLY);
             }
             else if(type.IsArray || type.Implements(typeof(IList)))
             {
-                if(_serializerSettings.SerializationType == SerializationType.All || _serializerSettings.SerializationType == SerializationType.Collections)
+                if(_serializerSettings.SerializationTypeHandle == SerializationTypeHandle.All || _serializerSettings.SerializationTypeHandle == SerializationTypeHandle.Collections)
                 {
                     _serialized.Append(Constants.OPEN_CURLY);
-                    AppendType(value, SerializationType.Collections, ",\"$values\":[");
+                    AppendType(value, SerializationTypeHandle.Collections, ",\"$values\":[");
                     SerializeList((IList) value);
                     _serialized.Append(Constants.CLOSE_BRACKET);
                     _serialized.Append(Constants.CLOSE_CURLY);
@@ -234,9 +234,9 @@ namespace SFJson.Conversion
             }
         }
 
-        private void AppendType(object obj, SerializationType serializationType, string appendString = "")
+        private void AppendType(object obj, SerializationTypeHandle serializationTypeHandle, string appendString = "")
         {
-            if(_serializerSettings.SerializationType == SerializationType.All || _serializerSettings.SerializationType == serializationType)
+            if(_serializerSettings.SerializationTypeHandle == SerializationTypeHandle.All || _serializerSettings.SerializationTypeHandle == serializationTypeHandle)
             {
                 AppendAsString("$type");
                 _serialized.Append(Constants.COLON);

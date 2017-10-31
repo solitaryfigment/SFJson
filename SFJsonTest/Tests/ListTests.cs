@@ -77,7 +77,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationType = SerializationType.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -129,7 +129,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationType = SerializationType.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);

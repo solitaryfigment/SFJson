@@ -1,7 +1,7 @@
 ﻿namespace SFJson.Conversion.Settings
 {
     /// <summary>
-    /// Defines deserialization settings use during both tokenization
+    /// Defines deserialization settings used during both tokenization
     /// and deserialization phases.
     /// </summary>
     public class DeserializerSettings

@@ -33,7 +33,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationType = SerializationType.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -53,7 +53,7 @@ namespace SFJsonTest
             Assert.AreEqual(obj.PropString, strDeserialized.PropString);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<PrimitiveHolderWithNameConversion>(strWithType);
-            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { SerializationType = SerializationType.All });
+            var afterstrWithType = _serializer.Serialize(strWithTypeDeserialized, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
             Console.WriteLine(afterstrWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<PrimitiveHolderWithNameConversion>(strWithTypeDeserialized);
