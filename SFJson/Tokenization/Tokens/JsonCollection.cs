@@ -4,11 +4,21 @@ using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
 {
+    /// <summary>
+    /// Represents a collection (i.e. Array or List) in tokenized form
+    /// to be deserialized.
+    /// </summary>
+    /// <seealso cref="JsonToken"/>
+    /// <seealso cref="JsonObject"/>
+    /// <seealso cref="JsonValue"/>
     public class JsonCollection : JsonToken
     {
-        public override JsonType JsonType
+        /// <summary>
+        /// Returns the token type, a collection will always be <c>JsonTokenType.Collection</c>
+        /// </summary>
+        public override JsonTokenType JsonTokenType
         {
-            get { return JsonType.Collection; }
+            get { return JsonTokenType.Collection; }
         }
 
         public override object GetValue(Type type)

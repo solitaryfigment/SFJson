@@ -2,10 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using SFJson.Conversion.Settings;
+using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
 {
+    /// <summary>
+    /// Base class for all token created during the tokenizaiton phase.
+    /// </summary>
+    /// <seealso cref="JsonCollection"/>
+    /// <seealso cref="JsonObject"/>
+    /// <seealso cref="JsonValue"/>
     public abstract class JsonToken
     {
         public string Name;
@@ -14,13 +22,27 @@ namespace SFJson.Tokenization.Tokens
         
         protected Func<Type, object> OnNullValue;
 
-        public abstract JsonType JsonType { get; }
+        /// <summary>
+        /// Returns the <c>JsonTokenType</c>.
+        /// </summary>
+        public abstract JsonTokenType JsonTokenType { get; }
 
+        /// <summary>
+        /// <see cref="JsonToken.GetValue"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         public T GetValue<T>()
         {
             return (T) GetValue(typeof(T));
         }
-
+        
+        /// <summary>
+        /// Converts the tokenized value to <paramref name="type"/>. 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>
+        /// The <paramref name="type"/> this token represents as an <c>object</c>
+        /// </returns>
         public abstract object GetValue(Type type);
 
         protected Type DetermineType(Type type)

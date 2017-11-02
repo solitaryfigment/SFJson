@@ -7,15 +7,25 @@ using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
 {
+    /// <summary>
+    /// Represents an object in tokenized form to be deserialized.
+    /// </summary>
+    /// <seealso cref="JsonToken"/>
+    /// <seealso cref="JsonObject"/>
+    /// <seealso cref="JsonValue"/>
     public class JsonObject : JsonToken
     {
         private MemberInfo[] _memberInfos;
 
-        public override JsonType JsonType
+        /// <summary>
+        /// Returns the token type, a collection will always be <c>JsonTokenType.Object</c>
+        /// </summary>
+        public override JsonTokenType JsonTokenType
         {
-            get { return JsonType.Collection; }
+            get { return JsonTokenType.Collection; }
         }
 
+        /// <inheritdoc cref="JsonToken.GetValue"/>
         public override object GetValue(Type type)
         {
             type = DetermineType(type);

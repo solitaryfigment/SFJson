@@ -178,7 +178,7 @@ namespace SFJson.Tokenization
             }
             else
             {
-                var expectedCharacter = (_currentToken.JsonType == JsonType.Object) ? "\'}\'" : "\']\'";
+                var expectedCharacter = (_currentToken.JsonTokenType == JsonTokenType.Object) ? "\'}\'" : "\']\'";
                 throw new TokenizationException(string.Format("Malformed input: Expected {0} but was \'{1}\' at position {2}.", expectedCharacter, _currentChar.ToString().ToLiteral(), _index));
             }
         }

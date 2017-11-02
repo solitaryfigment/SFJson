@@ -10,16 +10,32 @@ using SFJson.Utils;
 
 namespace SFJson.Conversion
 {
+    /// <summary>
+    /// Handles converting an <c>object</c> to a JSON string.
+    /// </summary>
     public class Serializer
     {
         private SerializerSettings _serializerSettings;
         private StringBuilder _serialized;
 
+        /// <summary>
+        /// <see cref="Serializer.Serialize(object, SerializerSettings)"/>
+        /// </summary>
+        /// <param name="objectToSerialize"></param>
         public string Serialize(object objectToSerialize)
         {
             return Serialize(objectToSerialize, new SerializerSettings {SerializationTypeHandle = SerializationTypeHandle.None});
         }
 
+        /// <summary>
+        /// Convets an <c>object</c> to a JSON string.
+        /// </summary>
+        /// <param name="objectToSerialize"></param>
+        /// <param name="serializerSettings"></param>
+        /// <returns>
+        /// The converted JSON string
+        /// </returns>
+        /// <exception cref="SerializationException"></exception>
         public string Serialize(object objectToSerialize, SerializerSettings serializerSettings)
         {
             _serializerSettings = serializerSettings;

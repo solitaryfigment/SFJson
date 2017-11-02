@@ -49,11 +49,13 @@
     <Compile Include="Tokenization\Tokens\JsonCollection.cs" />
     <Compile Include="Tokenization\Tokens\JsonObject.cs" />
     <Compile Include="Tokenization\Tokens\JsonToken.cs" />
-    <Compile Include="Tokenization\Tokens\JsonType.cs" />
+    <Compile Include="Tokenization\Tokens\JsonTokenType.cs" />
     <Compile Include="Tokenization\Tokens\JsonValue.cs" />
     <Compile Include="Utils\Constants.cs" />
-    <Compile Include="Utils\Extension.cs" />
+    <Compile Include="Utils\DefaultHandler.cs" />
+    <Compile Include="Utils\TypeExtension.cs" />
     <Compile Include="Utils\SerializationTypeHandle.cs" />
+    <Compile Include="Utils\StringExtension.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

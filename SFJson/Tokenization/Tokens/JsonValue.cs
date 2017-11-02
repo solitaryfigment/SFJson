@@ -3,13 +3,19 @@ using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
 {
+    /// <summary>
+    /// Represents an object in tokenized form to be deserialized.
+    /// </summary>
+    /// <seealso cref="JsonToken"/>
+    /// <seealso cref="JsonCollection"/>
+    /// <seealso cref="JsonObject"/>
     public class JsonValue : JsonToken
     {
         private readonly object _value;
 
-        public override JsonType JsonType
+        public override JsonTokenType JsonTokenType
         {
-            get { return JsonType.Value; }
+            get { return JsonTokenType.Value; }
         }
 
         public JsonValue(string name, object value)

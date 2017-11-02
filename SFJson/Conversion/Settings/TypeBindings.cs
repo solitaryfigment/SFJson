@@ -10,7 +10,7 @@ namespace SFJson.Conversion.Settings
     /// </summary>
     public class TypeBindings
     {
-        private static Dictionary<Type, Type> _bindings = new Dictionary<Type, Type>();
+        private static readonly Dictionary<Type, Type> _bindings = new Dictionary<Type, Type>();
 
         /// <summary>
         /// Adds a <c>KeyValuePair</c> binding.

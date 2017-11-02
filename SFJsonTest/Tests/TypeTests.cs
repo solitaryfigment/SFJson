@@ -80,7 +80,7 @@ namespace SFJsonTest
         {
             var obj = new TypeHolder()
             {
-                PropType = typeof(Dictionary<Dictionary<JsonType,int[]>,List<string[]>>)
+                PropType = typeof(Dictionary<Dictionary<JsonTokenType,int[]>,List<string[]>>)
             };
             
             var str = _serializer.Serialize(obj);
@@ -88,8 +88,8 @@ namespace SFJsonTest
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.TypeHolder, SFJsonTest\",\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", strWithType);
+            Assert.AreEqual("{\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.TypeHolder, SFJsonTest\",\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<TypeHolder>(str);
             Assert.NotNull(strDeserialized);
