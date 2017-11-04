@@ -69,7 +69,7 @@ namespace SFJsonTest
         [Test]
         public void CanConvertObjectWithDicitonary()
         {
-            var obj = new ObjectWithDictionary()
+            var obj = new ObjectWithDictionary
             {
                 Dictionary = new Dictionary<int, int>
                 {
@@ -91,23 +91,23 @@ namespace SFJsonTest
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<ObjectWithDictionary>(strDeserialized);
             Assert.AreEqual(obj.Dictionary.Count, strDeserialized.Dictionary.Count);
-            var objKeys = obj.Dictionary.Keys.ToArray();
-            var strDeserializedKeys = strDeserialized.Dictionary.Keys.ToArray();
+            var objKeys = ((IDictionary<int,int>)obj.Dictionary).Keys.ToArray();
+            var strDeserializedKeys = ((IDictionary<int,int>)strDeserialized.Dictionary).Keys.ToArray();
             for(int i = 0; i < objKeys.Length; i++)
             {
                 Assert.AreEqual(objKeys[i], strDeserializedKeys[i]);
-                Assert.AreEqual(obj.Dictionary[objKeys[i]], strDeserialized.Dictionary[strDeserializedKeys[i]]);
+                Assert.AreEqual(((IDictionary<int,int>)obj.Dictionary)[objKeys[i]], ((IDictionary<int,int>)strDeserialized.Dictionary)[strDeserializedKeys[i]]);
             }
             
             var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<ObjectWithDictionary>(strWithTypeDeserialized);
             Assert.AreEqual(obj.Dictionary.Count, strWithTypeDeserialized.Dictionary.Count);
-            var strWithTypeDeserializedKeys = strDeserialized.Dictionary.Keys.ToArray();
+            var strWithTypeDeserializedKeys = ((IDictionary<int,int>)strDeserialized.Dictionary).Keys.ToArray();
             for(int i = 0; i < objKeys.Length; i++)
             {
                 Assert.AreEqual(objKeys[i], strWithTypeDeserializedKeys[i]);
-                Assert.AreEqual(obj.Dictionary[objKeys[i]], strWithTypeDeserialized.Dictionary[strWithTypeDeserializedKeys[i]]);
+                Assert.AreEqual(((IDictionary<int,int>)obj.Dictionary)[objKeys[i]], ((IDictionary<int,int>)strWithTypeDeserialized.Dictionary)[strWithTypeDeserializedKeys[i]]);
             }
         }
 

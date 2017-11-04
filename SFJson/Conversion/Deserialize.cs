@@ -30,7 +30,7 @@ namespace SFJson.Conversion
         public T Deserialize<T>(string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             _stringToDeserialize = stringToSerialize;
-            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings);
+            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, new SettingsManager { DeserializationSettings = deserializerSettings });
             try
             {
                 var obj = _lastTokenization.GetValue<T>();
@@ -63,7 +63,7 @@ namespace SFJson.Conversion
         public object Deserialize(Type type, string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             _stringToDeserialize = stringToSerialize;
-            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, deserializerSettings);
+            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, new SettingsManager { DeserializationSettings = deserializerSettings });
             try
             {
                 var obj = _lastTokenization.GetValue(type);

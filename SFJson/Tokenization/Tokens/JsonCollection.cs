@@ -25,9 +25,17 @@ namespace SFJson.Tokenization.Tokens
         {
             type = DetermineType(type);
             var obj = CreateInstance(type);
-            if(type.Implements(typeof(IList)))
+            if(type.Implements(typeof(IDictionary)))
+            {
+                obj = GetDictionaryValues(type, obj as IDictionary);
+            }
+            else if(type.Implements(typeof(IEnumerable)))
             {
                 obj = GetListValues(type, obj as IList);
+            }
+            else
+            {
+                // throw error
             }
             return obj;
         }

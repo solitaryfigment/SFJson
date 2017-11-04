@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <UseMSBuildEngine>False</UseMSBuildEngine>
-    <LangVersion>6</LangVersion>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +41,7 @@
     <Compile Include="Conversion\Settings\DeserializerSettings.cs" />
     <Compile Include="Conversion\Settings\GlobalSettings.cs" />
     <Compile Include="Conversion\Settings\SerializerSettings.cs" />
+    <Compile Include="Conversion\Settings\SettingsManager.cs" />
     <Compile Include="Conversion\Settings\TypeBindings.cs" />
     <Compile Include="Exceptions\DeserializationException.cs" />
     <Compile Include="Exceptions\SerializationException.cs" />

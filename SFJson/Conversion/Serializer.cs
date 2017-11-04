@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,7 +17,7 @@ namespace SFJson.Conversion
     /// </summary>
     public class Serializer
     {
-        private SerializerSettings _serializerSettings;
+        private SettingsManager _settingsManager;
         private StringBuilder _serialized;
 
         /// <summary>
@@ -24,7 +26,7 @@ namespace SFJson.Conversion
         /// <param name="objectToSerialize"></param>
         public string Serialize(object objectToSerialize)
         {
-            return Serialize(objectToSerialize, new SerializerSettings {SerializationTypeHandle = SerializationTypeHandle.None});
+            return Serialize(objectToSerialize, null);
         }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace SFJson.Conversion
         /// <exception cref="SerializationException"></exception>
         public string Serialize(object objectToSerialize, SerializerSettings serializerSettings)
         {
-            _serializerSettings = serializerSettings;
+            _settingsManager = new SettingsManager { SerializationSettings = serializerSettings };
             _serialized = new StringBuilder();
             try
             {
@@ -73,10 +75,12 @@ namespace SFJson.Conversion
             {
                 foreach(var key in dictionary.Keys)
                 {
-                    var s = new SerializerSettings()
+                    var s = new SerializerSettings
                     {
-                        SerializationTypeHandle = _serializerSettings.SerializationTypeHandle,
-                        PropertyStringEscape = true
+                        PropertyStringEscape = true,
+                        DateTimeFormat = _settingsManager.DateTimeFormat,
+                        DateTimeOffsetFormat = _settingsManager.DateTimeOffsetFormat,
+                        SerializationTypeHandle = _settingsManager.SerializationTypeHandle
                     };
                     AppendSeparator(appendSeparator);
                     _serialized.AppendFormat("\"{0}\"", new Serializer().Serialize(key, s));
@@ -91,7 +95,7 @@ namespace SFJson.Conversion
             _serialized.Append(Constants.NULL);
         }
 
-        private void SerializeList(IList list)
+        private void SerializeList(IEnumerable list)
         {
             var appendSeparator = false;
             if(list != null)
@@ -121,7 +125,7 @@ namespace SFJson.Conversion
         {
             var fieldInfos = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
             var propertyInfos = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            var appendSeparator = _serializerSettings.SerializationTypeHandle == SerializationTypeHandle.All || _serializerSettings.SerializationTypeHandle == SerializationTypeHandle.Objects;
+            var appendSeparator = _settingsManager.SerializationTypeHandle == SerializationTypeHandle.All || _settingsManager.SerializationTypeHandle == SerializationTypeHandle.Objects;
             foreach(var fieldInfo in fieldInfos)
             {
                 if(SerializeMember(fieldInfo, fieldInfo.FieldType, fieldInfo.GetValue(obj), appendSeparator))
@@ -169,6 +173,7 @@ namespace SFJson.Conversion
 
         private void SerializeObject(Type type, object value)
         {
+            type = type.IsInterface ? value.GetType() : type;
             if(value == null)
             {
                 _serialized.AppendFormat(Constants.NULL);
@@ -184,12 +189,12 @@ namespace SFJson.Conversion
             }
             else if(value is DateTimeOffset)
             {
-                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _serializerSettings.DateTimeOffsetFormat, "}");
+                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _settingsManager.DateTimeOffsetFormat, "}");
                 AppendAsString(string.Format(indexAndFormat, value));
             }
             else if(value is DateTime)
             {
-                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _serializerSettings.DateTimeFormat, "}");
+                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _settingsManager.DateTimeFormat, "}");
                 AppendAsString(string.Format(indexAndFormat, value));
             }
             else if(value is TimeSpan)
@@ -208,27 +213,34 @@ namespace SFJson.Conversion
             {
                 AppendAsString(value.ToString());
             }
-            else if(type.Implements(typeof(IDictionary)))
+            else if(type.Implements(typeof(IDictionary)) || (type.GetGenericArguments().Length == 2 && type.Implements(typeof(IEnumerable))))
             {
-                _serialized.Append(Constants.OPEN_CURLY);
-                AppendType(value, SerializationTypeHandle.Collections, Constants.COMMA.ToString());
-                SerializeDictionary((IDictionary) value);
-                _serialized.Append(Constants.CLOSE_CURLY);
+                if(type.Implements(typeof(IDictionary)))
+                {
+                    _serialized.Append(Constants.OPEN_CURLY);
+                    AppendType(value, SerializationTypeHandle.Collections, Constants.COMMA.ToString());
+                    SerializeDictionary((IDictionary)value);
+                    _serialized.Append(Constants.CLOSE_CURLY);
+                }
+                else
+                {
+                    Console.WriteLine("Need to do something else");
+                }
             }
-            else if(type.IsArray || type.Implements(typeof(IList)))
+            else if(type.IsArray || type.Implements(typeof(IEnumerable)))
             {
-                if(_serializerSettings.SerializationTypeHandle == SerializationTypeHandle.All || _serializerSettings.SerializationTypeHandle == SerializationTypeHandle.Collections)
+                if(_settingsManager.SerializationTypeHandle == SerializationTypeHandle.All || _settingsManager.SerializationTypeHandle == SerializationTypeHandle.Collections)
                 {
                     _serialized.Append(Constants.OPEN_CURLY);
                     AppendType(value, SerializationTypeHandle.Collections, ",\"$values\":[");
-                    SerializeList((IList) value);
+                    SerializeList((IEnumerable) value);
                     _serialized.Append(Constants.CLOSE_BRACKET);
                     _serialized.Append(Constants.CLOSE_CURLY);
                 }
                 else
                 {
                     _serialized.Append(Constants.OPEN_BRACKET);
-                    SerializeList((IList) value);
+                    SerializeList((IEnumerable) value);
                     _serialized.Append(Constants.CLOSE_BRACKET);
                 }
             }
@@ -240,7 +252,7 @@ namespace SFJson.Conversion
 
         private void AppendAsString(string value)
         {
-            if(_serializerSettings.PropertyStringEscape)
+            if(_settingsManager.PropertyStringEscape)
             {
                 _serialized.AppendFormat("\\\"{0}\\\"", value);
             }
@@ -252,7 +264,7 @@ namespace SFJson.Conversion
 
         private void AppendType(object obj, SerializationTypeHandle serializationTypeHandle, string appendString = "")
         {
-            if(_serializerSettings.SerializationTypeHandle == SerializationTypeHandle.All || _serializerSettings.SerializationTypeHandle == serializationTypeHandle)
+            if(_settingsManager.SerializationTypeHandle == SerializationTypeHandle.All || _settingsManager.SerializationTypeHandle == serializationTypeHandle)
             {
                 AppendAsString("$type");
                 _serialized.Append(Constants.COLON);

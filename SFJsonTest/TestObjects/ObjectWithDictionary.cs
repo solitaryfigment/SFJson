@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace SFJsonTest
 {
     public class ObjectWithDictionary
     {
-        public Dictionary<int, int> Dictionary { get; set; }
+        public IDictionary<int,int> Dictionary { get; set; }
+    }
+    
+    public class ObjectWithIEnumerableDictionary
+    {
+        public IEnumerable Dictionary { get; set; }
     }
     
     public class ObjectWithObjectDictionary

@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using SFJson.Conversion.Settings;
+using SFJson.Exceptions;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
@@ -18,7 +18,7 @@ namespace SFJson.Tokenization.Tokens
     {
         public string Name;
         public List<JsonToken> Children = new List<JsonToken>();
-        internal DeserializerSettings DeserializerSettings;
+        internal SettingsManager SettingsManager;
         
         protected Func<Type, object> OnNullValue;
 
@@ -47,23 +47,30 @@ namespace SFJson.Tokenization.Tokens
 
         protected Type DetermineType(Type type)
         {
+            Type determinedType = type;
             if(Children.Count > 0 && Children[0].Name == "$type")
             {
                 var typestring = Children[0].GetValue<string>();
                 var inheiritedType = Type.GetType(typestring);
                 if(inheiritedType != null)
                 {
-                    return CheckForBoundTypes(inheiritedType);
+                    determinedType = CheckForBoundTypes(inheiritedType);
                 }
             }
 
-            return CheckForBoundTypes(type);
+            determinedType = CheckForBoundTypes(determinedType);
+
+            if(determinedType.IsInterface)
+            {
+                determinedType = DetermineTypeFromInterface(determinedType);
+            }
+
+            return determinedType;
         }
 
         private Type CheckForBoundTypes(Type type)
         {
-            var returnType = DeserializerSettings?.TypeBindings?.TryGetValue(type);
-            returnType = returnType ?? GlobalSettings.TryGetTypeBinding(type);
+            var returnType = SettingsManager.TryGetTypeBinding(type);
             return returnType ?? type;
         }
 
@@ -85,6 +92,33 @@ namespace SFJson.Tokenization.Tokens
             return Activator.CreateInstance(type);
         }
 
+        private Type DetermineTypeFromInterface(Type type)
+        {
+            var genericTypes = type.GetGenericArguments();
+
+            if(!type.IsGenericType && (!type.Implements(typeof(IDictionary)) && type.Implements(typeof(IEnumerable))))
+            {
+                throw new TypeLoadException("Could not determine underlying type, try using the generic counterpart");
+            }
+
+            if(type.IsGenericType && genericTypes.Length == 1 && type.Implements(Type.GetType($"System.Collections.Generic.IEnumerable`1[[{genericTypes[0].AssemblyQualifiedName}]]")))
+            {
+                var listType = Type.GetType($"System.Collections.Generic.List`1[[{genericTypes[0].AssemblyQualifiedName}]]");
+                return listType ?? throw new Exception("List type ould not be generated");
+            }
+            else if(genericTypes.Length == 2 && type.Implements(Type.GetType($"System.Collections.Generic.IDictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]")))
+            {
+                var dictionaryType = Type.GetType($"System.Collections.Generic.Dictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]");
+                return dictionaryType ?? throw new Exception();
+            }
+            else if(type.Implements(typeof(IDictionary)))
+            {
+                return typeof(Dictionary<object, object>);
+            }
+
+            return type;
+        }
+
         protected object GetDictionaryValues(Type type, IDictionary obj)
         {
             var keyType = type.GetGenericArguments()[0];
@@ -97,12 +131,12 @@ namespace SFJson.Tokenization.Tokens
                 }
 
                 var key = child.Name;
-                var token = new Tokenizer().Tokenize(key, DeserializerSettings);
+                var token = new Tokenizer().Tokenize(key, SettingsManager);
                 token.OnNullValue = ReturnNull;
                 var keyValue = token.GetValue(keyType);
                 if(keyValue == null)
                 {
-                    if(DeserializerSettings != null && DeserializerSettings.SkipNullKeysInKeyValuedCollections)
+                    if(SettingsManager.SkipNullKeysInKeyValuedCollections)
                     {
                         continue;
                     }

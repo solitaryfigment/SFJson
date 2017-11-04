@@ -19,15 +19,15 @@ namespace SFJson.Tokenization
         private string _jsonString;
         private char _currentChar;
         private int _index;
-        private DeserializerSettings _deserializerSettings;
+        private SettingsManager _settingsManager;
 
-        internal JsonToken Tokenize(string jsonString, DeserializerSettings deserializerSettings)
+        internal JsonToken Tokenize(string jsonString, SettingsManager settingsManager)
         {
             try
             {
                 _tokenText.Length = 0;
                 _jsonString = jsonString;
-                _deserializerSettings = deserializerSettings;
+                _settingsManager = settingsManager;
                 return Tokenize();
             }
             catch(TokenizationException)
@@ -153,7 +153,7 @@ namespace SFJson.Tokenization
         private void PushToken<T>() where T : JsonToken, new()
         {
             T token = new T();
-            token.DeserializerSettings = _deserializerSettings;
+            token.SettingsManager = _settingsManager;
             if(Count > 0)
             {
                 _currentToken.Children.Add(token);
@@ -207,7 +207,7 @@ namespace SFJson.Tokenization
             {
                 token = new JsonValue(_tokenName, _tokenText.ToString());
             }
-            token.DeserializerSettings = _deserializerSettings;
+            token.SettingsManager = _settingsManager;
             return token;
         }
 

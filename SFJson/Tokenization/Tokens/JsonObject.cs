@@ -22,7 +22,7 @@ namespace SFJson.Tokenization.Tokens
         /// </summary>
         public override JsonTokenType JsonTokenType
         {
-            get { return JsonTokenType.Collection; }
+            get { return JsonTokenType.Object; }
         }
 
         /// <inheritdoc cref="JsonToken.GetValue"/>

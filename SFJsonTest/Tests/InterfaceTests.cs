@@ -34,7 +34,7 @@ namespace SFJsonTest
         [Test]
         public void CanConvertInterfaceWithDeserializerBinding()
         {
-            GlobalSettings.RemoveTypeBinding<ITestObject>();
+            GlobalSettings.DeserializationSettings.TypeBindings.Remove<ITestObject>();
 
             var deserializerSettings = new DeserializerSettings();
             deserializerSettings.TypeBindings.Add<ITestObject, TestObject>();
@@ -60,7 +60,7 @@ namespace SFJsonTest
         [Test]
         public void CanConvertInterfaceWithGlobalBinding()
         {
-            GlobalSettings.AddTypeBinding<ITestObject, TestObject>();
+            GlobalSettings.DeserializationSettings.TypeBindings.Add<ITestObject, TestObject>();
             
             var str = "{\"Integer\":12}";
             var strWithType = "{\"$type\":\"SFJsonTest.ITestObject, SFJsonTest\",\"Integer\":12}";

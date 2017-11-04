@@ -11,6 +11,8 @@ namespace SFJson.Conversion.Settings
         private const string DEFAULT_TIME_OFFSET_FORMAT = "yyyy-MM-ddTHH:mm:ss.fff zzz";
         private string _dateTimeFormat = string.Empty;
         private string _dateTimeOffsetFormat = string.Empty;
+        
+        internal bool PropertyStringEscape { get; set; }
 
         /// <summary>
         /// Defines when to inject the type handle metadata in the json output.
@@ -43,7 +45,5 @@ namespace SFJson.Conversion.Settings
             }
             set { _dateTimeOffsetFormat = value; }
         }
-
-        internal bool PropertyStringEscape { get; set; }
     }
 }
