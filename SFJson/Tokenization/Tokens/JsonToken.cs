@@ -96,7 +96,7 @@ namespace SFJson.Tokenization.Tokens
         {
             var genericTypes = type.GetGenericArguments();
 
-            if(!type.IsGenericType && (!type.Implements(typeof(IDictionary)) && type.Implements(typeof(IEnumerable))))
+            if(!type.IsGenericType && type.Implements(typeof(IEnumerable)))
             {
                 throw new TypeLoadException("Could not determine underlying type, try using the generic counterpart");
             }

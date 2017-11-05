@@ -66,36 +66,36 @@ namespace SFJsonTest
             Assert.AreEqual(obj.PropString, deserializedWithTypeNSToSF.PropString);
         }
 
-        [Test]
-        public void IEnumerableTest()
-        {
-            IDictionary obj = new Dictionary<int, SimpleBaseObject>
-            {
-                {1, new SimpleBaseObject { BaseFieldInt = 1, BasePropInt = 3 }},
-                {2, new SimpleBaseObject { BaseFieldInt = 2, BasePropInt = 4 }}
-            };
-            
-            var strNS = JsonConvert.SerializeObject(obj);
-            var strWithTypeNS = JsonConvert.SerializeObject(obj, _newtonsoftSettings);
-            
-            Console.WriteLine(strNS);
-            Console.WriteLine(strWithTypeNS);
-
-            IDictionary strNSDeserialized = JsonConvert.DeserializeObject<IDictionary>(strNS);
-//            Assert.Throws<JsonSerializationException>(() =>
-//                {
-                    IDictionary strWithTypeNSDeserialized = JsonConvert.DeserializeObject<IDictionary>(strWithTypeNS);
-                    Console.WriteLine(JsonConvert.SerializeObject(strWithTypeNSDeserialized));
-//                });
-            
-            IDictionary strWithTypeDeserialized = _deserializer.Deserialize<IDictionary>(strWithTypeNS);
-            
-            Console.WriteLine(JsonConvert.SerializeObject(strNSDeserialized, _newtonsoftSettings));
-            Console.WriteLine(JsonConvert.SerializeObject(strWithTypeDeserialized, _newtonsoftSettings));
-            
-            IDictionary strDeserialized = _deserializer.Deserialize<IDictionary>(strNS);
-            Console.WriteLine(JsonConvert.SerializeObject(strDeserialized));
-        }
+//        [Test]
+//        public void IEnumerableTest()
+//        {
+//            IDictionary obj = new Dictionary<int, SimpleBaseObject>
+//            {
+//                {1, new SimpleBaseObject { BaseFieldInt = 1, BasePropInt = 3 }},
+//                {2, new SimpleBaseObject { BaseFieldInt = 2, BasePropInt = 4 }}
+//            };
+//            
+//            var strNS = JsonConvert.SerializeObject(obj);
+//            var strWithTypeNS = JsonConvert.SerializeObject(obj, _newtonsoftSettings);
+//            
+//            Console.WriteLine(strNS);
+//            Console.WriteLine(strWithTypeNS);
+//
+//            IDictionary strNSDeserialized = JsonConvert.DeserializeObject<IDictionary>(strNS);
+////            Assert.Throws<JsonSerializationException>(() =>
+////                {
+//                    IDictionary strWithTypeNSDeserialized = JsonConvert.DeserializeObject<IDictionary>(strWithTypeNS);
+//                    Console.WriteLine(JsonConvert.SerializeObject(strWithTypeNSDeserialized));
+////                });
+//            
+//            IDictionary strWithTypeDeserialized = _deserializer.Deserialize<IDictionary>(_serializer.Serialize(obj));
+//            
+//            Console.WriteLine(JsonConvert.SerializeObject(strNSDeserialized, _newtonsoftSettings));
+//            Console.WriteLine(JsonConvert.SerializeObject(strWithTypeDeserialized, _newtonsoftSettings));
+//            
+//            IDictionary strDeserialized = _deserializer.Deserialize<IDictionary>(strNS);
+//            Console.WriteLine(JsonConvert.SerializeObject(strDeserialized));
+//        }
 
         [Test]
         public void NameConversionCompatability()
