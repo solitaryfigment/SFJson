@@ -83,7 +83,7 @@ namespace SFJson.Conversion
                         SerializationTypeHandle = _settingsManager.SerializationTypeHandle
                     };
                     AppendSeparator(appendSeparator);
-                    _serialized.AppendFormat("\"{0}\"", new Serializer().Serialize(key, s));
+                    SerializeObject(key.GetType(), key);
                     _serialized.Append(Constants.COLON);
                     SerializeObject(dictionary[key].GetType(), dictionary[key]);
                     appendSeparator = true;

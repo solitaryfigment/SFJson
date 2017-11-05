@@ -4,6 +4,7 @@
     {
         Object,
         Collection,
-        Value
+        Value,
+        Dicitonary
     }
 }

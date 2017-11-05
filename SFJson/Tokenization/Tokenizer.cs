@@ -60,24 +60,74 @@ namespace SFJson.Tokenization
             return _currentToken;
         }
 
+        private JsonDictionary _dictionary;
+        private JsonToken _potentialKey;
+
+        private void SetAsDictionaryToken(JsonToken token)
+        {
+            try
+            {
+                // TODO: Ignore whitespace
+                var nextChar = _jsonString[_index + 1];
+                var previousChar = _jsonString[_index - 1];
+                var addThingy = (nextChar == Constants.COLON && _potentialKey == null) || (previousChar == Constants.COLON && _potentialKey != null);
+                if(!addThingy)
+                {
+                    _dictionary = null;
+                    return;
+                }
+            }
+            catch
+            {
+                return;
+            }
+            if(_potentialKey == null)
+            {
+                _potentialKey = token;
+            }
+            else if(_dictionary != null)
+            {
+                _dictionary.Entries.Add(_potentialKey, token);
+                _potentialKey = null;
+            }
+            else
+            {
+                _potentialKey = null;
+            }
+        }
+
+        private JsonToken _temp;
         private void HandleNextCharacter()
         {
             switch(_currentChar)
             {
                 case Constants.OPEN_CURLY:
                     PushToken<JsonObject>();
+                    SetAsDictionaryToken(_currentToken);
                     break;
                 case Constants.CLOSE_CURLY:
+                    _temp = _currentToken;
                     PopToken<JsonObject>();
+                    SetAsDictionaryToken(_temp);
                     break;
                 case Constants.OPEN_BRACKET:
                     PushToken<JsonCollection>();
+                    SetAsDictionaryToken(_currentToken);
                     break;
                 case Constants.CLOSE_BRACKET:
+                    _temp = _currentToken;
                     PopToken<JsonCollection>();
+                    SetAsDictionaryToken(_temp);
                     break;
                 case Constants.COLON:
-                    ResetTokenText();
+                    if(_potentialKey is JsonObject && _dictionary == null)
+                    {
+                        StartDictionary();
+                    }
+                    else
+                    {
+                        ResetTokenText();
+                    }
                     break;
                 case Constants.COMMA:
                     AddAndParseElement();
@@ -154,7 +204,7 @@ namespace SFJson.Tokenization
         {
             T token = new T();
             token.SettingsManager = _settingsManager;
-            if(Count > 0)
+            if(Count > 0 &&  _currentToken.JsonTokenType != JsonTokenType.Dicitonary)
             {
                 _currentToken.Children.Add(token);
             }
@@ -166,7 +216,7 @@ namespace SFJson.Tokenization
 
         private void PopToken<T>()
         {
-            if(_currentToken is T)
+            if(_currentToken is T || _currentToken is JsonDictionary)
             {
                 Pop();
                 AddAndParseElement();
@@ -174,6 +224,7 @@ namespace SFJson.Tokenization
                 {
                     _currentToken = Peek();
                 }
+                _dictionary = _currentToken as JsonDictionary;
                 ResetTokenText();
             }
             else
@@ -183,6 +234,28 @@ namespace SFJson.Tokenization
             }
         }
 
+        private void StartDictionary()
+        {
+            JsonToken parentToken = null;
+            if(_currentToken != null)
+            {
+                parentToken = (Count > 0) ? Pop() : null;
+                _currentToken = (Count > 0) ? Peek() : null;
+            }
+            PushDictionary(parentToken);
+        }
+
+        private void PushDictionary(JsonToken parentToken)
+        {
+            if(parentToken != null)
+            {
+                _currentToken.Children.Remove(parentToken);
+            }
+            _tokenName = (parentToken != null) ? parentToken.Name : "";
+            PushToken<JsonDictionary>();
+            _dictionary = _currentToken as JsonDictionary;
+        }
+        
         private void ResetTokenText()
         {
             _tokenName = _tokenText.ToString();

@@ -48,6 +48,7 @@
     <Compile Include="Exceptions\TokenizationException.cs" />
     <Compile Include="Tokenization\Tokenizer.cs" />
     <Compile Include="Tokenization\Tokens\JsonCollection.cs" />
+    <Compile Include="Tokenization\Tokens\JsonDictionary.cs" />
     <Compile Include="Tokenization\Tokens\JsonObject.cs" />
     <Compile Include="Tokenization\Tokens\JsonToken.cs" />
     <Compile Include="Tokenization\Tokens\JsonTokenType.cs" />

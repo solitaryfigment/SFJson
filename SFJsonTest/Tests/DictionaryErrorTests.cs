@@ -39,7 +39,7 @@ namespace SFJsonTest
         public void SkipNullKeyInDictionaryWithSettings()
         {
             var str = "{\"Dictionary\":{null:2,\"3\":4,\"5\":6}}";
-            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib\",null:2,\"3\":4,\"5\":6}}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32, mscorlib]], mscorlib\",null:2,\"3\":4,\"5\":6}}";
             var deserializerSettings = new DeserializerSettings()
             {
                 SkipNullKeysInKeyValuedCollections = true

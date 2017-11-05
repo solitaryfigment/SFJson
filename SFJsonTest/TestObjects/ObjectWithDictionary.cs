@@ -5,7 +5,7 @@ namespace SFJsonTest
 {
     public class ObjectWithDictionary
     {
-        public IDictionary<int,int> Dictionary { get; set; }
+        public IDictionary<string,int> Dictionary { get; set; }
     }
     
     public class ObjectWithIEnumerableDictionary

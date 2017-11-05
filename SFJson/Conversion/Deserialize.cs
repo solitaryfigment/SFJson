@@ -36,9 +36,9 @@ namespace SFJson.Conversion
                 var obj = _lastTokenization.GetValue<T>();
                 return obj;
             }
-            catch(DeserializationException)
+            catch(DeserializationException e)
             {
-                throw;
+                throw new DeserializationException(e.Message, _lastTokenization, e.InnerException);
             }
             catch(Exception e)
             {
@@ -69,9 +69,9 @@ namespace SFJson.Conversion
                 var obj = _lastTokenization.GetValue(type);
                 return obj;
             }
-            catch(DeserializationException)
+            catch(DeserializationException e)
             {
-                throw;
+                throw new DeserializationException(e.Message, _lastTokenization, e.InnerException);
             }
             catch(Exception e)
             {
