@@ -12,6 +12,7 @@ namespace SFJson.Tokenization.Tokens
     /// Base class for all token created during the tokenizaiton phase.
     /// </summary>
     /// <seealso cref="JsonCollection"/>
+    /// <seealso cref="JsonDictionary"/>
     /// <seealso cref="JsonObject"/>
     /// <seealso cref="JsonValue"/>
     public abstract class JsonToken

@@ -9,6 +9,7 @@ namespace SFJson.Tokenization.Tokens
     /// to be deserialized.
     /// </summary>
     /// <seealso cref="JsonToken"/>
+    /// <seealso cref="JsonDictionary"/>
     /// <seealso cref="JsonObject"/>
     /// <seealso cref="JsonValue"/>
     public class JsonCollection : JsonToken

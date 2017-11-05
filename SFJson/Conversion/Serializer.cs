@@ -21,15 +21,6 @@ namespace SFJson.Conversion
         private StringBuilder _serialized;
 
         /// <summary>
-        /// <see cref="Serializer.Serialize(object, SerializerSettings)"/>
-        /// </summary>
-        /// <param name="objectToSerialize"></param>
-        public string Serialize(object objectToSerialize)
-        {
-            return Serialize(objectToSerialize, null);
-        }
-
-        /// <summary>
         /// Convets an <c>object</c> to a JSON string.
         /// </summary>
         /// <param name="objectToSerialize"></param>
@@ -38,7 +29,7 @@ namespace SFJson.Conversion
         /// The converted JSON string
         /// </returns>
         /// <exception cref="SerializationException"></exception>
-        public string Serialize(object objectToSerialize, SerializerSettings serializerSettings)
+        public string Serialize(object objectToSerialize, SerializerSettings serializerSettings = null)
         {
             _settingsManager = new SettingsManager { SerializationSettings = serializerSettings };
             _serialized = new StringBuilder();

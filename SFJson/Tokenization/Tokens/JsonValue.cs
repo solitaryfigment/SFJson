@@ -8,6 +8,7 @@ namespace SFJson.Tokenization.Tokens
     /// </summary>
     /// <seealso cref="JsonToken"/>
     /// <seealso cref="JsonCollection"/>
+    /// <seealso cref="JsonDictionary"/>
     /// <seealso cref="JsonObject"/>
     public class JsonValue : JsonToken
     {

@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Attributes\JsonIgnore.cs" />
     <Compile Include="Attributes\JsonNamedValue.cs" />
+    <Compile Include="Conversion\Converter.cs" />
     <Compile Include="Conversion\Deserialize.cs" />
     <Compile Include="Conversion\Serializer.cs" />
     <Compile Include="Conversion\Settings\DeserializerSettings.cs" />

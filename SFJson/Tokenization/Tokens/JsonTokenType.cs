@@ -5,6 +5,6 @@
         Object,
         Collection,
         Value,
-        Dicitonary
+        Dictionary
     }
 }

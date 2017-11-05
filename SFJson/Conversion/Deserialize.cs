@@ -13,6 +13,7 @@ namespace SFJson.Conversion
     {
         private string _stringToDeserialize;
         private JsonToken _lastTokenization;
+        private Tokenizer _tokenizer = new Tokenizer();
 
         /// <summary>
         /// Converts a JSON string to an instance of type <c>T</c>.
@@ -29,8 +30,7 @@ namespace SFJson.Conversion
         /// </exception>
         public T Deserialize<T>(string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
-            _stringToDeserialize = stringToSerialize;
-            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, new SettingsManager { DeserializationSettings = deserializerSettings });
+            Tokenize(stringToSerialize, deserializerSettings);
             try
             {
                 var obj = _lastTokenization.GetValue<T>();
@@ -62,8 +62,7 @@ namespace SFJson.Conversion
         /// </exception>
         public object Deserialize(Type type, string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
-            _stringToDeserialize = stringToSerialize;
-            _lastTokenization = new Tokenizer().Tokenize(_stringToDeserialize, new SettingsManager { DeserializationSettings = deserializerSettings });
+            Tokenize(stringToSerialize, deserializerSettings);
             try
             {
                 var obj = _lastTokenization.GetValue(type);
@@ -77,6 +76,12 @@ namespace SFJson.Conversion
             {
                 throw new DeserializationException("An error occured during deserialization.", _lastTokenization, e);
             }
+        }
+
+        private void Tokenize(string stringToSerialize, DeserializerSettings deserializerSettings = null)
+        {
+            _stringToDeserialize = stringToSerialize;
+            _lastTokenization = _tokenizer.Tokenize(_stringToDeserialize, new SettingsManager { DeserializationSettings = deserializerSettings });
         }
     }
 }

@@ -10,9 +10,11 @@ namespace SFJson.Tokenization
 {
     internal class Tokenizer : Stack<JsonToken>
     {
-        private readonly StringBuilder _tokenText = new StringBuilder();
-        
+        private StringBuilder _tokenText;
         private JsonToken _currentToken;
+        private JsonDictionary _dictionary;
+        private JsonToken _potentialKey;
+        private JsonToken _temp;
         private bool _isQuote;
         private bool _isTokenQuoted;
         private string _tokenName = string.Empty;
@@ -25,7 +27,8 @@ namespace SFJson.Tokenization
         {
             try
             {
-                _tokenText.Length = 0;
+                _tokenText = new StringBuilder();
+                Reset();
                 _jsonString = jsonString;
                 _settingsManager = settingsManager;
                 return Tokenize();
@@ -38,6 +41,20 @@ namespace SFJson.Tokenization
             {
                 throw new TokenizationException(string.Format("Tokenization Error occured on character {0} at position {1}", _currentChar, _index), e);
             }
+        }
+
+        private void Reset()
+        {
+            _tokenName = string.Empty;
+            _isTokenQuoted = false;
+            _isQuote = false;
+            _currentToken = null;
+            _dictionary = null;
+            _potentialKey = null;
+            _temp = null;
+            _tokenText.Length = 0;
+            _index = 0;
+            Clear();
         }
 
         private JsonToken Tokenize()
@@ -59,9 +76,6 @@ namespace SFJson.Tokenization
             }
             return _currentToken;
         }
-
-        private JsonDictionary _dictionary;
-        private JsonToken _potentialKey;
 
         private void SetAsDictionaryToken(JsonToken token)
         {
@@ -96,7 +110,6 @@ namespace SFJson.Tokenization
             }
         }
 
-        private JsonToken _temp;
         private void HandleNextCharacter()
         {
             switch(_currentChar)
@@ -124,10 +137,7 @@ namespace SFJson.Tokenization
                     {
                         StartDictionary();
                     }
-                    else
-                    {
-                        ResetTokenText();
-                    }
+                    ResetTokenText();
                     break;
                 case Constants.COMMA:
                     AddAndParseElement();
@@ -202,16 +212,34 @@ namespace SFJson.Tokenization
 
         private void PushToken<T>() where T : JsonToken, new()
         {
-            T token = new T();
-            token.SettingsManager = _settingsManager;
-            if(Count > 0 &&  _currentToken.JsonTokenType != JsonTokenType.Dicitonary)
-            {
-                _currentToken.Children.Add(token);
-            }
-            token.Name = _tokenName;
+            T token = CreateToken<T>();
+            AddAsChildOfCurrentToken(token);
             _currentToken = token;
             Push(token);
             ResetTokenText();
+        }
+        
+        private void AddAsChildOfCurrentToken(JsonToken token)
+        {
+            if(_currentToken == null)
+            {
+                token.Name = (string.IsNullOrEmpty(token.Name)) ? "ROOT" : token.Name;
+                return;
+            }
+            
+            if(Count > 0 &&  _currentToken.JsonTokenType != JsonTokenType.Dictionary)
+            {
+                
+                _currentToken.Children.Add(token);
+            }
+        }
+
+        private T CreateToken<T>() where T : JsonToken, new()
+        {
+            T token = new T();
+            token.SettingsManager = _settingsManager;
+            token.Name = _tokenName;
+            return token;
         }
 
         private void PopToken<T>()

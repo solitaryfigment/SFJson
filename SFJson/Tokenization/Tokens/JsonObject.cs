@@ -11,6 +11,7 @@ namespace SFJson.Tokenization.Tokens
     /// Represents an object in tokenized form to be deserialized.
     /// </summary>
     /// <seealso cref="JsonToken"/>
+    /// <seealso cref="JsonDictionary"/>
     /// <seealso cref="JsonObject"/>
     /// <seealso cref="JsonValue"/>
     public class JsonObject : JsonToken
