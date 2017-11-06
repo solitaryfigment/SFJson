@@ -72,12 +72,10 @@ namespace SFJsonTest
 
             var strDeserialized = _deserializer.Deserialize<StringObject>(str);
             Assert.IsInstanceOf<StringObject>(strDeserialized);
-            Console.WriteLine(strDeserialized.String);
             Assert.AreEqual("{[This:\"is \"\" a\",string]}", strDeserialized.String);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<StringObject>(strWithType);
             Assert.IsInstanceOf<StringObject>(strWithTypeDeserialized);
-            Console.WriteLine(strWithTypeDeserialized.String);
             Assert.AreEqual("{[This:\"is \"\" a\",string]}", strWithTypeDeserialized.String);
         }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Utils;
@@ -174,6 +175,79 @@ namespace SFJson.Tokenization.Tokens
             }
 
             return obj;
+        }
+
+        public string PrettyPrint()
+        {
+            var stringBuilder = new StringBuilder();
+            InternalPrettyPrint(0, stringBuilder, false);
+            return stringBuilder.ToString();
+        }
+
+        internal virtual void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool f = true)
+        {
+            if(f)
+            {
+                stringBuilder.Append('\n');
+                PrettyPrintIndent(indentLevel, stringBuilder);
+            }
+            if(!string.IsNullOrEmpty(Name))
+            {
+                stringBuilder.Append(Name + " : ");
+            }
+            
+            PrettyPrintControl(false, stringBuilder);
+            for(var index = 0; index < Children.Count; index++)
+            {
+                var token = Children[index];
+                if(index > 0)
+                {
+                    stringBuilder.Append(Constants.COMMA);
+                }
+                token.InternalPrettyPrint(indentLevel + 1, stringBuilder);
+            }
+
+            stringBuilder.Append('\n');
+            PrettyPrintIndent(indentLevel, stringBuilder);
+            PrettyPrintControl(true, stringBuilder);
+        }
+
+        protected void PrettyPrintControl(bool isClose, StringBuilder stringBuilder)
+        {
+            switch(JsonTokenType)
+            {
+                case JsonTokenType.Collection:
+                    if(isClose)
+                    {
+                        stringBuilder.Append(Constants.CLOSE_BRACKET);
+                    }
+                    else
+                    {
+                        stringBuilder.Append(Constants.OPEN_BRACKET);
+                    }
+                    break;
+                case JsonTokenType.Dictionary:
+                case JsonTokenType.Object:
+                    if(isClose)
+                    {
+                        stringBuilder.Append(Constants.CLOSE_CURLY);
+                    }
+                    else
+                    {
+                        stringBuilder.Append(Constants.OPEN_CURLY);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        protected void PrettyPrintIndent(int indentLevel, StringBuilder stringBuilder)
+        {
+            for(var i = 0; i < indentLevel; i++)
+            {
+                stringBuilder.Append("   ");
+            }
         }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
 {
@@ -42,6 +45,31 @@ namespace SFJson.Tokenization.Tokens
             }
             
             return obj;
+        }
+
+        internal override void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool f = false)
+        {
+            stringBuilder.Append('\n');
+            PrettyPrintIndent(indentLevel, stringBuilder);
+            
+            PrettyPrintControl(false, stringBuilder);
+            for(var index = 0; index < Entries.Count; index++)
+            {
+                var key = Entries.Keys.ToArray()[index];
+                var value = Entries.Values.ToArray()[index];
+                if(index > 0)
+                {
+                    stringBuilder.Append(Constants.COMMA);
+                }
+                key.InternalPrettyPrint(indentLevel + 1, stringBuilder);
+                stringBuilder.Append(" : ");
+                value.InternalPrettyPrint(indentLevel + 1, stringBuilder);
+            }
+
+            stringBuilder.Append('\n');
+            PrettyPrintIndent(indentLevel, stringBuilder);
+            PrettyPrintControl(true, stringBuilder);
+            
         }
     }
 }

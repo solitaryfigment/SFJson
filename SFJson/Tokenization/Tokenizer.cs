@@ -224,13 +224,11 @@ namespace SFJson.Tokenization
         {
             if(_currentToken == null)
             {
-                token.Name = (string.IsNullOrEmpty(token.Name)) ? "ROOT" : token.Name;
                 return;
             }
             
             if(Count > 0 &&  _currentToken.JsonTokenType != JsonTokenType.Dictionary)
             {
-                
                 _currentToken.Children.Add(token);
             }
         }
@@ -280,7 +278,7 @@ namespace SFJson.Tokenization
             {
                 _currentToken.Children.Remove(parentToken);
             }
-            var childToAdd = parentToken.Children.FirstOrDefault(c => c.Name == "$type");
+            var childToAdd = parentToken?.Children.FirstOrDefault(c => c.Name == "$type");
             _tokenName = (parentToken != null) ? parentToken.Name : "";
             PushToken<JsonDictionary>();
             _dictionary = _currentToken as JsonDictionary;
@@ -301,19 +299,23 @@ namespace SFJson.Tokenization
 
         private JsonToken ParseElement()
         {
+            if((_currentToken is JsonCollection || _currentToken is JsonDictionary) && _tokenName != "$type")
+            {
+                _tokenName = String.Empty;
+            }
             JsonToken token;
             string tokenText = _tokenText.ToString().ToLower();
             if(tokenText == Constants.FALSE || tokenText == Constants.TRUE)
             {
-                token = new JsonValue(_tokenName, tokenText == Constants.TRUE);
+                token = new JsonValue(_tokenName, tokenText == Constants.TRUE, false);
             }
             else if(tokenText == Constants.NULL)
             {
-                token = new JsonValue(_tokenName, null);
+                token = new JsonValue(_tokenName, null, false);
             }
             else
             {
-                token = new JsonValue(_tokenName, _tokenText.ToString());
+                token = new JsonValue(_tokenName, _tokenText.ToString(), _isTokenQuoted);
             }
             token.SettingsManager = _settingsManager;
             return token;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
@@ -13,16 +14,18 @@ namespace SFJson.Tokenization.Tokens
     public class JsonValue : JsonToken
     {
         private readonly object _value;
+        private readonly bool _isQuoted;
 
         public override JsonTokenType JsonTokenType
         {
             get { return JsonTokenType.Value; }
         }
 
-        public JsonValue(string name, object value)
+        public JsonValue(string name, object value, bool isQuoted)
         {
             Name = name;
             _value = value;
+            _isQuoted = isQuoted;
         }
 
         public override object GetValue(Type type)
@@ -76,6 +79,24 @@ namespace SFJson.Tokenization.Tokens
                 didParse = false;
             }
             return didParse;
+        }
+
+        internal override void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool f = false)
+        {
+            stringBuilder.Append('\n');
+            PrettyPrintIndent(indentLevel, stringBuilder);
+            if(!string.IsNullOrEmpty(Name))
+            {
+                stringBuilder.Append(Name + " : ");
+            }
+            if(_isQuoted)
+            {
+                stringBuilder.Append((_value != null) ? $"\"{_value.ToString()}\"" : "null");
+            }
+            else
+            {
+                stringBuilder.Append((_value != null) ? _value.ToString() : "null");
+            }
         }
     }
 }
