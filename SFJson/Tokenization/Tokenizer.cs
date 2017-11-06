@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
@@ -279,9 +280,15 @@ namespace SFJson.Tokenization
             {
                 _currentToken.Children.Remove(parentToken);
             }
+            var childToAdd = parentToken.Children.FirstOrDefault(c => c.Name == "$type");
             _tokenName = (parentToken != null) ? parentToken.Name : "";
             PushToken<JsonDictionary>();
             _dictionary = _currentToken as JsonDictionary;
+
+            if(childToAdd != null)
+            {
+                _currentToken.Children.Add(childToAdd);
+            }
         }
         
         private void ResetTokenText()

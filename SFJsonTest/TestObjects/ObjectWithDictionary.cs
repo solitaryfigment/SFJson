@@ -20,6 +20,6 @@ namespace SFJsonTest
     
     public class ObjectWithComplexObjectDictionary
     {
-        public Dictionary<ComplexObject, ComplexObject> Dictionary { get; set; }
+        public IDictionary<ComplexObject, ComplexObject> Dictionary { get; set; }
     }
 }
