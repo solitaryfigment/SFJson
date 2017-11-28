@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SFJson.Conversion.Settings;
-using SFJson.Exceptions;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
@@ -106,7 +106,7 @@ namespace SFJson.Tokenization.Tokens
             if(type.IsGenericType && genericTypes.Length == 1 && type.Implements(Type.GetType($"System.Collections.Generic.IEnumerable`1[[{genericTypes[0].AssemblyQualifiedName}]]")))
             {
                 var listType = Type.GetType($"System.Collections.Generic.List`1[[{genericTypes[0].AssemblyQualifiedName}]]");
-                return listType ?? throw new Exception("List type ould not be generated");
+                return listType ?? throw new Exception("List type could not be generated");
             }
             else if(genericTypes.Length == 2 && type.Implements(Type.GetType($"System.Collections.Generic.IDictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]")))
             {
@@ -184,9 +184,9 @@ namespace SFJson.Tokenization.Tokens
             return stringBuilder.ToString();
         }
 
-        internal virtual void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool f = true)
+        internal virtual void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
         {
-            if(f)
+            if(forceIndent)
             {
                 stringBuilder.Append('\n');
                 PrettyPrintIndent(indentLevel, stringBuilder);
@@ -236,8 +236,6 @@ namespace SFJson.Tokenization.Tokens
                     {
                         stringBuilder.Append(Constants.OPEN_CURLY);
                     }
-                    break;
-                default:
                     break;
             }
         }

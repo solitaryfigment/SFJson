@@ -47,7 +47,7 @@ namespace SFJson.Tokenization.Tokens
             return obj;
         }
 
-        internal override void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool f = false)
+        internal override void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
         {
             stringBuilder.Append('\n');
             PrettyPrintIndent(indentLevel, stringBuilder);

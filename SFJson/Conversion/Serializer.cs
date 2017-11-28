@@ -68,7 +68,6 @@ namespace SFJson.Conversion
                 {
                     var s = new SerializerSettings
                     {
-                        PropertyStringEscape = true,
                         DateTimeFormat = _settingsManager.DateTimeFormat,
                         DateTimeOffsetFormat = _settingsManager.DateTimeOffsetFormat,
                         SerializationTypeHandle = _settingsManager.SerializationTypeHandle
@@ -243,14 +242,7 @@ namespace SFJson.Conversion
 
         private void AppendAsString(string value)
         {
-            if(_settingsManager.PropertyStringEscape)
-            {
-                _serialized.AppendFormat("\\\"{0}\\\"", value);
-            }
-            else
-            {
-                _serialized.AppendFormat("\"{0}\"", value);
-            }
+            _serialized.AppendFormat("\"{0}\"", value);
         }
 
         private void AppendType(object obj, SerializationTypeHandle serializationTypeHandle, string appendString = "")

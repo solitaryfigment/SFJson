@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <UseMSBuildEngine>False</UseMSBuildEngine>
-    <LangVersion>7</LangVersion>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,7 +55,7 @@
     <Compile Include="Tokenization\Tokens\JsonTokenType.cs" />
     <Compile Include="Tokenization\Tokens\JsonValue.cs" />
     <Compile Include="Utils\Constants.cs" />
-    <Compile Include="Utils\DefaultHandler.cs" />
+    <Compile Include="Utils\TypeUtilHandler.cs" />
     <Compile Include="Utils\TypeExtension.cs" />
     <Compile Include="Utils\SerializationTypeHandle.cs" />
     <Compile Include="Utils\StringExtension.cs" />

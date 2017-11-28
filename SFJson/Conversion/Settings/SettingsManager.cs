@@ -9,11 +9,6 @@ namespace SFJson.Conversion.Settings
         internal SerializerSettings SerializationSettings { get; set; }
         
         #region Serializer Settings
-
-        internal bool PropertyStringEscape
-        {
-            get { return (SerializationSettings != null) ? SerializationSettings.PropertyStringEscape : false; }
-        }
         
         /// <summary>
         /// <see cref="Utils.SerializationTypeHandle"/>

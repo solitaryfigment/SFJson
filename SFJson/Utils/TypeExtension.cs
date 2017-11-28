@@ -17,7 +17,7 @@ namespace SFJson.Utils
         /// </returns>
         public static object GetDefault(this Type type)
         {
-            return DefaultHandler.DEFAULT_METHOD.MakeGenericMethod(type).Invoke(new DefaultHandler(), null);
+            return TypeUtilHandler.DEFAULT_METHOD.MakeGenericMethod(type).Invoke(new TypeUtilHandler(), null);
         }
 
         /// <summary>
