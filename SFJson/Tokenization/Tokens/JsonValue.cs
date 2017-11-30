@@ -81,7 +81,7 @@ namespace SFJson.Tokenization.Tokens
             return didParse;
         }
 
-        internal override void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
+        internal override void InternalToStringFormatted(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
         {
             stringBuilder.Append('\n');
             PrettyPrintIndent(indentLevel, stringBuilder);

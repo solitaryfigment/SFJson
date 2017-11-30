@@ -77,14 +77,46 @@ namespace SFJson.Tokenization
             }
             return _currentToken;
         }
+        
+        private char NextValidChar()
+        {
+            var index = _index + 1;
+            char c = ' ';
+
+            while(index < _jsonString.Length && IsWhiteSpace(c))
+            {
+                c = _jsonString[index];
+                index++;
+            }
+            
+            return c;
+        }
+        
+        private char PreviousValidChar()
+        {
+            var index = _index - 1;
+            char c = ' ';
+
+            while(index > 0 && IsWhiteSpace(c))
+            {
+                c = _jsonString[index];
+                index--;
+            }
+            
+            return c;
+        }
+
+        private bool IsWhiteSpace(char c)
+        {
+            return Char.IsWhiteSpace(c);
+        }
 
         private void SetAsDictionaryToken(JsonToken token)
         {
             try
             {
-                // TODO: Ignore whitespace
-                var nextChar = _jsonString[_index + 1];
-                var previousChar = _jsonString[_index - 1];
+                char nextChar = NextValidChar();
+                var previousChar = PreviousValidChar();
                 var addThingy = (nextChar == Constants.COLON && _potentialKey == null) || (previousChar == Constants.COLON && _potentialKey != null);
                 if(!addThingy)
                 {
@@ -145,7 +177,10 @@ namespace SFJson.Tokenization
                     ResetTokenText();
                     break;
                 default:
-                    _tokenText.Append(_currentChar);
+                    if(_isQuote || !IsWhiteSpace(_currentChar))
+                    {
+                        _tokenText.Append(_currentChar);
+                    }
                     break;
             }
         }

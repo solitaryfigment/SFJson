@@ -177,14 +177,14 @@ namespace SFJson.Tokenization.Tokens
             return obj;
         }
 
-        public string PrettyPrint()
+        public string ToStringFormatted()
         {
             var stringBuilder = new StringBuilder();
-            InternalPrettyPrint(0, stringBuilder, false);
+            InternalToStringFormatted(0, stringBuilder, false);
             return stringBuilder.ToString();
         }
 
-        internal virtual void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
+        internal virtual void InternalToStringFormatted(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
         {
             if(forceIndent)
             {
@@ -204,7 +204,7 @@ namespace SFJson.Tokenization.Tokens
                 {
                     stringBuilder.Append(Constants.COMMA);
                 }
-                token.InternalPrettyPrint(indentLevel + 1, stringBuilder);
+                token.InternalToStringFormatted(indentLevel + 1, stringBuilder);
             }
 
             stringBuilder.Append('\n');

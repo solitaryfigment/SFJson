@@ -8,6 +8,7 @@ using System.Text;
 using SFJson.Attributes;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
+using SFJson.Tokenization;
 using SFJson.Utils;
 
 namespace SFJson.Conversion
@@ -42,7 +43,14 @@ namespace SFJson.Conversion
                 throw new SerializationException("Error during serialization.", e);
             }
 
-            return _serialized.ToString();
+            if(_settingsManager.FormattedString)
+            {
+                return new Tokenizer().Tokenize(_serialized.ToString(), _settingsManager).ToStringFormatted();
+            }
+            else
+            {
+                return _serialized.ToString();
+            }
         }
 
         private void SerializeObject(object obj)

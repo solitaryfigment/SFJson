@@ -47,10 +47,14 @@ namespace SFJson.Tokenization.Tokens
             return obj;
         }
 
-        internal override void InternalPrettyPrint(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
+        internal override void InternalToStringFormatted(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
         {
             stringBuilder.Append('\n');
             PrettyPrintIndent(indentLevel, stringBuilder);
+            if(!string.IsNullOrEmpty(Name))
+            {
+                stringBuilder.Append(Name + " : ");
+            }
             
             PrettyPrintControl(false, stringBuilder);
             for(var index = 0; index < Entries.Count; index++)
@@ -61,9 +65,9 @@ namespace SFJson.Tokenization.Tokens
                 {
                     stringBuilder.Append(Constants.COMMA);
                 }
-                key.InternalPrettyPrint(indentLevel + 1, stringBuilder);
+                key.InternalToStringFormatted(indentLevel + 1, stringBuilder);
                 stringBuilder.Append(" : ");
-                value.InternalPrettyPrint(indentLevel + 1, stringBuilder);
+                value.InternalToStringFormatted(indentLevel + 1, stringBuilder);
             }
 
             stringBuilder.Append('\n');

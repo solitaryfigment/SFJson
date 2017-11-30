@@ -9,6 +9,11 @@ namespace SFJson.Conversion.Settings
         internal SerializerSettings SerializationSettings { get; set; }
         
         #region Serializer Settings
+
+        internal bool FormattedString
+        {
+            get { return (SerializationSettings != null) ? SerializationSettings.FormattedString : false; }
+        }
         
         /// <summary>
         /// <see cref="Utils.SerializationTypeHandle"/>

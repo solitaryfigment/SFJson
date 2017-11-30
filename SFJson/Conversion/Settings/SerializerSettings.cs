@@ -12,6 +12,8 @@ namespace SFJson.Conversion.Settings
         private string _dateTimeFormat = string.Empty;
         private string _dateTimeOffsetFormat = string.Empty;
         
+        public bool FormattedString { get; set; }
+        
         /// <summary>
         /// Defines when to inject the type handle metadata in the json output.
         /// This is represented with an element <c>"$type"</c>.
