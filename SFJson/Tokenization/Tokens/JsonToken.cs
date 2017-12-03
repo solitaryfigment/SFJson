@@ -76,7 +76,7 @@ namespace SFJson.Tokenization.Tokens
             return returnType ?? type;
         }
 
-        protected object CreateInstance(Type type)
+        protected object CreateInstance(Type type, params object[] args)
         {
             if(type == null)
             {
@@ -91,7 +91,8 @@ namespace SFJson.Tokenization.Tokens
                 return Array.CreateInstance(elementType, list.Children.Count);
             }
 
-            return Activator.CreateInstance(type);
+            
+            return Activator.CreateInstance(type, args);
         }
 
         private Type DetermineTypeFromInterface(Type type)
@@ -193,7 +194,7 @@ namespace SFJson.Tokenization.Tokens
             }
             if(!string.IsNullOrEmpty(Name))
             {
-                stringBuilder.Append(Name + " : ");
+                stringBuilder.Append($"\"{Name}\" : ");
             }
             
             PrettyPrintControl(false, stringBuilder);
@@ -244,7 +245,7 @@ namespace SFJson.Tokenization.Tokens
         {
             for(var i = 0; i < indentLevel; i++)
             {
-                stringBuilder.Append("   ");
+                stringBuilder.Append('\t');
             }
         }
     }

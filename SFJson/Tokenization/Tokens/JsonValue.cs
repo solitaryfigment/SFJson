@@ -87,7 +87,7 @@ namespace SFJson.Tokenization.Tokens
             PrettyPrintIndent(indentLevel, stringBuilder);
             if(!string.IsNullOrEmpty(Name))
             {
-                stringBuilder.Append(Name + " : ");
+                stringBuilder.Append($"\"{Name}\" : ");
             }
             if(_isQuoted)
             {

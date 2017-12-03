@@ -15,10 +15,5 @@ namespace SFJson.Utils
         {
             return default(T);
         }
-
-        internal T ConvertToType<T>(object obj)
-        {
-            return (T)obj;
-        }
     }
 }
