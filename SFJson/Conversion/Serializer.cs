@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -74,12 +72,6 @@ namespace SFJson.Conversion
             {
                 foreach(var key in dictionary.Keys)
                 {
-                    var s = new SerializerSettings
-                    {
-                        DateTimeFormat = _settingsManager.DateTimeFormat,
-                        DateTimeOffsetFormat = _settingsManager.DateTimeOffsetFormat,
-                        SerializationTypeHandle = _settingsManager.SerializationTypeHandle
-                    };
                     AppendSeparator(appendSeparator);
                     SerializeObject(key.GetType(), key);
                     _serialized.Append(Constants.COLON);

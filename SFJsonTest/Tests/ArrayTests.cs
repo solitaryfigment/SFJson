@@ -66,6 +66,50 @@ namespace SFJsonTest
 
         [TestCase(false)]
         [TestCase(true)]
+        public void CanDeserializeStackOfLists(bool formatOutput)
+        {
+            var obj = new Stack<List<int>>();
+            obj.Push(new List<int>{1,2,3});
+            obj.Push(new List<int>{1,2,3});
+            obj.Push(new List<int>{1,2,3});
+            obj.Push(new List<int>{1,2,3});
+            obj.Push(new List<int>{1,2,3});
+
+            var str = _serializer.Serialize(obj, new SerializerSettings() { FormattedString = formatOutput});
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { FormattedString = formatOutput, SerializationTypeHandle = SerializationTypeHandle.All });
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+
+            var strDeserialized = _deserializer.Deserialize<Stack<List<int>>>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<Stack<List<int>>>(strDeserialized);
+            Assert.AreEqual(obj.Count, strDeserialized.Count);
+            for(int i = 0; i < strDeserialized.Count; i++)
+            {
+                Assert.AreEqual(obj.ElementAt(i).Count, strDeserialized.ElementAt(i).Count);
+                for(int j = 0; j < obj.ElementAt(j).Count; j++)
+                {
+                    Assert.AreEqual(obj.ElementAt(i)[j], strDeserialized.ElementAt(i)[j]);
+                }
+            }
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<Stack<List<int>>>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<Stack<List<int>>>(strWithTypeDeserialized);
+            Assert.AreEqual(obj.Count, strWithTypeDeserialized.Count);
+            for(int i = 0; i < strWithTypeDeserialized.Count; i++)
+            {
+                Assert.AreEqual(obj.ElementAt(i).Count, strWithTypeDeserialized.ElementAt(i).Count);
+                for(int j = 0; j < obj.ElementAt(j).Count; j++)
+                {
+                    Assert.AreEqual(obj.ElementAt(i)[j], strWithTypeDeserialized.ElementAt(i)[j]);
+                }
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
         public void CanDeserializeEmptyObjectIntoEmptyArray(bool formatOutput)
         {
             var obj = new Stack<int>();

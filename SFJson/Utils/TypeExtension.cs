@@ -8,6 +8,9 @@ namespace SFJson.Utils
     /// </summary>
     public static class TypeExtension
     {
+        internal static string StackTypeFormat = "System.Collections.Generic.Stack`1[[{0}]], System";
+        internal static string QueueTypeFormat = "System.Collections.Generic.Queue`1[[{0}]], System";
+            
         /// <summary>
         /// Calls <code>default(T)</code> for <paramref name="type"/>
         /// </summary>
@@ -19,7 +22,7 @@ namespace SFJson.Utils
         {
             return TypeUtilHandler.DEFAULT_METHOD.MakeGenericMethod(type).Invoke(new TypeUtilHandler(), null);
         }
-
+        
         /// <summary>
         /// Determine if <paramref name="type"/> implements <paramref name="interfaceType"/>
         /// </summary>
@@ -40,6 +43,18 @@ namespace SFJson.Utils
             return (interfaceType as Type).IsAssignableFrom(type);
         }
 
+        internal static bool IsStack(this Type type)
+        {
+            return type.GetGenericArguments().Length == 1 &&
+                   type.IsAssignableFrom(Type.GetType(string.Format(StackTypeFormat, type.GetGenericArguments()[0].AssemblyQualifiedName)));
+        }
+
+        internal static bool IsQueue(this Type type)
+        {
+            return type.GetGenericArguments().Length == 1 &&
+                   type.IsAssignableFrom(Type.GetType(string.Format(QueueTypeFormat, type.GetGenericArguments()[0].AssemblyQualifiedName)));
+        }
+        
         internal static string GetTypeAsString(this Type type, bool appendAssembly = true)
         {
             var sb = new StringBuilder();
@@ -63,6 +78,11 @@ namespace SFJson.Utils
                 if(type.FullName != null)
                 {
                     sb.AppendFormat("{0}[{1}]", type.FullName.Substring(0, type.FullName.IndexOf('[')), genericStringBuilder);
+                }
+                else
+                {
+                    sb.AppendFormat("{0}[{1}]", type.Name.Substring(0, type.Name.IndexOf('[')), genericStringBuilder);
+                    throw new Exception("What is going on???");
                 }
             }
             else if(type.IsNested)

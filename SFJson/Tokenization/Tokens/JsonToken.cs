@@ -114,10 +114,6 @@ namespace SFJson.Tokenization.Tokens
                 var dictionaryType = Type.GetType($"System.Collections.Generic.Dictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]");
                 return dictionaryType ?? throw new Exception();
             }
-            else if(type.Implements(typeof(IDictionary)))
-            {
-                return typeof(Dictionary<object, object>);
-            }
 
             return type;
         }

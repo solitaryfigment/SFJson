@@ -35,7 +35,7 @@ namespace SFJson.Tokenization.Tokens
             {
                 return GetDictionaryValues(type, obj as IDictionary);
             }
-            else if(type.GetGenericArguments().Length == 1 && type.IsAssignableFrom(Type.GetType($"System.Collections.Generic.Stack`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]], System")))
+            else if(type.IsStack())
             {
                 var list = CreateInstance(Type.GetType($"System.Collections.Generic.List`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]]")) as IList;
                 GetListValues(type, list);
@@ -47,7 +47,7 @@ namespace SFJson.Tokenization.Tokens
                 }
                 obj = CreateInstance(type, list);
             }
-            else if(type.GetGenericArguments().Length == 1 && type.IsAssignableFrom(Type.GetType($"System.Collections.Generic.Queue`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]], System")))
+            else if(type.IsQueue())
             {
                 var list = CreateInstance(Type.GetType($"System.Collections.Generic.List`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]]")) as IList;
                 GetListValues(type, list);

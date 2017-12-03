@@ -38,7 +38,8 @@ namespace SFJson.Conversion
             }
             catch(DeserializationException e)
             {
-                throw new DeserializationException(e.Message, _lastTokenization, e.InnerException);
+                e.Token = _lastTokenization;
+                throw;
             }
             catch(Exception e)
             {
@@ -70,7 +71,8 @@ namespace SFJson.Conversion
             }
             catch(DeserializationException e)
             {
-                throw new DeserializationException(e.Message, _lastTokenization, e.InnerException);
+                e.Token = _lastTokenization;
+                throw;
             }
             catch(Exception e)
             {
