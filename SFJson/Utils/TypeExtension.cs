@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Text;
 
 namespace SFJson.Utils
@@ -10,7 +11,16 @@ namespace SFJson.Utils
     {
         internal static string StackTypeFormat = "System.Collections.Generic.Stack`1[[{0}]], System";
         internal static string QueueTypeFormat = "System.Collections.Generic.Queue`1[[{0}]], System";
-            
+        public static void Reverse(this IList list)
+        {
+            for(var i = 0; i < list.Count; i++)
+            {
+                var element = list[i];
+                list.RemoveAt(i);
+                list.Insert(0,element);
+            }
+        }
+        
         /// <summary>
         /// Calls <code>default(T)</code> for <paramref name="type"/>
         /// </summary>

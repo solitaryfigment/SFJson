@@ -150,8 +150,9 @@ namespace SFJsonTest
             }
         }
 
-        [Test]
-        public void CanConvertObjectWithComplexObjectDicitonary()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CanConvertObjectWithComplexObjectDicitonary(bool formattedOutput)
         {
             var obj = new ObjectWithComplexObjectDictionary()
             {
@@ -248,8 +249,8 @@ namespace SFJsonTest
                 }
             };
 
-            var str = _serializer.Serialize(obj, new SerializerSettings() {FormattedString = true});
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() {SerializationTypeHandle = SerializationTypeHandle.All,FormattedString = true});
+            var str = _serializer.Serialize(obj, new SerializerSettings() {FormattedString = formattedOutput});
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() {SerializationTypeHandle = SerializationTypeHandle.All,FormattedString = formattedOutput});
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);

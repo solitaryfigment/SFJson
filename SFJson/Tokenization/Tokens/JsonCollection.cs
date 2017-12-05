@@ -13,7 +13,7 @@ namespace SFJson.Tokenization.Tokens
     /// <seealso cref="JsonDictionary"/>
     /// <seealso cref="JsonObject"/>
     /// <seealso cref="JsonValue"/>
-    public class JsonCollection : JsonToken
+    public class JsonCollection : JsonObject
     {
         /// <summary>
         /// Returns the token type, a collection will always be <c>JsonTokenType.Collection</c>
@@ -27,36 +27,24 @@ namespace SFJson.Tokenization.Tokens
         {
             type = DetermineType(type);
             var obj = CreateInstance(type);
+            
             if(type.Implements(typeof(IDictionary)))
             {
-                obj = GetDictionaryValues(type, obj as IDictionary);
+                return GetDictionaryValues(type, obj as IDictionary);
             }
-            else if(type.IsStack())
+            if(type.Implements(typeof(IList)))
             {
-                var list = CreateInstance(Type.GetType($"System.Collections.Generic.List`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]]")) as IList;
-                GetListValues(type, list);
-                for(var i = 0; i < list.Count; i++)
-                {
-                    var element = list[i];
-                    list.RemoveAt(i);
-                    list.Insert(0,element);
-                }
-                obj = CreateInstance(type, list);
+                return GetListValues(type, obj as IList);
             }
-            else if(type.IsQueue())
+            if(type.IsStack())
             {
-                var list = CreateInstance(Type.GetType($"System.Collections.Generic.List`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]]")) as IList;
-                GetListValues(type, list);
-                obj = CreateInstance(type, list);
+                return GetStackValue(type, true);
             }
-            else if(type.Implements(typeof(IEnumerable)))
+            if(type.IsQueue())
             {
-                obj = GetListValues(type, obj as IList);
+                return GetStackValue(type, false);
             }
-            else
-            {
-                // throw error
-            }
+            
             return obj;
         }
     }

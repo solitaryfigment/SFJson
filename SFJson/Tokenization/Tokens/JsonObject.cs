@@ -31,31 +31,22 @@ namespace SFJson.Tokenization.Tokens
         {
             type = DetermineType(type);
             var obj = CreateInstance(type);
+            
             if(type.Implements(typeof(IDictionary)))
             {
                 return GetDictionaryValues(type, obj as IDictionary);
             }
-            else if(type.IsStack())
-            {
-                var list = CreateInstance(Type.GetType($"System.Collections.Generic.List`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]]")) as IList;
-                GetListValues(type, list);
-                for(var i = 0; i < list.Count; i++)
-                {
-                    var element = list[i];
-                    list.RemoveAt(i);
-                    list.Insert(0,element);
-                }
-                obj = CreateInstance(type, list);
-            }
-            else if(type.IsQueue())
-            {
-                var list = CreateInstance(Type.GetType($"System.Collections.Generic.List`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]]")) as IList;
-                GetListValues(type, list);
-                obj = CreateInstance(type, list);
-            }
-            else if(type.Implements(typeof(IList)))
+            if(type.Implements(typeof(IList)))
             {
                 return GetListValues(type, obj as IList);
+            }
+            if(type.IsStack())
+            {
+                return GetStackValue(type, true);
+            }
+            if(type.IsQueue())
+            {
+                return GetStackValue(type, false);
             }
 
             _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
@@ -68,6 +59,17 @@ namespace SFJson.Tokenization.Tokens
             }
 
             return obj;
+        }
+
+        protected object GetStackValue(Type type, bool reverse)
+        {
+            var list = CreateInstance(Type.GetType($"System.Collections.Generic.List`1[[{type.GetGenericArguments()[0].AssemblyQualifiedName}]]")) as IList;
+            GetListValues(type, list);
+            if(reverse)
+            {
+                list.Reverse();
+            }
+            return CreateInstance(type, list);
         }
 
         private void SetValue(JsonToken child, object obj)
