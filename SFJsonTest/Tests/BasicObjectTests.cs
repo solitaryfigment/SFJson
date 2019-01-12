@@ -162,9 +162,35 @@ namespace SFJsonTest
             
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"Enums\":Test2}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":Test2}", strWithType);
+            Assert.AreEqual("{\"Enums\":\"Test2\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":\"Test2\"}", strWithType);
             
+            var strDeserialized = _deserializer.Deserialize<ObjectWithEnum>(str);
+            
+            Assert.IsTrue(strDeserialized != null);
+            Assert.IsInstanceOf<Enums>(strDeserialized.Enums);
+            Assert.AreEqual(obj.Enums, strDeserialized.Enums);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithEnum>(strWithType);
+            
+            Assert.IsTrue(strWithTypeDeserialized != null);
+            Assert.IsInstanceOf<Enums>(strWithTypeDeserialized.Enums);
+            Assert.AreEqual(obj.Enums, strWithTypeDeserialized.Enums);
+        }
+        
+        [Test]
+        public void CanConvertEnumWithoutQuotes()
+        {
+            var obj = new ObjectWithEnum
+            {
+                Enums = Enums.Test2
+            };
+            
+            var str = "{\"Enums\":Test2}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":Test2}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
             var strDeserialized = _deserializer.Deserialize<ObjectWithEnum>(str);
             
             Assert.IsTrue(strDeserialized != null);

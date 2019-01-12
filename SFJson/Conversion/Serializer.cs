@@ -168,7 +168,11 @@ namespace SFJson.Conversion
             {
                 _serialized.AppendFormat(Constants.NULL);
             }
-            else if(type.IsPrimitive || type.IsEnum || value is decimal)
+            else if(type.IsEnum)
+            {
+                AppendAsString(value.ToString());
+            }
+            else if(type.IsPrimitive || value is decimal)
             {
                 var writeValue = value.ToString();
                 if(value is bool)

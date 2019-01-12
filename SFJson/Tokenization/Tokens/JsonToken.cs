@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using SFJson.Conversion.Settings;
 using SFJson.Utils;
@@ -90,7 +91,6 @@ namespace SFJson.Tokenization.Tokens
                 list = list ?? this;
                 return Array.CreateInstance(elementType, list.Children.Count);
             }
-
             
             return Activator.CreateInstance(type, args);
         }
@@ -101,7 +101,12 @@ namespace SFJson.Tokenization.Tokens
 
             if(!type.IsGenericType && type.Implements(typeof(IEnumerable)))
             {
-                throw new TypeLoadException("Could not determine underlying type, try using the generic counterpart");
+                if(type.Implements(typeof(IDictionary)))
+                {
+                    return typeof(Dictionary<Object, Object>);
+                }
+
+                return typeof(List<Object>);
             }
 
             if(type.IsGenericType && genericTypes.Length == 1 && type.Implements(Type.GetType($"System.Collections.Generic.IEnumerable`1[[{genericTypes[0].AssemblyQualifiedName}]]")))
@@ -109,12 +114,17 @@ namespace SFJson.Tokenization.Tokens
                 var listType = Type.GetType($"System.Collections.Generic.List`1[[{genericTypes[0].AssemblyQualifiedName}]]");
                 return listType ?? throw new Exception("List type could not be generated");
             }
-            else if(genericTypes.Length == 2 && type.Implements(Type.GetType($"System.Collections.Generic.IDictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]")))
+            
+            if(genericTypes.Length == 2 && type.Implements(Type.GetType($"System.Collections.Generic.IDictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]")))
             {
                 var dictionaryType = Type.GetType($"System.Collections.Generic.Dictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]");
-                return dictionaryType ?? throw new Exception();
+                return dictionaryType ?? throw new TypeLoadException("Could not determine underlying type, try using the generic counterpart");
             }
 
+            if(type.IsInterface)
+            {
+                throw new TypeLoadException("Could not determine underlying type, try using the generic counterpart");
+            }
             return type;
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using SFJson.Utils;
 
 namespace SFJson.Conversion.Settings
@@ -104,11 +105,18 @@ namespace SFJson.Conversion.Settings
         /// <returns></returns>
         internal Type TryGetTypeBinding(Type type)
         {
+            Type returnType = null;
             if(DeserializationSettings != null)
             {
-                return DeserializationSettings.TypeBindings.TryGetValue(type);
+                returnType = DeserializationSettings.TypeBindings.TryGetValue(type);
             }
-            return GlobalSettings.DeserializationSettings.TypeBindings.TryGetValue(type);
+
+            if(returnType == null)
+            {
+                returnType = GlobalSettings.DeserializationSettings.TypeBindings.TryGetValue(type);
+            }
+
+            return returnType;
         }      
 
         #endregion

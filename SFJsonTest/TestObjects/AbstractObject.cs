@@ -18,7 +18,11 @@ namespace SFJsonTest
         public SimpleObject ObjectImplementingAbstractClass { get; set; }
     }
 
-    public class SimpleBaseObject
+    public interface ISimpleBaseObject
+    {
+        int BasePropInt { get; set; }
+    }
+    public class SimpleBaseObject : ISimpleBaseObject
     {
         public int BaseFieldInt;
         public int BasePropInt { get; set; }

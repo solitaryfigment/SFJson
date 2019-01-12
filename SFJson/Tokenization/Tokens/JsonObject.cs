@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using SFJson.Attributes;
@@ -47,6 +48,12 @@ namespace SFJson.Tokenization.Tokens
             if(type.IsQueue())
             {
                 return GetStackValue(type, false);
+            }
+
+            if(type == typeof(System.Object))
+            {
+                obj = new Dictionary<string, Object>();
+                return GetDictionaryValues(obj.GetType(), obj as IDictionary);
             }
 
             _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
