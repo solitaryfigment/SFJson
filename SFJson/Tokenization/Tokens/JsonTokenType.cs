@@ -1,9 +1,10 @@
 ﻿namespace SFJson.Tokenization.Tokens
 {
-    public enum JsonType
+    public enum JsonTokenType
     {
         Object,
         Collection,
-        Value
+        Value,
+        Dictionary
     }
 }

@@ -36,3 +36,6 @@ Thumbs.db
 Builds/
 bin
 .idea
+html
+latex
+Doxyfile

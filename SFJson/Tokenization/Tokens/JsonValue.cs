@@ -1,31 +1,41 @@
 ﻿using System;
+using System.Text;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
 {
+    /// <summary>
+    /// Represents an object in tokenized form to be deserialized.
+    /// </summary>
+    /// <seealso cref="JsonToken"/>
+    /// <seealso cref="JsonCollection"/>
+    /// <seealso cref="JsonDictionary"/>
+    /// <seealso cref="JsonObject"/>
     public class JsonValue : JsonToken
     {
-        private object _value;
-        
-        public override JsonType JsonType
+        private readonly object _value;
+        private readonly bool _isQuoted;
+
+        public override JsonTokenType JsonTokenType
         {
-            get { return JsonType.Value; }
+            get { return JsonTokenType.Value; }
         }
 
-        public JsonValue(string name, object value)
+        public JsonValue(string name, object value, bool isQuoted)
         {
             Name = name;
             _value = value;
+            _isQuoted = isQuoted;
         }
 
         public override object GetValue(Type type)
         {
             object value;
-            if (_value == null && OnNullValue != null)
+            if(_value == null && OnNullValue != null)
             {
                 value = OnNullValue(type);
             }
-            else if (_value == null && type.IsValueType)
+            else if(_value == null && type.IsValueType)
             {
                 value = type.GetDefault();
             }
@@ -38,10 +48,9 @@ namespace SFJson.Tokenization.Tokens
 
         private bool TryParseValue(Type type, out object value)
         {
-            bool didParse = true;
+            var didParse = true;
             value = null;
-            
-            if (_value == null)
+            if(_value == null)
             {
                 didParse = false;
             }
@@ -57,7 +66,7 @@ namespace SFJson.Tokenization.Tokens
             {
                 value = TimeSpan.Parse((string)_value);
             }
-            else if (type == typeof(Type))
+            else if(type == typeof(Type))
             {
                 value = Type.GetType(_value.ToString());
             }
@@ -70,6 +79,24 @@ namespace SFJson.Tokenization.Tokens
                 didParse = false;
             }
             return didParse;
+        }
+
+        internal override void InternalToStringFormatted(int indentLevel, StringBuilder stringBuilder, bool forceIndent = true)
+        {
+            stringBuilder.Append('\n');
+            PrettyPrintIndent(indentLevel, stringBuilder);
+            if(!string.IsNullOrEmpty(Name))
+            {
+                stringBuilder.Append($"\"{Name}\" : ");
+            }
+            if(_isQuoted)
+            {
+                stringBuilder.Append((_value != null) ? $"\"{_value.ToString()}\"" : "null");
+            }
+            else
+            {
+                stringBuilder.Append((_value != null) ? _value.ToString() : "null");
+            }
         }
     }
 }

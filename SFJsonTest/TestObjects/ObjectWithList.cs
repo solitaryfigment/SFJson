@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace SFJsonTest
 {
     public class ObjectWithList
     {
         public List<int> List { get; set; }
+    }
+    
+    public class ObjectWithIEnumerable
+    {
+        public IEnumerable<int> List { get; set; }
     }
     
     public class ObjectWithListOfObjects

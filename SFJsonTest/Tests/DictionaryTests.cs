@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using SFJson;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
 namespace SFJsonTest
@@ -22,25 +23,69 @@ namespace SFJsonTest
         }
         
         [Test]
+        public void CanDeserializeEmptyObjectIntoEmptyDictionary()
+        {
+            var str = "{\"Dictionary\":{}}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32, mscorlib]], mscorlib\"}}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strDeserialized);
+            Assert.NotNull(strDeserialized.Dictionary);
+            Assert.AreEqual(0, strDeserialized.Dictionary.Count);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.Dictionary);
+            Assert.AreEqual(0, strWithTypeDeserialized.Dictionary.Count);
+        }
+        
+        [Test]
+        public void CanDeserializeEmptyArrayIntoEmptyDictionary()
+        {
+            var str = "{\"Dictionary\":[]}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":[\"$type\":\"System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32, mscorlib]], mscorlib\"]}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strDeserialized);
+            Assert.NotNull(strDeserialized.Dictionary);
+            Assert.AreEqual(0, strDeserialized.Dictionary.Count);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithDictionary>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.Dictionary);
+            Assert.AreEqual(0, strWithTypeDeserialized.Dictionary.Count);
+        }
+        
+        [Test]
         public void CanConvertObjectWithDicitonary()
         {
-            var obj = new ObjectWithDictionary()
+            var obj = new ObjectWithDictionary
             {
-                Dictionary = new Dictionary<int, int>
+                Dictionary = new Dictionary<string, int>
                 {
-                    {1, 2},
-                    {3, 4},
-                    {5, 6}
+                    {"1", 2},
+                    {"3", 4},
+                    {"5", 6}
                 }
             };
             
-            var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var str = _serializer.Serialize(obj, new SerializerSettings() {FormattedString = false});
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All, FormattedString = false });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"Dictionary\":{\"1\":2,\"3\":4,\"5\":6}}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib\",\"1\":2,\"3\":4,\"5\":6}}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32, mscorlib]], mscorlib\",\"1\":2,\"3\":4,\"5\":6}}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(str);
             Assert.NotNull(strDeserialized);
@@ -80,15 +125,16 @@ namespace SFJsonTest
             };
 
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() {TypeHandler = TypeHandler.All});
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() {SerializationTypeHandle = SerializationTypeHandle.All});
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
 
-            Assert.AreEqual("{\"Dictionary\":{\"{}\":{},\"{}\":{},\"{}\":{}}}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithObjectDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[SFJsonTest.SimpleTestObject, SFJsonTest],[SFJsonTest.SimpleTestObject, SFJsonTest]], mscorlib\",\"{\\\"$type\\\":\\\"SFJsonTest.SimpleTestObject, SFJsonTest\\\"}\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"{\\\"$type\\\":\\\"SFJsonTest.SimpleTestObject, SFJsonTest\\\"}\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"{\\\"$type\\\":\\\"SFJsonTest.SimpleTestObject, SFJsonTest\\\"}\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}}}", strWithType);
+            Assert.AreEqual("{\"Dictionary\":{{}:{},{}:{},{}:{}}}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithObjectDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[SFJsonTest.SimpleTestObject, SFJsonTest],[SFJsonTest.SimpleTestObject, SFJsonTest]], mscorlib\",{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}:{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}:{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}:{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"}}}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<ObjectWithObjectDictionary>(str);
+            Assert.AreEqual(obj.Dictionary.Count, strDeserialized.Dictionary.Count);
             foreach(var kvp in strDeserialized.Dictionary)
             {
                 Assert.IsInstanceOf<SimpleTestObject>(kvp.Key);
@@ -96,6 +142,7 @@ namespace SFJsonTest
             }
             
             var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithObjectDictionary>(str);
+            Assert.AreEqual(obj.Dictionary.Count, strWithTypeDeserialized.Dictionary.Count);
             foreach(var kvp in strWithTypeDeserialized.Dictionary)
             {
                 Assert.IsInstanceOf<SimpleTestObject>(kvp.Key);
@@ -103,8 +150,9 @@ namespace SFJsonTest
             }
         }
 
-        [Test]
-        public void CanConvertObjectWithComplexObjectDicitonary()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CanConvertObjectWithComplexObjectDicitonary(bool formattedOutput)
         {
             var obj = new ObjectWithComplexObjectDictionary()
             {
@@ -201,18 +249,22 @@ namespace SFJsonTest
                 }
             };
 
-            var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() {TypeHandler = TypeHandler.All});
+            var str = _serializer.Serialize(obj, new SerializerSettings() {FormattedString = formattedOutput});
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() {SerializationTypeHandle = SerializationTypeHandle.All,FormattedString = formattedOutput});
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
 
-            Assert.AreEqual("{\"Dictionary\":{\"{\\\"Inner\\\":{\\\"Inner\\\":{\\\"Inner\\\":null}},\\\"SimpleTestObject\\\":{},\\\"SimpleTestObjectWithProperties\\\":{\\\"FieldInt\\\":20,\\\"TestInt\\\":10},\\\"PrimitiveHolder\\\":{\\\"PropBool\\\":false,\\\"PropDouble\\\":100.1,\\\"PropFloat\\\":1.1,\\\"PropInt\\\":25,\\\"PropString\\\":\\\"First\\\"}}\":{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}},\"{\\\"Inner\\\":{\\\"Inner\\\":{\\\"Inner\\\":null}},\\\"SimpleTestObject\\\":{},\\\"SimpleTestObjectWithProperties\\\":{\\\"FieldInt\\\":20,\\\"TestInt\\\":10},\\\"PrimitiveHolder\\\":{\\\"PropBool\\\":false,\\\"PropDouble\\\":100.1,\\\"PropFloat\\\":1.1,\\\"PropInt\\\":25,\\\"PropString\\\":\\\"First\\\"}}\":{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}}}}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithComplexObjectDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[SFJsonTest.ComplexObject, SFJsonTest],[SFJsonTest.ComplexObject, SFJsonTest]], mscorlib\",\"{\\\"$type\\\":\\\"SFJsonTest.ComplexObject, SFJsonTest\\\",\\\"Inner\\\":{\\\"$type\\\":\\\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\\\",\\\"Inner\\\":{\\\"$type\\\":\\\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\\\",\\\"Inner\\\":null}},\\\"SimpleTestObject\\\":{\\\"$type\\\":\\\"SFJsonTest.SimpleTestObject, SFJsonTest\\\"},\\\"SimpleTestObjectWithProperties\\\":{\\\"$type\\\":\\\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\\\",\\\"FieldInt\\\":20,\\\"TestInt\\\":10},\\\"PrimitiveHolder\\\":{\\\"$type\\\":\\\"SFJsonTest.PrimitiveHolder, SFJsonTest\\\",\\\"PropBool\\\":false,\\\"PropDouble\\\":100.1,\\\"PropFloat\\\":1.1,\\\"PropInt\\\":25,\\\"PropString\\\":\\\"First\\\"}}\":{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}},\"{\\\"$type\\\":\\\"SFJsonTest.ComplexObject, SFJsonTest\\\",\\\"Inner\\\":{\\\"$type\\\":\\\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\\\",\\\"Inner\\\":{\\\"$type\\\":\\\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\\\",\\\"Inner\\\":null}},\\\"SimpleTestObject\\\":{\\\"$type\\\":\\\"SFJsonTest.SimpleTestObject, SFJsonTest\\\"},\\\"SimpleTestObjectWithProperties\\\":{\\\"$type\\\":\\\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\\\",\\\"FieldInt\\\":20,\\\"TestInt\\\":10},\\\"PrimitiveHolder\\\":{\\\"$type\\\":\\\"SFJsonTest.PrimitiveHolder, SFJsonTest\\\",\\\"PropBool\\\":false,\\\"PropDouble\\\":100.1,\\\"PropFloat\\\":1.1,\\\"PropInt\\\":25,\\\"PropString\\\":\\\"First\\\"}}\":{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}}}}", strWithType);
-            
+            if(!formattedOutput)
+            {
+                Assert.AreEqual("{\"Dictionary\":{{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"FieldInt\":20,\"TestInt\":10},\"PrimitiveHolder\":{\"PropBool\":false,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"First\"}}:{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}},{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"FieldInt\":20,\"TestInt\":10},\"PrimitiveHolder\":{\"PropBool\":false,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"First\"}}:{\"Inner\":{\"Inner\":{\"Inner\":null}},\"SimpleTestObject\":{},\"SimpleTestObjectWithProperties\":{\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}}}}",str);
+                Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithComplexObjectDictionary, SFJsonTest\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[SFJsonTest.ComplexObject, SFJsonTest],[SFJsonTest.ComplexObject, SFJsonTest]], mscorlib\",{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":20,\"TestInt\":10},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":false,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"First\"}}:{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}},{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":20,\"TestInt\":10},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":false,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"First\"}}:{\"$type\":\"SFJsonTest.ComplexObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":{\"$type\":\"SFJsonTest.SelfReferencedSimpleObject, SFJsonTest\",\"Inner\":null}},\"SimpleTestObject\":{\"$type\":\"SFJsonTest.SimpleTestObject, SFJsonTest\"},\"SimpleTestObjectWithProperties\":{\"$type\":\"SFJsonTest.SimpleTestObjectWithProperties, SFJsonTest\",\"FieldInt\":30,\"TestInt\":5},\"PrimitiveHolder\":{\"$type\":\"SFJsonTest.PrimitiveHolder, SFJsonTest\",\"PropBool\":false,\"PropDouble\":2.1,\"PropFloat\":5.1,\"PropInt\":45,\"PropString\":\"Second\"}}}}",strWithType);
+            }
+
             var strDeserialized = _deserializer.Deserialize<ObjectWithComplexObjectDictionary>(str);
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<ObjectWithComplexObjectDictionary>(strDeserialized);
+            Assert.NotNull(strDeserialized.Dictionary);
             Assert.AreEqual(obj.Dictionary.Count, strDeserialized.Dictionary.Count);
             var objKeys = obj.Dictionary.Keys.ToArray();
             var strDeserializedKeys = strDeserialized.Dictionary.Keys.ToArray();

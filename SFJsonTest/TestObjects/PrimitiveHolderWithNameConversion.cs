@@ -1,24 +1,18 @@
-﻿using Newtonsoft.Json;
-using SFJson.Attributes;
+﻿using SFJson.Attributes;
 
 namespace SFJsonTest
 {
     public class PrimitiveHolderWithNameConversion
     {
-        [JsonValueName("b")]
-        [JsonProperty("b")]
+        [JsonNamedValue("b")]
         public bool PropBool { get; set; }
-        [JsonValueName("d")]
-        [JsonProperty("d")]
+        [JsonNamedValue("d")]
         public double PropDouble { get; set; }
-        [JsonValueName("f")]
-        [JsonProperty("f")]
+        [JsonNamedValue("f")]
         public float PropFloat { get; set; }
-        [JsonValueName("i")]
-        [JsonProperty("i")]
+        [JsonNamedValue("i")]
         public int PropInt { get; set; }
-        [JsonValueName("s")]
-        [JsonProperty("s")]
+        [JsonNamedValue("s")]
         public string PropString { get; set; }
     }
 }

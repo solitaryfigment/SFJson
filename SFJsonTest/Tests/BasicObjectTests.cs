@@ -2,6 +2,7 @@ using System;
 using NUnit.Framework;
 using SFJson;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
 namespace SFJsonTest
@@ -40,7 +41,7 @@ namespace SFJsonTest
         {
             var obj = new SimpleTestObject();
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -62,7 +63,7 @@ namespace SFJsonTest
             var obj = new StringObject();
             obj.String = "{[This:\"is \"\" a\",string]}";
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -71,12 +72,10 @@ namespace SFJsonTest
 
             var strDeserialized = _deserializer.Deserialize<StringObject>(str);
             Assert.IsInstanceOf<StringObject>(strDeserialized);
-            Console.WriteLine(strDeserialized.String);
             Assert.AreEqual("{[This:\"is \"\" a\",string]}", strDeserialized.String);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<StringObject>(strWithType);
             Assert.IsInstanceOf<StringObject>(strWithTypeDeserialized);
-            Console.WriteLine(strWithTypeDeserialized.String);
             Assert.AreEqual("{[This:\"is \"\" a\",string]}", strWithTypeDeserialized.String);
         }
 
@@ -93,7 +92,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -129,7 +128,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -159,13 +158,39 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
             
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"Enums\":Test2}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":Test2}", strWithType);
+            Assert.AreEqual("{\"Enums\":\"Test2\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":\"Test2\"}", strWithType);
             
+            var strDeserialized = _deserializer.Deserialize<ObjectWithEnum>(str);
+            
+            Assert.IsTrue(strDeserialized != null);
+            Assert.IsInstanceOf<Enums>(strDeserialized.Enums);
+            Assert.AreEqual(obj.Enums, strDeserialized.Enums);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithEnum>(strWithType);
+            
+            Assert.IsTrue(strWithTypeDeserialized != null);
+            Assert.IsInstanceOf<Enums>(strWithTypeDeserialized.Enums);
+            Assert.AreEqual(obj.Enums, strWithTypeDeserialized.Enums);
+        }
+        
+        [Test]
+        public void CanConvertEnumWithoutQuotes()
+        {
+            var obj = new ObjectWithEnum
+            {
+                Enums = Enums.Test2
+            };
+            
+            var str = "{\"Enums\":Test2}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithEnum, SFJsonTest\",\"Enums\":Test2}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
             var strDeserialized = _deserializer.Deserialize<ObjectWithEnum>(str);
             
             Assert.IsTrue(strDeserialized != null);
@@ -188,7 +213,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
             
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -215,7 +240,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -244,7 +269,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -271,7 +296,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -307,7 +332,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);

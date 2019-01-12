@@ -1,12 +1,23 @@
 using System;
 using NUnit.Framework;
-using SFJson;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Utils;
+using GlobalSettings = SFJson.Conversion.Settings.GlobalSettings;
 
 namespace SFJsonTest
 {
+    public interface ITestObject
+    {
+        int Integer { get; set; }
+    }
+
+    public class TestObject : ITestObject
+    {
+        public int Integer { get; set; }
+    }
+    
     [TestFixture]
     public class InterfaceTests
     {
@@ -19,7 +30,56 @@ namespace SFJsonTest
             _deserializer = new Deserializer();
             _serializer = new Serializer();
         }
-        
+
+        [Test]
+        public void CanConvertInterfaceWithDeserializerBinding()
+        {
+            GlobalSettings.DeserializationSettings.TypeBindings.Remove<ITestObject>();
+
+            var deserializerSettings = new DeserializerSettings();
+            deserializerSettings.TypeBindings.Add<ITestObject, TestObject>();
+            
+            var str = "{\"Integer\":12}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ITestObject, SFJsonTest\",\"Integer\":12}";
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ITestObject>(str, deserializerSettings);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<TestObject>(strDeserialized);
+            Assert.AreEqual(12, strDeserialized.Integer);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ITestObject>(strWithType, deserializerSettings);
+            Console.WriteLine(_serializer.Serialize(strWithTypeDeserialized));
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<TestObject>(strWithTypeDeserialized);
+            Assert.AreEqual(12, strWithTypeDeserialized.Integer);
+        }
+
+        [Test]
+        public void CanConvertInterfaceWithGlobalBinding()
+        {
+            GlobalSettings.DeserializationSettings.TypeBindings.Add<ITestObject, TestObject>();
+            
+            var str = "{\"Integer\":12}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ITestObject, SFJsonTest\",\"Integer\":12}";
+
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ITestObject>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<TestObject>(strDeserialized);
+            Assert.AreEqual(12, strDeserialized.Integer);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ITestObject>(strWithType);
+            Console.WriteLine(_serializer.Serialize(strWithTypeDeserialized));
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<TestObject>(strWithTypeDeserialized);
+            Assert.AreEqual(12, strWithTypeDeserialized.Integer);
+        }
+
         [Test]
         public void CanConvertObjectWithInterface()
         {
@@ -33,7 +93,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -63,7 +123,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);

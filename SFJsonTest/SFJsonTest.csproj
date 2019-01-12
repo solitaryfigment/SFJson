@@ -11,7 +11,7 @@
     <AssemblyName>SFJsonTest</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <LangVersion>6</LangVersion>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,15 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\..\..\UnityProjects\GraveDefense\GraveDefense\Assets\_Libraries\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
       <HintPath>..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\Applications\Unity\Hub\Editor\2018.3.1f1\Unity.app\Contents\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +60,7 @@
     <Compile Include="TestObjects\SimpleTestObject.cs" />
     <Compile Include="TestObjects\SimpleTestObjectWithProperties.cs" />
     <Compile Include="TestObjects\DateTimeObject.cs" />
+    <Compile Include="TestObjects\StructObject.cs" />
     <Compile Include="Tests\AbstractTests.cs" />
     <Compile Include="Tests\ArrayTests.cs" />
     <Compile Include="Tests\CompatabilityTests.cs" />
@@ -78,12 +77,13 @@
     <Compile Include="Tests\NameConversionTests.cs" />
     <Compile Include="Tests\NestedObjectTests.cs" />
     <Compile Include="Tests\GenericTests.cs" />
+    <Compile Include="Tests\StructTests.cs" />
     <Compile Include="Tests\TimeObjectTests.cs" />
     <Compile Include="Tests\TypeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SFJson\SFJson.csproj">
-      <Project>{8677B2F4-17E7-499E-B7B9-D8FF536F5CEE}</Project>
+      <Project>{8677b2f4-17e7-499e-b7b9-d8ff536f5cee}</Project>
       <Name>SFJson</Name>
     </ProjectReference>
   </ItemGroup>

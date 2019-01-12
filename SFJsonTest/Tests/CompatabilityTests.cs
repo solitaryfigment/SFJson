@@ -1,8 +1,9 @@
 using System;
-using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
-using SFJson;
 using SFJson.Conversion;
+using SFJson.Exceptions;
 
 namespace SFJsonTest
 {
@@ -11,96 +12,89 @@ namespace SFJsonTest
     {
         private Serializer _serializer;
         private Deserializer _deserializer;
-        private JsonSerializerSettings _newtonsoftSettings;
 
         [OneTimeSetUp]
         public void Init()
         {
             _deserializer = new Deserializer();
             _serializer = new Serializer();
-            
-            _newtonsoftSettings = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            };
         }
 
+        // TODO: More tests: 
+        //    IList
+        //    IEnumerable
+        //    Random interface type
         [Test]
-        public void Primitives()
+        public void IDictionaryTest()
         {
-            var obj = new PrimitiveHolder()
+            IDictionary obj = new Dictionary<int, SimpleBaseObject>
             {
-                PropBool = true,
-                PropDouble = 100.1,
-                PropFloat = 1.1f,
-                PropInt = 25,
-                PropString = "1"
+                {1, new SimpleBaseObject { BaseFieldInt = 1, BasePropInt = 3 }},
+                {2, new SimpleBaseObject { BaseFieldInt = 2, BasePropInt = 4 }}
             };
             
-//            var strNS = _serializer.Serialize(obj);
-//            var strWithTypeNS = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
-            var strNS = JsonConvert.SerializeObject(obj);
-            var strWithTypeNS = JsonConvert.SerializeObject(obj, _newtonsoftSettings);
+            var str = _serializer.Serialize(obj);
             
-            Console.WriteLine(strNS);
-            Console.WriteLine(strWithTypeNS);
-            
-            var deserializedNSToSF = _deserializer.Deserialize<PrimitiveHolder>(strNS);
-            Assert.NotNull(deserializedNSToSF);
-            Assert.IsInstanceOf<PrimitiveHolder>(deserializedNSToSF);
-            Assert.AreEqual(obj.PropBool, deserializedNSToSF.PropBool);
-            Assert.AreEqual(obj.PropDouble, deserializedNSToSF.PropDouble);
-            Assert.AreEqual(obj.PropFloat, deserializedNSToSF.PropFloat);
-            Assert.AreEqual(obj.PropInt, deserializedNSToSF.PropInt);
-            Assert.AreEqual(obj.PropString, deserializedNSToSF.PropString);
-            
-            var deserializedWithTypeNSToSF = _deserializer.Deserialize<PrimitiveHolder>(strWithTypeNS);
-            Assert.NotNull(deserializedWithTypeNSToSF);
-            Assert.IsInstanceOf<PrimitiveHolder>(deserializedWithTypeNSToSF);
-            Assert.AreEqual(obj.PropBool, deserializedWithTypeNSToSF.PropBool);
-            Assert.AreEqual(obj.PropDouble, deserializedWithTypeNSToSF.PropDouble);
-            Assert.AreEqual(obj.PropFloat, deserializedWithTypeNSToSF.PropFloat);
-            Assert.AreEqual(obj.PropInt, deserializedWithTypeNSToSF.PropInt);
-            Assert.AreEqual(obj.PropString, deserializedWithTypeNSToSF.PropString);
-        }
+            Console.WriteLine(str);
 
+            IDictionary strDeserialized = _deserializer.Deserialize<IDictionary>(str);
+
+            var reserialized = _serializer.Serialize(strDeserialized);
+            Console.WriteLine(reserialized);
+            Assert.AreEqual("{\"1\":{\"BaseFieldInt\":\"1\",\"BasePropInt\":\"3\"},\"2\":{\"BaseFieldInt\":\"2\",\"BasePropInt\":\"4\"}}", reserialized);
+        }
+        
         [Test]
-        public void NameConversionCompatability()
+        public void IListTest()
         {
-            var obj = new PrimitiveHolderWithNameConversion()
+            IList obj = new List<SimpleBaseObject>
             {
-                PropBool = true,
-                PropDouble = 100.1,
-                PropFloat = 1.1f,
-                PropInt = 25,
-                PropString = "1"
+                new SimpleBaseObject { BaseFieldInt = 1, BasePropInt = 3 },
+                new SimpleBaseObject { BaseFieldInt = 2, BasePropInt = 4 }
             };
             
-//            var strNS = _serializer.Serialize(obj);
-//            var strWithTypeNS = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
-            var strNS = JsonConvert.SerializeObject(obj);
-            var strWithTypeNS = JsonConvert.SerializeObject(obj, _newtonsoftSettings);
+            var str = _serializer.Serialize(obj);
             
-            Console.WriteLine(strNS);
-            Console.WriteLine(strWithTypeNS);
+            Console.WriteLine(str);
+
+            IList strDeserialized = _deserializer.Deserialize<IList>(str);
+
+            var reserialized = _serializer.Serialize(strDeserialized);
+            Console.WriteLine(reserialized);
+            Assert.AreEqual("[{\"BaseFieldInt\":\"1\",\"BasePropInt\":\"3\"},{\"BaseFieldInt\":\"2\",\"BasePropInt\":\"4\"}]", reserialized);
+        }
+        
+        [Test]
+        public void LoneInterfaceFailsTest()
+        {
+            var obj = new SimpleBaseObject {BaseFieldInt = 1, BasePropInt = 3};
             
-            var deserializedNSToSF = _deserializer.Deserialize<PrimitiveHolderWithNameConversion>(strNS);
-            Assert.NotNull(deserializedNSToSF);
-            Assert.IsInstanceOf<PrimitiveHolderWithNameConversion>(deserializedNSToSF);
-            Assert.AreEqual(obj.PropBool, deserializedNSToSF.PropBool);
-            Assert.AreEqual(obj.PropDouble, deserializedNSToSF.PropDouble);
-            Assert.AreEqual(obj.PropFloat, deserializedNSToSF.PropFloat);
-            Assert.AreEqual(obj.PropInt, deserializedNSToSF.PropInt);
-            Assert.AreEqual(obj.PropString, deserializedNSToSF.PropString);
+            var str = _serializer.Serialize(obj);
             
-            var deserializedWithTypeNSToSF = _deserializer.Deserialize<PrimitiveHolderWithNameConversion>(strWithTypeNS);
-            Assert.NotNull(deserializedWithTypeNSToSF);
-            Assert.IsInstanceOf<PrimitiveHolderWithNameConversion>(deserializedWithTypeNSToSF);
-            Assert.AreEqual(obj.PropBool, deserializedWithTypeNSToSF.PropBool);
-            Assert.AreEqual(obj.PropDouble, deserializedWithTypeNSToSF.PropDouble);
-            Assert.AreEqual(obj.PropFloat, deserializedWithTypeNSToSF.PropFloat);
-            Assert.AreEqual(obj.PropInt, deserializedWithTypeNSToSF.PropInt);
-            Assert.AreEqual(obj.PropString, deserializedWithTypeNSToSF.PropString);
+            Console.WriteLine(str);
+
+            Assert.Throws<DeserializationException>(() =>
+                {
+                    ISimpleBaseObject strDeserialized = _deserializer.Deserialize<ISimpleBaseObject>(str);
+                });
+        }
+        
+        [Test]
+        public void IEnumerableTest()
+        {
+            Stack<SimpleBaseObject> obj = new Stack<SimpleBaseObject>();
+            obj.Push(new SimpleBaseObject {BaseFieldInt = 1, BasePropInt = 3});
+            obj.Push(new SimpleBaseObject {BaseFieldInt = 2, BasePropInt = 4});
+            
+            var str = _serializer.Serialize(obj);
+            
+            Console.WriteLine(str);
+
+            IEnumerable strDeserialized = _deserializer.Deserialize<IEnumerable>(str);
+
+            var reserialized = _serializer.Serialize(strDeserialized);
+            Console.WriteLine(reserialized);
+            Assert.AreEqual("[{\"BaseFieldInt\":\"2\",\"BasePropInt\":\"4\"},{\"BaseFieldInt\":\"1\",\"BasePropInt\":\"3\"}]", reserialized);
         }
     }
 }

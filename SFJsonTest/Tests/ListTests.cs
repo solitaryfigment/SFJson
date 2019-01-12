@@ -1,8 +1,9 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SFJson;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
 namespace SFJsonTest
@@ -21,18 +22,62 @@ namespace SFJsonTest
         }
         
         [Test]
+        public void CanDeserializeEmptyObjectIntoEmptyList()
+        {
+            var str = "{\"List\":{}}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithList, SFJsonTest\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":{}}}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithList>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithList>(strDeserialized);
+            Assert.NotNull(strDeserialized.List);
+            Assert.AreEqual(0, strDeserialized.List.Count);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithList>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithList>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.List);
+            Assert.AreEqual(0, strWithTypeDeserialized.List.Count);
+        }
+        
+        [Test]
+        public void CanDeserializeEmptyArrayIntoEmptyList()
+        {
+            var str = "{\"List\":[]}";
+            var strWithType = "{\"$type\":\"SFJsonTest.ObjectWithList, SFJsonTest\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[]}}";
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<ObjectWithList>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<ObjectWithList>(strDeserialized);
+            Assert.NotNull(strDeserialized.List);
+            Assert.AreEqual(0, strDeserialized.List.Count);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithList>(strWithType);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.IsInstanceOf<ObjectWithList>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized.List);
+            Assert.AreEqual(0, strWithTypeDeserialized.List.Count);
+        }
+        
+        [Test]
         public void CanConvertObjectWithList()
         {
-            var obj = new ObjectWithList()
+            var obj = new ObjectWithList
             {
-                List = new List<int>()
+                List = new List<int>
                 {
                     1, 2, 3, 4, 5
                 }
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -43,17 +88,18 @@ namespace SFJsonTest
             Assert.NotNull(strDeserialized);
             Assert.IsInstanceOf<ObjectWithList>(strDeserialized);
             Assert.AreEqual(obj.List.Count, strDeserialized.List.Count);
-            for(int i = 0; i < strDeserialized.List.Count; i++)
+            for(int i = 0; i < strDeserialized.List.Count(); i++)
             {
-                Assert.AreEqual(obj.List[i], strDeserialized.List[i]);
+                Assert.AreEqual(obj.List.ElementAt(i), strDeserialized.List.ElementAt(i));
             }
             
             var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithList>(strWithType);
             Assert.NotNull(strWithTypeDeserialized);
             Assert.IsInstanceOf<ObjectWithList>(strWithTypeDeserialized);
-            for(int i = 0; i < strWithTypeDeserialized.List.Count; i++)
+            Assert.AreEqual(obj.List.Count, strDeserialized.List.Count);
+            for(int i = 0; i < strWithTypeDeserialized.List.Count(); i++)
             {
-                Assert.AreEqual(obj.List[i], strWithTypeDeserialized.List[i]);
+                Assert.AreEqual(obj.List.ElementAt(i), strWithTypeDeserialized.List.ElementAt(i));
             }
         }
 
@@ -84,7 +130,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);

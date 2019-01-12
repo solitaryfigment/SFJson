@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SFJson.Conversion;
+using SFJson.Conversion.Settings;
 using SFJson.Tokenization.Tokens;
 using SFJson.Utils;
 
@@ -29,7 +32,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -56,7 +59,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -79,16 +82,16 @@ namespace SFJsonTest
         {
             var obj = new TypeHolder()
             {
-                PropType = typeof(Dictionary<Dictionary<JsonType,int[]>,List<string[]>>)
+                PropType = typeof(Dictionary<Dictionary<JsonTokenType,int[]>,List<string[]>>)
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTest.TypeHolder, SFJsonTest\",\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", strWithType);
+            Assert.AreEqual("{\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTest.TypeHolder, SFJsonTest\",\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<TypeHolder>(str);
             Assert.NotNull(strDeserialized);
@@ -110,7 +113,7 @@ namespace SFJsonTest
             };
             
             var str = _serializer.Serialize(obj);
-            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { TypeHandler = TypeHandler.All });
+            var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
