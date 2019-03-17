@@ -34,31 +34,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Attributes\JsonIgnore.cs" />
-    <Compile Include="Attributes\JsonNamedValue.cs" />
-    <Compile Include="Conversion\Converter.cs" />
-    <Compile Include="Conversion\Deserializer.cs" />
-    <Compile Include="Conversion\Serializer.cs" />
-    <Compile Include="Conversion\Settings\DeserializerSettings.cs" />
-    <Compile Include="Conversion\Settings\GlobalSettings.cs" />
-    <Compile Include="Conversion\Settings\SerializerSettings.cs" />
-    <Compile Include="Conversion\Settings\SettingsManager.cs" />
-    <Compile Include="Conversion\Settings\TypeBindings.cs" />
-    <Compile Include="Exceptions\DeserializationException.cs" />
-    <Compile Include="Exceptions\SerializationException.cs" />
-    <Compile Include="Exceptions\TokenizationException.cs" />
-    <Compile Include="Tokenization\Tokenizer.cs" />
-    <Compile Include="Tokenization\Tokens\JsonCollection.cs" />
-    <Compile Include="Tokenization\Tokens\JsonDictionary.cs" />
-    <Compile Include="Tokenization\Tokens\JsonObject.cs" />
-    <Compile Include="Tokenization\Tokens\JsonToken.cs" />
-    <Compile Include="Tokenization\Tokens\JsonTokenType.cs" />
-    <Compile Include="Tokenization\Tokens\JsonValue.cs" />
-    <Compile Include="Utils\Constants.cs" />
-    <Compile Include="Utils\TypeUtilHandler.cs" />
-    <Compile Include="Utils\TypeExtension.cs" />
-    <Compile Include="Utils\SerializationTypeHandle.cs" />
-    <Compile Include="Utils\StringExtension.cs" />
+    <Compile Include="..\SFJsonCore\Attributes\**"/>
+    <Compile Include="..\SFJsonCore\Conversion\**"/>
+    <Compile Include="..\SFJsonCore\Exceptions\**"/>
+    <Compile Include="..\SFJsonCore\Tokenization\**"/>
+    <Compile Include="..\SFJsonCore\Utils\**"/>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

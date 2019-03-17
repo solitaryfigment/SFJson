@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFJson", "SFJson\SFJson.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFJsonTest", "SFJsonTest\SFJsonTest.csproj", "{9778D7D7-CEEA-465D-8CE8-3FAC647D3ABD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFJsonCore", "SFJsonCore\SFJsonCore.csproj", "{AAE408C5-D531-4FB9-A4FF-E5802D9E562F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9778D7D7-CEEA-465D-8CE8-3FAC647D3ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9778D7D7-CEEA-465D-8CE8-3FAC647D3ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9778D7D7-CEEA-465D-8CE8-3FAC647D3ABD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAE408C5-D531-4FB9-A4FF-E5802D9E562F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAE408C5-D531-4FB9-A4FF-E5802D9E562F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAE408C5-D531-4FB9-A4FF-E5802D9E562F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAE408C5-D531-4FB9-A4FF-E5802D9E562F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

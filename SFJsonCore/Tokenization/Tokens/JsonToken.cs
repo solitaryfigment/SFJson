@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using SFJson.Attributes;
 using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
@@ -92,7 +93,10 @@ namespace SFJson.Tokenization.Tokens
                 return Array.CreateInstance(elementType, list.Children.Count);
             }
             
-            return Activator.CreateInstance(type, args);
+            var instance = Activator.CreateInstance(type, args);
+            // instance.GetType().InvokeMember()
+            // var methods = instance.GetType().GetMethods().Select(m => m.GetCustomAttributes(typeof(SerializeStep), false).Length > 0);
+            return instance;
         }
 
         private Type DetermineTypeFromInterface(Type type)
