@@ -41,23 +41,25 @@ namespace SFJson.Conversion
                 throw new SerializationException("Error during serialization.", e);
             }
 
-            if(_settingsManager.FormattedString)
-            {
-                return new Tokenizer().Tokenize(_serialized.ToString(), _settingsManager).ToStringFormatted();
-            }
-            else
-            {
+            // if(_settingsManager.FormattedString)
+            // {
+            //     return new Tokenizer().Tokenize(_serialized.ToString(), _settingsManager).ToStringFormatted();
+            // }
+            // else
+            // {
                 return _serialized.ToString();
-            }
+            // }
         }
 
-        private void SerializeObject(object obj)
+        private void SerializeObject(object obj, int indentLevel)
         {
             if(obj != null)
             {
                 _serialized.Append(Constants.OPEN_CURLY);
-                AppendType(obj, SerializationTypeHandle.Objects);
-                SerializeMembers(obj);
+                AppendType(obj, SerializationTypeHandle.Objects, ++indentLevel);
+                SerializeMembers(obj, indentLevel);
+                PrettyPrintNewLine();
+                PrettyPrintIndent(--indentLevel);
                 _serialized.Append(Constants.CLOSE_CURLY);
                 return;
             }
@@ -65,60 +67,97 @@ namespace SFJson.Conversion
             _serialized.Append(Constants.NULL);
         }
 
-        private void SerializeDictionary(IDictionary dictionary)
+        private void SerializeDictionary(IDictionary dictionary, int indentLevel)
         {
             var appendSeparator = false;
             if(dictionary != null)
             {
+                _serialized.Append(Constants.OPEN_CURLY);
+                AppendType(dictionary, SerializationTypeHandle.Collections, ++indentLevel, Constants.COMMA.ToString());
                 foreach(var key in dictionary.Keys)
                 {
-                    AppendSeparator(appendSeparator);
-                    SerializeObject(key.GetType(), key);
+                    AppendSeparator(appendSeparator, indentLevel);
+                    SerializeObject(key.GetType(), key, indentLevel);
                     _serialized.Append(Constants.COLON);
-                    SerializeObject(dictionary[key].GetType(), dictionary[key]);
+                    _serialized.Append(Constants.SPACE);
+                    SerializeObject(dictionary[key].GetType(), dictionary[key], indentLevel);
                     appendSeparator = true;
                 }
-
+                PrettyPrintNewLine();
+                PrettyPrintIndent(--indentLevel);
+                _serialized.Append(Constants.CLOSE_CURLY);
+                
                 return;
             }
 
             _serialized.Append(Constants.NULL);
         }
 
-        private void SerializeList(IEnumerable list)
+        private void SerializeList(IEnumerable list, int indentLevel)
         {
             var appendSeparator = false;
             if(list != null)
             {
-                foreach(var element in list)
+                if(_settingsManager.SerializationTypeHandle == SerializationTypeHandle.All || _settingsManager.SerializationTypeHandle == SerializationTypeHandle.Collections)
                 {
-                    AppendSeparator(appendSeparator);
-                    SerializeObject(element.GetType(), element);
-                    appendSeparator = true;
-                }
+                    _serialized.Append(Constants.OPEN_CURLY);
+                    AppendType(list, SerializationTypeHandle.Collections, ++indentLevel, ",\"$values\":[");
+                    var e = list.GetEnumerator();
+                    while(e.MoveNext())
+                    {
+                        AppendSeparator(appendSeparator, indentLevel);
+                        SerializeObject(e.Current.GetType(), e.Current, indentLevel);
+                        appendSeparator = true;
+                    }
 
+                    PrettyPrintNewLine();
+                    PrettyPrintIndent(--indentLevel);
+                    _serialized.Append(Constants.CLOSE_BRACKET);
+                    PrettyPrintNewLine();
+                    PrettyPrintIndent(--indentLevel);
+                    _serialized.Append(Constants.CLOSE_CURLY);
+                }
+                else
+                {
+                    _serialized.Append(Constants.OPEN_BRACKET);
+                    indentLevel++;
+                    var e = list.GetEnumerator();
+                    while(e.MoveNext())
+                    {
+                        AppendSeparator(appendSeparator, indentLevel);
+                        SerializeObject(e.Current.GetType(), e.Current, indentLevel);
+                        appendSeparator = true;
+                    }
+
+                    PrettyPrintNewLine();
+                    PrettyPrintIndent(--indentLevel);
+                    _serialized.Append(Constants.CLOSE_BRACKET);
+                }
+                
                 return;
             }
 
             _serialized.Append(Constants.NULL);
         }
 
-        private void AppendSeparator(bool appendSeparator)
+        private void AppendSeparator(bool appendSeparator, int indentLevel)
         {
             if(appendSeparator)
             {
                 _serialized.Append(Constants.COMMA);
             }
+            PrettyPrintNewLine();
+            PrettyPrintIndent(indentLevel);
         }
 
-        private void SerializeMembers(object obj)
+        private void SerializeMembers(object obj, int indentLevel)
         {
             var fieldInfos = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
             var propertyInfos = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             var appendSeparator = _settingsManager.SerializationTypeHandle == SerializationTypeHandle.All || _settingsManager.SerializationTypeHandle == SerializationTypeHandle.Objects;
             foreach(var fieldInfo in fieldInfos)
             {
-                if(SerializeMember(fieldInfo, fieldInfo.FieldType, fieldInfo.GetValue(obj), appendSeparator))
+                if(SerializeMember(fieldInfo, fieldInfo.FieldType, fieldInfo.GetValue(obj), appendSeparator, indentLevel))
                 {
                     appendSeparator = true;
                 }
@@ -132,7 +171,7 @@ namespace SFJson.Conversion
 
                 try
                 {
-                    if(SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj, null), appendSeparator))
+                    if(SerializeMember(propertyInfo, propertyInfo.PropertyType, propertyInfo.GetValue(obj, null), appendSeparator, indentLevel))
                     {
                         appendSeparator = true;
                     }
@@ -144,24 +183,45 @@ namespace SFJson.Conversion
             }
         }
 
-        private bool SerializeMember(MemberInfo memberInfo, Type type, object value, bool appendSeparator)
+        private bool SerializeMember(MemberInfo memberInfo, Type type, object value, bool appendSeparator, int indentLevel)
         {
             var ignoreAttribute = (JsonIgnore) memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
             if(ignoreAttribute == null)
             {
                 var attribute = (JsonNamedValue) memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonNamedValue));
                 var memberName = (attribute != null) ? attribute.Name : memberInfo.Name;
-                AppendSeparator(appendSeparator);
+                AppendSeparator(appendSeparator, indentLevel);
                 AppendAsString(memberName);
                 _serialized.Append(Constants.COLON);
-                SerializeObject(type, value);
+                _serialized.Append(Constants.SPACE);
+                SerializeObject(type, value, indentLevel);
                 return true;
             }
 
             return false;
         }
+        
 
-        private void SerializeObject(Type type, object value)
+        protected void PrettyPrintIndent(int indentLevel)
+        {
+            if(_settingsManager.FormattedString)
+            {
+                for(var i = 0; i < indentLevel; i++)
+                {
+                    _serialized.Append('\t');
+                }
+            }
+        }
+        
+        protected void PrettyPrintNewLine()
+        {
+            if(_settingsManager.FormattedString)
+            {
+                _serialized.Append(Environment.NewLine);
+            }
+        }
+
+        private void SerializeObject(Type type, object value, int indentLevel = 0)
         {
             type = type.IsInterface ? value.GetType() : type;
             if(value == null)
@@ -209,38 +269,15 @@ namespace SFJson.Conversion
             }
             else if(type.Implements(typeof(IDictionary)) || (type.GetGenericArguments().Length == 2 && type.Implements(typeof(IEnumerable))))
             {
-                if(type.Implements(typeof(IDictionary)))
-                {
-                    _serialized.Append(Constants.OPEN_CURLY);
-                    AppendType(value, SerializationTypeHandle.Collections, Constants.COMMA.ToString());
-                    SerializeDictionary((IDictionary)value);
-                    _serialized.Append(Constants.CLOSE_CURLY);
-                }
-                else
-                {
-                    Console.WriteLine("Need to do something else");
-                }
+                SerializeDictionary((IDictionary)value, indentLevel);
             }
             else if(type.IsArray || type.Implements(typeof(IEnumerable)))
             {
-                if(_settingsManager.SerializationTypeHandle == SerializationTypeHandle.All || _settingsManager.SerializationTypeHandle == SerializationTypeHandle.Collections)
-                {
-                    _serialized.Append(Constants.OPEN_CURLY);
-                    AppendType(value, SerializationTypeHandle.Collections, ",\"$values\":[");
-                    SerializeList((IEnumerable) value);
-                    _serialized.Append(Constants.CLOSE_BRACKET);
-                    _serialized.Append(Constants.CLOSE_CURLY);
-                }
-                else
-                {
-                    _serialized.Append(Constants.OPEN_BRACKET);
-                    SerializeList((IEnumerable) value);
-                    _serialized.Append(Constants.CLOSE_BRACKET);
-                }
+                SerializeList((IEnumerable)value, indentLevel);
             }
             else
             {
-                SerializeObject(value);
+                SerializeObject(value, indentLevel);
             }
         }
 
@@ -249,14 +286,19 @@ namespace SFJson.Conversion
             _serialized.AppendFormat("\"{0}\"", value);
         }
 
-        private void AppendType(object obj, SerializationTypeHandle serializationTypeHandle, string appendString = "")
+        private void AppendType(object obj, SerializationTypeHandle serializationTypeHandle, int indentLevel, string appendString = "")
         {
             if(_settingsManager.SerializationTypeHandle == SerializationTypeHandle.All || _settingsManager.SerializationTypeHandle == serializationTypeHandle)
             {
+                PrettyPrintNewLine();
+                PrettyPrintIndent(indentLevel);
                 AppendAsString("$type");
                 _serialized.Append(Constants.COLON);
+                _serialized.Append(Constants.SPACE);
                 AppendAsString(obj.GetType().GetTypeAsString());
                 _serialized.Append(appendString);
+                PrettyPrintNewLine();
+                PrettyPrintIndent(indentLevel);
             }
         }
     }

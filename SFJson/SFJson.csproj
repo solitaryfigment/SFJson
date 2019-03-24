@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <UseMSBuildEngine>False</UseMSBuildEngine>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,20 +25,21 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\SFJsonCore\Attributes\**"/>
-    <Compile Include="..\SFJsonCore\Conversion\**"/>
-    <Compile Include="..\SFJsonCore\Exceptions\**"/>
-    <Compile Include="..\SFJsonCore\Tokenization\**"/>
-    <Compile Include="..\SFJsonCore\Utils\**"/>
+    <Compile Include="..\SFJsonCore\Attributes\**" />
+    <Compile Include="..\SFJsonCore\Conversion\**" />
+    <Compile Include="..\SFJsonCore\Exceptions\**" />
+    <Compile Include="..\SFJsonCore\Tokenization\**" />
+    <Compile Include="..\SFJsonCore\Utils\**" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

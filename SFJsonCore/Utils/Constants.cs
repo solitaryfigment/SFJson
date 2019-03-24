@@ -7,6 +7,7 @@
         internal const char OPEN_BRACKET = '[';
         internal const char CLOSE_BRACKET = ']';
         internal const char COLON = ':';
+        internal const char SPACE = ' ';
         internal const char COMMA = ',';
         internal const char QUOTE = '"';
         internal const string FALSE = "false";
