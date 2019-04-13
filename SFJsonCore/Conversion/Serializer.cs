@@ -40,15 +40,7 @@ namespace SFJson.Conversion
             {
                 throw new SerializationException("Error during serialization.", e);
             }
-
-            // if(_settingsManager.FormattedString)
-            // {
-            //     return new Tokenizer().Tokenize(_serialized.ToString(), _settingsManager).ToStringFormatted();
-            // }
-            // else
-            // {
-                return _serialized.ToString();
-            // }
+            return _serialized.ToString();
         }
 
         private void SerializeObject(object obj, int indentLevel)
