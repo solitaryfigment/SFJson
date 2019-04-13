@@ -71,7 +71,7 @@ namespace SFJson.Conversion
                     AppendSeparator(appendSeparator, indentLevel);
                     SerializeObject(key.GetType(), key, indentLevel);
                     _serialized.Append(Constants.COLON);
-                    _serialized.Append(Constants.SPACE);
+                    PrettyPrintSpace();
                     SerializeObject(dictionary[key].GetType(), dictionary[key], indentLevel);
                     appendSeparator = true;
                 }
@@ -185,7 +185,7 @@ namespace SFJson.Conversion
                 AppendSeparator(appendSeparator, indentLevel);
                 AppendAsString(memberName);
                 _serialized.Append(Constants.COLON);
-                _serialized.Append(Constants.SPACE);
+                PrettyPrintSpace();
                 SerializeObject(type, value, indentLevel);
                 return true;
             }
@@ -210,6 +210,14 @@ namespace SFJson.Conversion
             if(_settingsManager.FormattedString)
             {
                 _serialized.Append(Environment.NewLine);
+            }
+        }
+        
+        protected void PrettyPrintSpace()
+        {
+            if(_settingsManager.FormattedString)
+            {
+                _serialized.Append(Constants.SPACE);
             }
         }
 
@@ -286,7 +294,7 @@ namespace SFJson.Conversion
                 PrettyPrintIndent(indentLevel);
                 AppendAsString("$type");
                 _serialized.Append(Constants.COLON);
-                _serialized.Append(Constants.SPACE);
+                PrettyPrintSpace();
                 AppendAsString(obj.GetType().GetTypeAsString());
                 _serialized.Append(appendString);
                 PrettyPrintNewLine();

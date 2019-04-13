@@ -46,7 +46,10 @@ namespace SFJsonTest
             
             var str = Converter.Serialize(obj, new SerializerSettings { FormattedString = formatOutput, SerializationTypeHandle = serializationTypeHandle });
             Console.WriteLine(str);
-            Assert.AreEqual(serializedForm, str);
+            if(!formatOutput)
+            {
+                Assert.AreEqual(serializedForm, str);
+            }
 
             if(!ThrowsException(exceptionType, () => { Converter.Deserialize<ObjectWithAbstractClass>(str); }))
             {
