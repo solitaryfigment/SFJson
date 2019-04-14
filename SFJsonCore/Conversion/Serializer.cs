@@ -6,7 +6,6 @@ using System.Text;
 using SFJson.Attributes;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
-using SFJson.Tokenization;
 using SFJson.Utils;
 
 namespace SFJson.Conversion

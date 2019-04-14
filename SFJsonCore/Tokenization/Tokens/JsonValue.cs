@@ -41,7 +41,14 @@ namespace SFJson.Tokenization.Tokens
             }
             else if(!TryParseValue(type, out value))
             {
-                value = Convert.ChangeType(_value, type);
+                try
+                {
+                    value = Convert.ChangeType(_value, type);
+                }
+                catch
+                {
+                    return (type.IsValueType) ? type.GetDefault() : null;
+                }
             }
             return value;
         }
