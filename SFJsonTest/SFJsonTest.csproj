@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SFJsonTest</RootNamespace>
     <AssemblyName>SFJsonTest</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
@@ -83,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SFJson\SFJson.csproj">
-      <Project>{8677b2f4-17e7-499e-b7b9-d8ff536f5cee}</Project>
+      <Project>{880aecae-eacd-4014-815d-cbb31dbb5a59}</Project>
       <Name>SFJson</Name>
     </ProjectReference>
   </ItemGroup>
