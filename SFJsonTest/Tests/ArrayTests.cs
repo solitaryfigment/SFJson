@@ -41,7 +41,7 @@ namespace SFJsonTest
             if(!formatOutput)
             {
                 Assert.AreEqual("[1,2,3,4,5]", str);
-                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Queue`1[[System.Int32, mscorlib]], System\",\"$values\":[1,2,3,4,5]}", strWithType);
+                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Queue`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]}", strWithType);
             }
 
             var strDeserialized = _deserializer.Deserialize<Queue<int>>(str);
@@ -127,7 +127,7 @@ namespace SFJsonTest
             if(!formatOutput)
             {
                 Assert.AreEqual("[5,4,3,2,1]", str);
-                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Stack`1[[System.Int32, mscorlib]], System\",\"$values\":[5,4,3,2,1]}", strWithType);
+                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Stack`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[5,4,3,2,1]}", strWithType);
             }
 
             var strDeserialized = _deserializer.Deserialize<Stack<int>>(str);
