@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Tokenization;
@@ -46,7 +48,7 @@ namespace SFJson.Conversion
                 throw new DeserializationException("An error occured during deserialization.", _lastTokenization, e);
             }
         }
-
+        
         /// <summary>
         /// Converts a JSON string to an instance of <pararef name="type"/>.
         /// </summary>

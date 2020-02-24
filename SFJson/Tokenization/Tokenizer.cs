@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
@@ -124,7 +125,7 @@ namespace SFJson.Tokenization
                     return;
                 }
             }
-            catch
+            catch (Exception e)
             {
                 return;
             }

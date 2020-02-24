@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using SFJson.Conversion;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
@@ -28,13 +29,13 @@ namespace SFJson.Tokenization.Tokens
             type = DetermineType(type);
             var obj = CreateInstance(type);
             
-            if(type.Implements(typeof(IDictionary)))
+            if(IsGenericDictionary(obj, type, out var dictionaryWrapper))
             {
-                return GetDictionaryValues(type, obj as IDictionary);
+                return GetDictionaryValues(dictionaryWrapper);
             }
-            if(type.Implements(typeof(IList)))
+            if(IsGenericList(obj, type, out var listWrapper))
             {
-                return GetListValues(type, obj as IList);
+                return GetListValues(type, listWrapper);
             }
             if(type.IsStack())
             {

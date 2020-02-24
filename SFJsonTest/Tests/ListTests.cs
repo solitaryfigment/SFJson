@@ -66,6 +66,81 @@ namespace SFJsonTest
         }
         
         [Test]
+        public void CanConvertList()
+        {
+            var list = new List<int>
+            {
+                1, 2, 3, 4, 5
+            };
+            
+            var str = _serializer.Serialize(list);
+            // var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
+
+            Console.WriteLine(str);
+            // Console.WriteLine(strWithType);
+            Assert.AreEqual("[1,2,3,4,5]", str);
+            // Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithList, SFJsonTest\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]}}", strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<List<int>>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<List<int>>(strDeserialized);
+            Assert.AreEqual(list.Count, strDeserialized.Count);
+            for(int i = 0; i < strDeserialized.Count(); i++)
+            {
+                Assert.AreEqual(list.ElementAt(i), strDeserialized.ElementAt(i));
+            }
+            
+            // var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithList>(strWithType);
+            // Assert.NotNull(strWithTypeDeserialized);
+            // Assert.IsInstanceOf<ObjectWithList>(strWithTypeDeserialized);
+            // Assert.AreEqual(list.Count, strDeserialized.Count);
+            // for(int i = 0; i < strWithTypeDeserialized.List.Count(); i++)
+            // {
+            //     Assert.AreEqual(obj.List.ElementAt(i), strWithTypeDeserialized.List.ElementAt(i));
+            // }
+        }
+
+        private class AList : List<int>
+        {
+            
+        }
+        
+        [Test]
+        public void CanConvertPlainList()
+        {
+            var list = new AList()
+            {
+                1, 2, 3, 4, 5
+            };
+            
+            var str = _serializer.Serialize(list);
+            // var strWithType = _serializer.Serialize(obj, new SerializerSettings() { SerializationTypeHandle = SerializationTypeHandle.All });
+
+            Console.WriteLine(str);
+            // Console.WriteLine(strWithType);
+            Assert.AreEqual("[1,2,3,4,5]", str);
+            // Assert.AreEqual("{\"$type\":\"SFJsonTest.ObjectWithList, SFJsonTest\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]}}", strWithType);
+            
+            var strDeserialized = _deserializer.Deserialize<AList>(str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<AList>(strDeserialized);
+            Assert.AreEqual(list.Count, strDeserialized.Count);
+            for(int i = 0; i < strDeserialized.Count(); i++)
+            {
+                Assert.AreEqual(list.ElementAt(i), strDeserialized.ElementAt(i));
+            }
+            
+            // var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithList>(strWithType);
+            // Assert.NotNull(strWithTypeDeserialized);
+            // Assert.IsInstanceOf<ObjectWithList>(strWithTypeDeserialized);
+            // Assert.AreEqual(list.Count, strDeserialized.Count);
+            // for(int i = 0; i < strWithTypeDeserialized.List.Count(); i++)
+            // {
+            //     Assert.AreEqual(obj.List.ElementAt(i), strWithTypeDeserialized.List.ElementAt(i));
+            // }
+        }
+
+        [Test]
         public void CanConvertObjectWithList()
         {
             var obj = new ObjectWithList

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using SFJson.Attributes;
+using SFJson.Conversion;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
@@ -32,14 +33,11 @@ namespace SFJson.Tokenization.Tokens
         {
             type = DetermineType(type);
             var obj = CreateInstance(type);
-            
-            if(type.Implements(typeof(IDictionary)))
+            var isDict = IsGenericDictionary(obj, type, out var dictionaryWrapper);
+            var isList = IsGenericList(obj, type, out var listWrapper);
+            if(isDict)
             {
-                return GetDictionaryValues(type, obj as IDictionary);
-            }
-            if(type.Implements(typeof(IList)))
-            {
-                return GetListValues(type, obj as IList);
+                return GetDictionaryValues(dictionaryWrapper);
             }
             if(type.IsStack())
             {
@@ -49,11 +47,15 @@ namespace SFJson.Tokenization.Tokens
             {
                 return GetStackValue(type, false);
             }
+            if(isList)
+            {
+                return GetListValues(type, listWrapper);
+            }
 
             if(type == typeof(System.Object))
             {
                 obj = new Dictionary<string, Object>();
-                return GetDictionaryValues(obj.GetType(), obj as IDictionary);
+                return GetDictionaryValues(new DictionaryWrapper<string, Object>((Dictionary<string, Object>)obj));
             }
 
             _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);

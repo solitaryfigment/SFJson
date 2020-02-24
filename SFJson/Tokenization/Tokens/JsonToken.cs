@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using SFJson.Attributes;
+using SFJson.Conversion;
 using SFJson.Conversion.Settings;
 using SFJson.Utils;
 
@@ -98,11 +99,57 @@ namespace SFJson.Tokenization.Tokens
             // var methods = instance.GetType().GetMethods().Select(m => m.GetCustomAttributes(typeof(SerializeStep), false).Length > 0);
             return instance;
         }
+        
+        protected bool IsGenericList(object obj, Type type, out IListWrapper listWrapper)
+        {
+            listWrapper = null;
+            foreach(var interfaceType in type.GetInterfaces())
+            {
+                if(interfaceType.IsGenericType && typeof(IList<>).IsAssignableFrom(interfaceType.GetGenericTypeDefinition()))
+                {
+                    var genArgs = interfaceType.GenericTypeArguments;
+                    listWrapper = Serializer.CreateListWrapper(obj, interfaceType, genArgs[0]);
+                    return true;
+                }
+                else if (typeof(IList).IsAssignableFrom(interfaceType))
+                {
+                    listWrapper = Serializer.CreateListWrapper(obj);
+                    return true;
+                }
+            }
+        
+            return false;
+        }
 
+        protected bool IsGenericDictionary(object obj, Type type, out IDictionaryWrapper dictionaryWrapper)
+        {
+            dictionaryWrapper = null;
+            foreach(var interfaceType in type.GetInterfaces())
+            {
+                if(interfaceType.IsGenericType && typeof(IDictionary<,>).IsAssignableFrom(interfaceType.GetGenericTypeDefinition()))
+                {
+                    var genArgs = interfaceType.GenericTypeArguments;
+                    dictionaryWrapper = Serializer.CreateDictionaryWrapper(obj, interfaceType, genArgs[0], genArgs[1]);
+                    return true;
+                }
+                else if (typeof(IDictionary).IsAssignableFrom(interfaceType))
+                {
+                    dictionaryWrapper = Serializer.CreateDictionaryWrapper(obj);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
         private Type DetermineTypeFromInterface(Type type)
         {
             var genericTypes = type.GetGenericArguments();
-
+            // Type dictionaryType
+            // if(IsGenericDictionary(type))
+            // {
+            //     
+            // }
             if(!type.IsGenericType && type.Implements(typeof(IEnumerable)))
             {
                 if(type.Implements(typeof(IDictionary)))
@@ -132,10 +179,10 @@ namespace SFJson.Tokenization.Tokens
             return type;
         }
 
-        protected object GetDictionaryValues(Type type, IDictionary obj)
+        protected object GetDictionaryValues(IDictionaryWrapper dictionaryWrapper)
         {
-            var keyType = type.GetGenericArguments()[0];
-            var valueType = type.GetGenericArguments()[1];
+            var keyType = dictionaryWrapper.KeyType;
+            var valueType = dictionaryWrapper.ValueType;
             foreach(var child in Children)
             {
                 if(child.Name == "$type")
@@ -157,15 +204,57 @@ namespace SFJson.Tokenization.Tokens
                     throw new NullReferenceException("Cannot add null key to dictionary.");
                 }
 
-                obj.Add(keyValue, child.GetValue(valueType));
+                dictionaryWrapper[keyValue] = child.GetValue(valueType);
             }
 
-            return obj;
+            return dictionaryWrapper.Dictionary;
         }
 
         private object ReturnNull(Type type)
         {
             return null;
+        }
+        
+        protected object GetListValues(Type type, IListWrapper obj)
+        {
+            var list = Children.FirstOrDefault(c => c.Name == "$values");
+            var elementType = obj.ElementType;
+            list = list ?? this;
+            
+            try
+            {
+                for(var i = 0; i < list.Children.Count; i++)
+                {
+                    if(obj.List.GetType().IsArray)
+                    {
+                        obj[i] = list.Children[i].GetValue(elementType);
+                    }
+                    else
+                    {
+                        obj.Add(list.Children[i].GetValue(elementType));
+                    }
+                }
+        
+                return obj.List;
+            }
+            catch (NotSupportedException e)
+            {
+                if(obj.IsReadOnly)
+                {
+                    IList thing = Array.CreateInstance(elementType, list.Children.Count);
+                
+                    for(var i = 0; i < list.Children.Count; i++)
+                    {
+                        thing[i] = list.Children[i].GetValue(elementType);
+                    }
+                
+                    return CreateInstance(type, thing);
+                }
+                else
+                {
+                    throw e;
+                }
+            }
         }
 
         protected object GetListValues(Type type, IList obj)

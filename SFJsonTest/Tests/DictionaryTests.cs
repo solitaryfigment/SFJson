@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SFJson;
 using SFJson.Conversion;
 using SFJson.Conversion.Settings;
 using SFJson.Utils;
@@ -21,7 +20,7 @@ namespace SFJsonTest
             _deserializer = new Deserializer();
             _serializer = new Serializer();
         }
-        
+
         [Test]
         public void CanDeserializeEmptyObjectIntoEmptyDictionary()
         {
@@ -67,7 +66,7 @@ namespace SFJsonTest
         }
         
         [Test]
-        public void CanConvertObjectWithDicitonary()
+        public void CanConvertObjectWithDictionary()
         {
             var obj = new ObjectWithDictionary
             {
@@ -111,8 +110,43 @@ namespace SFJsonTest
             }
         }
 
+        private class BoolList : List<bool>
+        {
+            
+        }
+        private class ADictionary : Dictionary<string, bool[]>
+        {
+            
+        }
+        
         [Test]
-        public void CanConvertObjectWithObjectDicitonary()
+        public void CanConvertDictionary()
+        {
+            var dictionary = new Dictionary<string, bool>();
+            dictionary.Add("First", true);
+            dictionary.Add("Second", false);
+            dictionary.Add("Third", true);
+            var str = _serializer.Serialize(dictionary);
+            var deserialized = _deserializer.Deserialize<Dictionary<string, bool>>(str);
+            
+            Assert.AreEqual(dictionary, deserialized);
+        }
+        
+        [Test]
+        public void CanConvertPlainDictionary()
+        {
+            var dictionary = new ADictionary();
+            dictionary.Add("First", new bool[]{true});
+            dictionary.Add("Second", new bool[]{true, false});
+            dictionary.Add("Third", new bool[]{false, false});
+            var str = _serializer.Serialize(dictionary);
+            var deserialized = _deserializer.Deserialize<ADictionary>(str);
+            
+            Assert.AreEqual(dictionary, deserialized);
+        }
+
+        [Test]
+        public void CanConvertObjectWithObjectDictionary()
         {
             var obj = new ObjectWithObjectDictionary()
             {
@@ -152,7 +186,7 @@ namespace SFJsonTest
 
         [TestCase(true)]
         [TestCase(false)]
-        public void CanConvertObjectWithComplexObjectDicitonary(bool formattedOutput)
+        public void CanConvertObjectWithComplexObjectDictionary(bool formattedOutput)
         {
             var obj = new ObjectWithComplexObjectDictionary()
             {
