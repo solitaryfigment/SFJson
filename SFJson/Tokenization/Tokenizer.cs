@@ -125,7 +125,7 @@ namespace SFJson.Tokenization
                     return;
                 }
             }
-            catch (Exception e)
+            catch
             {
                 return;
             }

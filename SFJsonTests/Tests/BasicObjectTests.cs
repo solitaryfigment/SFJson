@@ -21,6 +21,24 @@ namespace SFJsonTests
         }
 
         [Test]
+        public void CanDeserializeOnToInstance()
+        {
+            var obj = new SimpleTestObject();
+            var str = "{\"Extra\":12}";
+            var strWithType = "{\"$type\":\"SFJsonTests.SimpleTestObject, SFJsonTests\",\"Extra\":12}";
+
+            var strDeserialized = _deserializer.Deserialize<SimpleTestObject>(obj, str);
+            Assert.NotNull(strDeserialized);
+            Assert.IsInstanceOf<SimpleTestObject>(strDeserialized);
+            Assert.AreSame(obj, strDeserialized);
+            
+            var strWithTypeDeserialized = _deserializer.Deserialize<SimpleTestObject>(obj, strWithType);
+            Assert.IsInstanceOf<SimpleTestObject>(strWithTypeDeserialized);
+            Assert.NotNull(strWithTypeDeserialized);
+            Assert.AreSame(obj, strWithTypeDeserialized);
+        }
+
+        [Test]
         public void CanDeserializeStringWithExtraProperties()
         {
             var obj = new SimpleTestObject();

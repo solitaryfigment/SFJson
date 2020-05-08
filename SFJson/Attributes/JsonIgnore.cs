@@ -9,4 +9,15 @@ namespace SFJson.Attributes
     public class JsonIgnore : Attribute
     {
     }
+    
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class CustomConverterAttribute : Attribute
+    {
+        public Type ConverterType;
+
+        public CustomConverterAttribute(Type converterType)
+        {
+            ConverterType = converterType;
+        }
+    }
 }

@@ -61,7 +61,14 @@ namespace SFJson.Conversion
             _serialized = new StringBuilder();
             try
             {
-                SerializeObject(objectToSerialize.GetType(), objectToSerialize);
+                if(objectToSerialize != null)
+                {
+                    SerializeObject(objectToSerialize.GetType(), objectToSerialize);
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch(Exception e)
             {

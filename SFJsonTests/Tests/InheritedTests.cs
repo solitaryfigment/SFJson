@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
-using SFJson;
 using SFJson.Conversion;
 using SFJson.Conversion.Settings;
 using SFJson.Utils;
@@ -54,6 +54,84 @@ namespace SFJsonTests
             Assert.AreEqual(obj.FieldString, strWithTypeDeserialized.FieldString);
             Assert.AreEqual(obj.BasePropInt, strWithTypeDeserialized.BasePropInt);
             Assert.AreEqual(obj.PropString, strWithTypeDeserialized.PropString);
+        }
+
+        [Test]
+        public void CanConvertUseCustomConverters()
+        {
+            var mainObj = new SimpleObjectWrapper
+            {
+                Obj1 = new SimpleInheritedObject2
+                {
+                    BaseFieldInt = 2,
+                    BasePropInt = 2,
+                    FieldString = "String",
+                    PropString = "String2"
+                },
+                Obj2 = new SimpleInheritedObject3
+                {
+                    BaseFieldInt = 3,
+                    BasePropInt = 4,
+                    FieldString = "String3",
+                    PropString = "String4",
+                    List = new List<ISimpleBaseObject>
+                    {
+                        new SimpleInheritedObject3
+                        {
+                            BaseFieldInt = 3,
+                            BasePropInt = 4,
+                            FieldString = "String3",
+                            PropString = "String4"
+                        }
+                    }
+                }
+            };
+
+            var str = _serializer.Serialize(mainObj);
+            var strWithType = _serializer.Serialize(mainObj, new SerializerSettings { SerializationTypeHandle = SerializationTypeHandle.All });
+            
+            Console.WriteLine(str);
+            Console.WriteLine(strWithType);
+            // Assert.AreEqual("{\"FieldString\":\"String\",\"BaseFieldInt\":1,\"PropString\":\"String2\",\"BasePropInt\":2}", str);
+            
+            var strDeserialized = _deserializer.Deserialize<SimpleObjectWrapper>(str);
+            
+            Assert.IsTrue(strDeserialized != null);
+            Assert.AreEqual(mainObj.Obj1.BaseFieldInt, strDeserialized.Obj1.BaseFieldInt);
+            Assert.AreEqual(((SimpleInheritedObject2)mainObj.Obj1).FieldString, ((SimpleInheritedObject2)strDeserialized.Obj1).FieldString);
+            Assert.AreEqual(mainObj.Obj1.BasePropInt, strDeserialized.Obj1.BasePropInt);
+            Assert.AreEqual(((SimpleInheritedObject2)mainObj.Obj1).PropString, ((SimpleInheritedObject2)strDeserialized.Obj1).PropString);
+            Assert.AreEqual(mainObj.Obj2.BaseFieldInt, strDeserialized.Obj2.BaseFieldInt);
+            Assert.AreEqual(((SimpleInheritedObject3)mainObj.Obj2).FieldString, ((SimpleInheritedObject3)strDeserialized.Obj2).FieldString);
+            Assert.AreEqual(mainObj.Obj2.BasePropInt, strDeserialized.Obj2.BasePropInt);
+            Assert.AreEqual(((SimpleInheritedObject3)mainObj.Obj2).PropString, ((SimpleInheritedObject3)strDeserialized.Obj2).PropString);
+
+            var objElm = ((SimpleInheritedObject3)mainObj.Obj2).List[0] as SimpleInheritedObject3;
+            var deserElm = ((SimpleInheritedObject3)strDeserialized.Obj2).List[0] as SimpleInheritedObject3;
+            Assert.AreEqual(objElm.BaseFieldInt, deserElm.BaseFieldInt);
+            Assert.AreEqual(objElm.FieldString, deserElm.FieldString);
+            Assert.AreEqual(objElm.BasePropInt, deserElm.BasePropInt);
+            Assert.AreEqual(objElm.PropString, deserElm.PropString);
+            
+            
+            strDeserialized = _deserializer.Deserialize<SimpleObjectWrapper>(strWithType);
+            
+            Assert.IsTrue(strDeserialized != null);
+            Assert.AreEqual(mainObj.Obj1.BaseFieldInt, strDeserialized.Obj1.BaseFieldInt);
+            Assert.AreEqual(((SimpleInheritedObject2)mainObj.Obj1).FieldString, ((SimpleInheritedObject2)strDeserialized.Obj1).FieldString);
+            Assert.AreEqual(mainObj.Obj1.BasePropInt, strDeserialized.Obj1.BasePropInt);
+            Assert.AreEqual(((SimpleInheritedObject2)mainObj.Obj1).PropString, ((SimpleInheritedObject2)strDeserialized.Obj1).PropString);
+            Assert.AreEqual(mainObj.Obj2.BaseFieldInt, strDeserialized.Obj2.BaseFieldInt);
+            Assert.AreEqual(((SimpleInheritedObject3)mainObj.Obj2).FieldString, ((SimpleInheritedObject3)strDeserialized.Obj2).FieldString);
+            Assert.AreEqual(mainObj.Obj2.BasePropInt, strDeserialized.Obj2.BasePropInt);
+            Assert.AreEqual(((SimpleInheritedObject3)mainObj.Obj2).PropString, ((SimpleInheritedObject3)strDeserialized.Obj2).PropString);
+
+            objElm = ((SimpleInheritedObject3)mainObj.Obj2).List[0] as SimpleInheritedObject3;
+            deserElm = ((SimpleInheritedObject3)strDeserialized.Obj2).List[0] as SimpleInheritedObject3;
+            Assert.AreEqual(objElm.BaseFieldInt, deserElm.BaseFieldInt);
+            Assert.AreEqual(objElm.FieldString, deserElm.FieldString);
+            Assert.AreEqual(objElm.BasePropInt, deserElm.BasePropInt);
+            Assert.AreEqual(objElm.PropString, deserElm.PropString);
         }
 
         [Test]

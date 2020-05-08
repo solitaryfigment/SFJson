@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using SFJson.Attributes;
@@ -24,6 +25,7 @@ namespace SFJson.Tokenization.Tokens
         public string Name;
         public List<JsonToken> Children = new List<JsonToken>();
         internal SettingsManager SettingsManager;
+        internal MemberInfo MemberInfo;
         
         protected Func<Type, object> OnNullValue;
 
@@ -36,20 +38,25 @@ namespace SFJson.Tokenization.Tokens
         /// <see cref="JsonToken.GetValue"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public T GetValue<T>()
+        public T GetValue<T>(object instance = null)
         {
-            return (T) GetValue(typeof(T));
+            return (T) GetValue(typeof(T), instance);
         }
-        
+
         /// <summary>
         /// Converts the tokenized value to <paramref name="type"/>. 
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="instance"></param>
         /// <returns>
         /// The <paramref name="type"/> this token represents as an <c>object</c>
         /// </returns>
-        public abstract object GetValue(Type type);
+        public abstract object GetValue(Type type, object instance = null);
 
+        public virtual void SetupChildrenForType(Type type)
+        {
+        }
+        
         protected Type DetermineType(Type type)
         {
             Type determinedType = type;
@@ -79,11 +86,16 @@ namespace SFJson.Tokenization.Tokens
             return returnType ?? type;
         }
 
-        protected object CreateInstance(Type type, params object[] args)
+        protected object CreateInstance(Type type, object instance = null, params object[] args)
         {
             if(type == null)
             {
                 return null;
+            }
+
+            if(instance != null && type.IsAssignableFrom(instance.GetType()))
+            {
+                return instance;
             }
 
             var elementType = type.GetElementType();
@@ -94,10 +106,10 @@ namespace SFJson.Tokenization.Tokens
                 return Array.CreateInstance(elementType, list.Children.Count);
             }
             
-            var instance = Activator.CreateInstance(type, args);
+            var obj = Activator.CreateInstance(type, args);
             // instance.GetType().InvokeMember()
             // var methods = instance.GetType().GetMethods().Select(m => m.GetCustomAttributes(typeof(SerializeStep), false).Length > 0);
-            return instance;
+            return obj;
         }
         
         protected bool IsGenericList(object obj, Type type, out IListWrapper listWrapper)
@@ -248,7 +260,7 @@ namespace SFJson.Tokenization.Tokens
                         thing[i] = list.Children[i].GetValue(elementType);
                     }
                 
-                    return CreateInstance(type, thing);
+                    return CreateInstance(type, null, thing);
                 }
                 else
                 {

@@ -27,12 +27,12 @@ namespace SFJson.Tokenization.Tokens
             get { return JsonTokenType.Dictionary; }
         }
 
-        public override object GetValue(Type type)
+        public override object GetValue(Type type, object instance = null)
         {
             type = DetermineType(type);
             var keyType = type.GetGenericArguments()[0];
             var valueType = type.GetGenericArguments()[1];
-            var obj = CreateInstance(type) as IDictionary;
+            var obj = CreateInstance(type, instance) as IDictionary;
 
             if(obj == null)
             {

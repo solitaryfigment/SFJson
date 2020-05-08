@@ -17,9 +17,15 @@ namespace SFJson.Conversion
         private JsonToken _lastTokenization;
         private Tokenizer _tokenizer = new Tokenizer();
 
+        public T Deserialize<T>(string stringToSerialize, DeserializerSettings deserializerSettings = null)
+        {
+            return Deserialize<T>(null, stringToSerialize, deserializerSettings);
+        }
+
         /// <summary>
         /// Converts a JSON string to an instance of type <c>T</c>.
         /// </summary>
+        /// <param name="instance"></param>
         /// <param name="stringToSerialize"></param>
         /// <param name="deserializerSettings"></param>
         /// <typeparam name="T"></typeparam>
@@ -30,12 +36,12 @@ namespace SFJson.Conversion
         /// Deserializtion errors will contain the root <see cref="JsonToken"/> from
         /// the tokenization phase.
         /// </exception>
-        public T Deserialize<T>(string stringToSerialize, DeserializerSettings deserializerSettings = null)
+        public T Deserialize<T>(object instance, string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             Tokenize(stringToSerialize, deserializerSettings);
             try
             {
-                var obj = _lastTokenization.GetValue<T>();
+                var obj = _lastTokenization.GetValue<T>(instance);
                 return obj;
             }
             catch(DeserializationException e)
@@ -45,14 +51,20 @@ namespace SFJson.Conversion
             }
             catch(Exception e)
             {
-                throw new DeserializationException("An error occured during deserialization.", _lastTokenization, e);
+                throw new DeserializationException($"An error occured during deserialization. {_lastTokenization}.{_lastTokenization.Name}", _lastTokenization, e);
             }
         }
-        
+
+        public object Deserialize(Type type, string stringToSerialize, DeserializerSettings deserializerSettings = null)
+        {
+            return this.Deserialize(type, null, stringToSerialize, deserializerSettings);
+        }
+
         /// <summary>
         /// Converts a JSON string to an instance of <pararef name="type"/>.
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="instance"></param>
         /// <param name="stringToSerialize"></param>
         /// <param name="deserializerSettings"></param>
         /// <returns>
@@ -63,12 +75,12 @@ namespace SFJson.Conversion
         /// Deserializtion errors will contain the root <see cref="JsonToken"/> from
         /// the tokenization phase.
         /// </exception>
-        public object Deserialize(Type type, string stringToSerialize, DeserializerSettings deserializerSettings = null)
+        public object Deserialize(Type type, object instance, string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
             Tokenize(stringToSerialize, deserializerSettings);
             try
             {
-                var obj = _lastTokenization.GetValue(type);
+                var obj = _lastTokenization.GetValue(type, instance);
                 return obj;
             }
             catch(DeserializationException e)

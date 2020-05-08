@@ -18,8 +18,6 @@ namespace SFJson.Tokenization.Tokens
     /// <seealso cref="JsonValue"/>
     public class JsonObject : JsonToken
     {
-        private MemberInfo[] _memberInfos;
-
         /// <summary>
         /// Returns the token type, a collection will always be <c>JsonTokenType.Object</c>
         /// </summary>
@@ -27,12 +25,22 @@ namespace SFJson.Tokenization.Tokens
         {
             get { return JsonTokenType.Object; }
         }
-
+        
+        public override void SetupChildrenForType(Type type)
+        {
+            var memberInfos = type?.GetMembers(BindingFlags.Instance | BindingFlags.Public);
+            foreach(var child in Children)
+            {
+                FindMemberInfoOfToken(child, memberInfos);
+            }
+        }
+        
         /// <inheritdoc cref="JsonToken.GetValue"/>
-        public override object GetValue(Type type)
+        public override object GetValue(Type type, object instance = null)
         {
             type = DetermineType(type);
-            var obj = CreateInstance(type);
+            SetupChildrenForType(type);
+            var obj = CreateInstance(type, instance);
             var isDict = IsGenericDictionary(obj, type, out var dictionaryWrapper);
             var isList = IsGenericList(obj, type, out var listWrapper);
             if(isDict)
@@ -57,8 +65,7 @@ namespace SFJson.Tokenization.Tokens
                 obj = new Dictionary<string, Object>();
                 return GetDictionaryValues(new DictionaryWrapper<string, Object>((Dictionary<string, Object>)obj));
             }
-
-            _memberInfos = type.GetMembers(BindingFlags.Instance | BindingFlags.Public);
+            
             foreach(var child in Children)
             {
                 if(child.Name != "$type")
@@ -78,34 +85,49 @@ namespace SFJson.Tokenization.Tokens
             {
                 list.Reverse();
             }
-            return CreateInstance(type, list);
+            return CreateInstance(type, null, list);
         }
 
         private void SetValue(JsonToken child, object obj)
         {
-            var memberInfo = FindMemberInfoOfToken(child);
-            if(memberInfo is PropertyInfo)
+            var customConverterAttribute = (CustomConverterAttribute)child.MemberInfo?.GetCustomAttributes(typeof(CustomConverterAttribute), true).FirstOrDefault();
+            var customConverter = (customConverterAttribute != null) ? (CustomConverter)Activator.CreateInstance(customConverterAttribute.ConverterType) : (CustomConverter)null;
+            if(child.MemberInfo is PropertyInfo)
             {
-                var propertyInfo = (PropertyInfo)memberInfo;
-                propertyInfo.SetValue(obj, child.GetValue(propertyInfo.PropertyType), null);
+                var propertyInfo = (PropertyInfo)child.MemberInfo;
+                if(customConverter != null)
+                {
+                    propertyInfo.SetValue(obj, customConverter.Convert(child, propertyInfo.PropertyType), null);
+                }
+                else
+                {
+                    propertyInfo.SetValue(obj, child.GetValue(propertyInfo.PropertyType), null);
+                }
             }
-            else if(memberInfo is FieldInfo)
+            else if(child.MemberInfo is FieldInfo)
             {
-                var fieldInfo = (FieldInfo)memberInfo;
-                fieldInfo.SetValue(obj, child.GetValue(fieldInfo.FieldType));
+                var fieldInfo = (FieldInfo)child.MemberInfo;
+                if(customConverter != null)
+                {
+                    fieldInfo.SetValue(obj, customConverter.Convert(child, fieldInfo.FieldType));
+                }
+                else
+                {
+                    fieldInfo.SetValue(obj, child.GetValue(fieldInfo.FieldType));
+                }
             }
         }
 
-        private MemberInfo FindMemberInfoOfToken(JsonToken child)
+        private void FindMemberInfoOfToken(JsonToken child, MemberInfo[] memberInfos)
         {
-            var memberInfo = _memberInfos.FirstOrDefault(m => m.GetCustomAttributes(true).Any(a => a is JsonNamedValue && ((JsonNamedValue)a).Name == child.Name) || m.Name == child.Name);
+            var memberInfo = memberInfos?.FirstOrDefault(m => m.GetCustomAttributes(true).Any(a => a is JsonNamedValue && ((JsonNamedValue)a).Name == child.Name) || m.Name == child.Name);
             if(memberInfo == null)
             {
-                return null;
+                return;
             }
 
             var ignoreAttribute = (JsonIgnore)memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
-            return (ignoreAttribute == null) ? memberInfo : null;
+            child.MemberInfo = (ignoreAttribute == null) ? memberInfo : null;
         }
     }
 }

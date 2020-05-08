@@ -24,10 +24,10 @@ namespace SFJson.Tokenization.Tokens
             get { return JsonTokenType.Collection; }
         }
 
-        public override object GetValue(Type type)
+        public override object GetValue(Type type, object instance = null)
         {
             type = DetermineType(type);
-            var obj = CreateInstance(type);
+            var obj = CreateInstance(type, instance);
             
             if(IsGenericDictionary(obj, type, out var dictionaryWrapper))
             {

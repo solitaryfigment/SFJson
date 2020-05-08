@@ -28,7 +28,7 @@ namespace SFJson.Tokenization.Tokens
             _isQuoted = isQuoted;
         }
 
-        public override object GetValue(Type type)
+        public override object GetValue(Type type, object instance = null)
         {
             object value;
             if(_value == null && OnNullValue != null)
