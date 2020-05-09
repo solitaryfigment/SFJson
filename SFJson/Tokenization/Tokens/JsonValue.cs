@@ -98,7 +98,7 @@ namespace SFJson.Tokenization.Tokens
             }
             if(_isQuoted)
             {
-                stringBuilder.Append((_value != null) ? $"\"{_value.ToString()}\"" : "null");
+                stringBuilder.Append((_value != null) ? $"\"{_value}\"" : "null");
             }
             else
             {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 
-namespace SFJson.Conversion
+namespace SFJson.WrapperObjects
 {
     public interface IListWrapper : IList
     {

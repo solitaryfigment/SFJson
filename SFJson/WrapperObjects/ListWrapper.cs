@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace SFJson.Conversion
+namespace SFJson.WrapperObjects
 {
     public class ListWrapper<T> : IListWrapper
     {

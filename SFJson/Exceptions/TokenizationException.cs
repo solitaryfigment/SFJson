@@ -8,12 +8,7 @@ namespace SFJson.Exceptions
     /// </summary>
     public class TokenizationException : Exception
     {
-        public TokenizationException(string message)
-            : this(message, null)
-        {
-        }
-
-        public TokenizationException(string message, Exception innerException)
+        public TokenizationException(string message, Exception innerException = null)
             : base(message, innerException)
         {
         }

@@ -67,7 +67,7 @@ namespace SFJson.Conversion
         protected T GetValueOfChild<T>(Type tokenType, string childName)
         {
             var value = GetValueOfChild(tokenType, typeof(T), childName);
-            return (value == null) ? default : (T)value;
+            return value == null ? default : (T)value;
         }
 
         protected object GetValueOfChild(Type tokenType, Type childType, string childName)
@@ -79,13 +79,12 @@ namespace SFJson.Conversion
 
             var child = _token.Children.FirstOrDefault(c => c.Name == childName);
             Console.WriteLine(child);
-            var customConverterAttribute = (CustomConverterAttribute)child?.MemberInfo?.GetCustomAttributes(typeof(CustomConverterAttribute), true)?.FirstOrDefault();
-            var customConverter = (customConverterAttribute != null) ? (CustomConverter)Activator.CreateInstance(customConverterAttribute.ConverterType) : (CustomConverter)null;
+            var customConverterAttribute = (CustomConverterAttribute)child?.MemberInfo?.GetCustomAttributes(typeof(CustomConverterAttribute), true).FirstOrDefault();
+            var customConverter = customConverterAttribute != null ? (CustomConverter)Activator.CreateInstance(customConverterAttribute.ConverterType) : null;
             
-            if(child?.MemberInfo is PropertyInfo)
+            if(child?.MemberInfo is PropertyInfo propertyInfo)
             {
                 Console.WriteLine("PropertyInfo");
-                var propertyInfo = (PropertyInfo)child.MemberInfo;
                 if(customConverter != null)
                 {
                     return customConverter.Convert(child, propertyInfo.PropertyType);
@@ -93,10 +92,9 @@ namespace SFJson.Conversion
                 return child.GetValue(propertyInfo.PropertyType);
             }
             
-            if(child?.MemberInfo is FieldInfo)
+            if(child?.MemberInfo is FieldInfo fieldInfo)
             {
                 Console.WriteLine("FieldInfo");
-                var fieldInfo = (FieldInfo)child.MemberInfo;
                 if(customConverter != null)
                 {
                     return customConverter.Convert(child, fieldInfo.FieldType);

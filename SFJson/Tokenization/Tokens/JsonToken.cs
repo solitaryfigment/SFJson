@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
-using SFJson.Attributes;
 using SFJson.Conversion;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Utils;
+using SFJson.WrapperObjects;
 
 namespace SFJson.Tokenization.Tokens
 {
     /// <summary>
-    /// Base class for all token created during the tokenizaiton phase.
+    /// Base class for all token created during the tokenization phase.
     /// </summary>
     /// <seealso cref="JsonCollection"/>
     /// <seealso cref="JsonDictionary"/>
@@ -24,7 +22,7 @@ namespace SFJson.Tokenization.Tokens
     public abstract class JsonToken
     {
         public string Name;
-        public List<JsonToken> Children = new List<JsonToken>();
+        public readonly List<JsonToken> Children = new List<JsonToken>();
         internal SettingsManager SettingsManager;
         internal MemberInfo MemberInfo;
         
@@ -63,11 +61,11 @@ namespace SFJson.Tokenization.Tokens
             Type determinedType = type;
             if(Children.Count > 0 && Children[0].Name == "$type")
             {
-                var typestring = Children[0].GetValue<string>();
-                var inheiritedType = Type.GetType(typestring);
-                if(inheiritedType != null)
+                var typeName = Children[0].GetValue<string>();
+                var inheritedType = Type.GetType(typeName);
+                if(inheritedType != null)
                 {
-                    determinedType = CheckForBoundTypes(inheiritedType);
+                    determinedType = CheckForBoundTypes(inheritedType);
                 }
             }
 
@@ -97,7 +95,7 @@ namespace SFJson.Tokenization.Tokens
                 return null;
             }
 
-            if(instance != null && type.IsAssignableFrom(instance.GetType()))
+            if(instance != null && type.IsInstanceOfType(instance))
             {
                 return instance;
             }
@@ -253,7 +251,7 @@ namespace SFJson.Tokenization.Tokens
         
                 return obj.List;
             }
-            catch (NotSupportedException e)
+            catch (NotSupportedException)
             {
                 if(obj.IsReadOnly)
                 {
@@ -266,10 +264,7 @@ namespace SFJson.Tokenization.Tokens
                 
                     return CreateInstance(type, null, thing);
                 }
-                else
-                {
-                    throw e;
-                }
+                throw;
             }
         }
 

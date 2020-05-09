@@ -8,7 +8,7 @@ namespace SFJson.Attributes
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class JsonNamedValue : Attribute
     {
-        public string Name { get; set; }
+        public string Name { get; }
 
         public JsonNamedValue(string name)
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
@@ -41,7 +40,7 @@ namespace SFJson.Tokenization
             }
             catch(Exception e)
             {
-                throw new TokenizationException(string.Format("Tokenization Error occured on character {0} at position {1}", _currentChar, _index), e);
+                throw new TokenizationException($"Tokenization Error occured on character {_currentChar} at position {_index}", e);
             }
         }
 
@@ -72,11 +71,7 @@ namespace SFJson.Tokenization
                 HandleNextCharacter();
             }
 
-            if(_currentToken == null)
-            {
-                _currentToken = ParseElement();
-            }
-            return _currentToken;
+            return _currentToken ?? (_currentToken = ParseElement());
         }
         
         private char NextValidChar()
@@ -271,9 +266,11 @@ namespace SFJson.Tokenization
 
         private T CreateToken<T>() where T : JsonToken, new()
         {
-            T token = new T();
-            token.SettingsManager = _settingsManager;
-            token.Name = _tokenName;
+            T token = new T
+            {
+                SettingsManager = _settingsManager,
+                Name = _tokenName
+            };
             return token;
         }
 
@@ -293,7 +290,7 @@ namespace SFJson.Tokenization
             else
             {
                 var expectedCharacter = (_currentToken.JsonTokenType == JsonTokenType.Object) ? "\'}\'" : "\']\'";
-                throw new TokenizationException(string.Format("Malformed input: Expected {0} but was \'{1}\' at position {2}.", expectedCharacter, _currentChar.ToString().ToLiteral(), _index));
+                throw new TokenizationException($"Malformed input: Expected {expectedCharacter} but was \'{_currentChar.ToString().ToLiteral()}\' at position {_index}.");
             }
         }
 

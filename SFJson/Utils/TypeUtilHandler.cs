@@ -13,7 +13,7 @@ namespace SFJson.Utils
 
         internal T GetDefault<T>()
         {
-            return default(T);
+            return default;
         }
     }
 }

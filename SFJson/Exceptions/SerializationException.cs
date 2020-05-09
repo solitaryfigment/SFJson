@@ -9,12 +9,7 @@ namespace SFJson.Exceptions
     /// </summary>
     public class SerializationException : Exception
     {
-        public SerializationException(string message)
-            : this(message, null)
-        {
-        }
-
-        public SerializationException(string message, Exception innerException)
+        public SerializationException(string message, Exception innerException = null)
             : base(message, innerException)
         {
         }

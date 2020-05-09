@@ -13,7 +13,7 @@ namespace SFJson.Attributes
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class CustomConverterAttribute : Attribute
     {
-        public Type ConverterType;
+        public readonly Type ConverterType;
 
         public CustomConverterAttribute(Type converterType)
         {

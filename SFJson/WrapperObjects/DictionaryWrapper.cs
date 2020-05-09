@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SFJson.Conversion
+namespace SFJson.WrapperObjects
 {
     public class DictionaryWrapper<TKey, TValue> : IDictionaryWrapper
     {

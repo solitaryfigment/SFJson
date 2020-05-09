@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Tokenization;
@@ -9,13 +7,13 @@ using SFJson.Tokenization.Tokens;
 namespace SFJson.Conversion
 {
     /// <summary>
-    /// Handles converting a JSON string to an intance of an object.
+    /// Handles converting a JSON string to an instance of an object.
     /// </summary>
     public class Deserializer
     {
         private string _stringToDeserialize;
         private JsonToken _lastTokenization;
-        private Tokenizer _tokenizer = new Tokenizer();
+        private readonly Tokenizer _tokenizer = new Tokenizer();
 
         public T Deserialize<T>(string stringToSerialize, DeserializerSettings deserializerSettings = null)
         {
@@ -33,7 +31,7 @@ namespace SFJson.Conversion
         /// A deserialized instance of type <c>T</c>
         /// </returns>
         /// <exception cref="DeserializationException">
-        /// Deserializtion errors will contain the root <see cref="JsonToken"/> from
+        /// Deserialization errors will contain the root <see cref="JsonToken"/> from
         /// the tokenization phase.
         /// </exception>
         public T Deserialize<T>(object instance, string stringToSerialize, DeserializerSettings deserializerSettings = null)
@@ -72,7 +70,7 @@ namespace SFJson.Conversion
         /// to <paramref name="type"/>.
         /// </returns>
         /// <exception cref="DeserializationException">
-        /// Deserializtion errors will contain the root <see cref="JsonToken"/> from
+        /// Deserialization errors will contain the root <see cref="JsonToken"/> from
         /// the tokenization phase.
         /// </exception>
         public object Deserialize(Type type, object instance, string stringToSerialize, DeserializerSettings deserializerSettings = null)

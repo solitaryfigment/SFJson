@@ -6,6 +6,7 @@ using System.Reflection;
 using SFJson.Attributes;
 using SFJson.Conversion;
 using SFJson.Utils;
+using SFJson.WrapperObjects;
 
 namespace SFJson.Tokenization.Tokens
 {
@@ -60,7 +61,7 @@ namespace SFJson.Tokenization.Tokens
                 return GetListValues(type, listWrapper);
             }
 
-            if(type == typeof(System.Object))
+            if(type == typeof(Object))
             {
                 obj = new Dictionary<string, Object>();
                 return GetDictionaryValues(new DictionaryWrapper<string, Object>((Dictionary<string, Object>)obj));
@@ -92,9 +93,8 @@ namespace SFJson.Tokenization.Tokens
         {
             var customConverterAttribute = (CustomConverterAttribute)child.MemberInfo?.GetCustomAttributes(typeof(CustomConverterAttribute), true).FirstOrDefault();
             var customConverter = (customConverterAttribute != null) ? (CustomConverter)Activator.CreateInstance(customConverterAttribute.ConverterType) : (CustomConverter)null;
-            if(child.MemberInfo is PropertyInfo)
+            if(child.MemberInfo is PropertyInfo propertyInfo)
             {
-                var propertyInfo = (PropertyInfo)child.MemberInfo;
                 if(customConverter != null)
                 {
                     propertyInfo.SetValue(obj, customConverter.Convert(child, propertyInfo.PropertyType), null);
@@ -104,9 +104,8 @@ namespace SFJson.Tokenization.Tokens
                     propertyInfo.SetValue(obj, child.GetValue(propertyInfo.PropertyType), null);
                 }
             }
-            else if(child.MemberInfo is FieldInfo)
+            else if(child.MemberInfo is FieldInfo fieldInfo)
             {
-                var fieldInfo = (FieldInfo)child.MemberInfo;
                 if(customConverter != null)
                 {
                     fieldInfo.SetValue(obj, customConverter.Convert(child, fieldInfo.FieldType));
@@ -120,7 +119,7 @@ namespace SFJson.Tokenization.Tokens
 
         private void FindMemberInfoOfToken(JsonToken child, MemberInfo[] memberInfos)
         {
-            var memberInfo = memberInfos?.FirstOrDefault(m => m.GetCustomAttributes(true).Any(a => a is JsonNamedValue && ((JsonNamedValue)a).Name == child.Name) || m.Name == child.Name);
+            var memberInfo = memberInfos?.FirstOrDefault(m => m.GetCustomAttributes(true).Any(a => a is JsonNamedValue value && value.Name == child.Name) || m.Name == child.Name);
             if(memberInfo == null)
             {
                 return;

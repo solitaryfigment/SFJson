@@ -47,8 +47,7 @@ namespace SFJson.Conversion.Settings
         /// </returns>
         public Type TryGetValue(Type type)
         {
-            Type val;
-            _bindings.TryGetValue(type, out val);
+            _bindings.TryGetValue(type, out var val);
             return val;
         }
 

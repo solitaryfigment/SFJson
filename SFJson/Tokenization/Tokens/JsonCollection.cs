@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
-using SFJson.Conversion;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens

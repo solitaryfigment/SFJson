@@ -8,6 +8,7 @@ using SFJson.Attributes;
 using SFJson.Conversion.Settings;
 using SFJson.Exceptions;
 using SFJson.Utils;
+using SFJson.WrapperObjects;
 
 namespace SFJson.Conversion
 {
@@ -26,9 +27,9 @@ namespace SFJson.Conversion
         }
         internal static IDictionaryWrapper CreateDictionaryWrapper(object dictionary, Type dictType, Type keyType, Type valueType)
         {
-            var wrapperType = typeof(DictionaryWrapper<,>)?.MakeGenericType(keyType, valueType);
+            var wrapperType = typeof(DictionaryWrapper<,>).MakeGenericType(keyType, valueType);
             ConstructorInfo genericWrapperConstructor = wrapperType.GetConstructor(new[] { dictType });
-            IDictionaryWrapper wrapper = (IDictionaryWrapper)genericWrapperConstructor.Invoke(new object[]{dictionary});
+            IDictionaryWrapper wrapper = (IDictionaryWrapper)genericWrapperConstructor?.Invoke(new []{dictionary});
             return wrapper;
         }
         
@@ -40,14 +41,14 @@ namespace SFJson.Conversion
         
         internal static IListWrapper CreateListWrapper(object list, Type listType, Type elementType)
         {
-            var wrapperType = typeof(ListWrapper<>)?.MakeGenericType(elementType);
+            var wrapperType = typeof(ListWrapper<>).MakeGenericType(elementType);
             ConstructorInfo genericWrapperConstructor = wrapperType.GetConstructor(new[] { listType });
-            IListWrapper wrapper = (IListWrapper)genericWrapperConstructor.Invoke(new object[]{list});
+            IListWrapper wrapper = (IListWrapper)genericWrapperConstructor?.Invoke(new []{list});
             return wrapper;
         }
         
         /// <summary>
-        /// Convets an <c>object</c> to a JSON string.
+        /// Converts an <c>object</c> to a JSON string.
         /// </summary>
         /// <param name="objectToSerialize"></param>
         /// <param name="serializerSettings"></param>
@@ -133,7 +134,7 @@ namespace SFJson.Conversion
                     while(e.MoveNext())
                     {
                         AppendSeparator(appendSeparator, indentLevel);
-                        SerializeObject(e.Current.GetType(), e.Current, indentLevel);
+                        SerializeObject(e.Current?.GetType(), e.Current, indentLevel);
                         appendSeparator = true;
                     }
 
@@ -152,7 +153,7 @@ namespace SFJson.Conversion
                     while(e.MoveNext())
                     {
                         AppendSeparator(appendSeparator, indentLevel);
-                        SerializeObject(e.Current.GetType(), e.Current, indentLevel);
+                        SerializeObject(e.Current?.GetType(), e.Current, indentLevel);
                         appendSeparator = true;
                     }
 
@@ -180,7 +181,7 @@ namespace SFJson.Conversion
                     while(e.MoveNext())
                     {
                         AppendSeparator(appendSeparator, indentLevel);
-                        SerializeObject(e.Current.GetType(), e.Current, indentLevel);
+                        SerializeObject(e.Current?.GetType(), e.Current, indentLevel);
                         appendSeparator = true;
                     }
 
@@ -199,7 +200,7 @@ namespace SFJson.Conversion
                     while(e.MoveNext())
                     {
                         AppendSeparator(appendSeparator, indentLevel);
-                        SerializeObject(e.Current.GetType(), e.Current, indentLevel);
+                        SerializeObject(e.Current?.GetType(), e.Current, indentLevel);
                         appendSeparator = true;
                     }
 
@@ -260,30 +261,32 @@ namespace SFJson.Conversion
         private bool SerializeMember(MemberInfo memberInfo, Type type, object value, bool appendSeparator, int indentLevel)
         {
             var ignoreAttribute = (JsonIgnore) memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
-            if(ignoreAttribute == null)
+            if(ignoreAttribute != null)
             {
-                var attribute = (JsonNamedValue) memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonNamedValue));
-                var memberName = (attribute != null) ? attribute.Name : memberInfo.Name;
-                AppendSeparator(appendSeparator, indentLevel);
-                AppendAsString(memberName);
-                _serialized.Append(Constants.COLON);
-                PrettyPrintSpace();
-                SerializeObject(type, value, indentLevel);
-                return true;
+                return false;
             }
 
-            return false;
+            var attribute = (JsonNamedValue) memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonNamedValue));
+            var memberName = attribute != null ? attribute.Name : memberInfo.Name;
+            AppendSeparator(appendSeparator, indentLevel);
+            AppendAsString(memberName);
+            _serialized.Append(Constants.COLON);
+            PrettyPrintSpace();
+            SerializeObject(type, value, indentLevel);
+            
+            return true;
         }
-        
 
         protected void PrettyPrintIndent(int indentLevel)
         {
-            if(_settingsManager.FormattedString)
+            if(!_settingsManager.FormattedString)
             {
-                for(var i = 0; i < indentLevel; i++)
-                {
-                    _serialized.Append('\t');
-                }
+                return;
+            }
+
+            for(var i = 0; i < indentLevel; i++)
+            {
+                _serialized.Append('\t');
             }
         }
         
@@ -305,12 +308,15 @@ namespace SFJson.Conversion
 
         private void SerializeObject(Type type, object value, int indentLevel = 0)
         {
-            type = type.IsInterface ? value.GetType() : type;
             if(value == null)
             {
                 _serialized.AppendFormat(Constants.NULL);
+                return;
             }
-            else if(type.IsEnum)
+            
+            type = type.IsInterface ? value.GetType() : type;
+            
+            if(type.IsEnum)
             {
                 AppendAsString(value.ToString());
             }
@@ -325,21 +331,21 @@ namespace SFJson.Conversion
             }
             else if(value is DateTimeOffset)
             {
-                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _settingsManager.DateTimeOffsetFormat, "}");
+                var indexAndFormat = $"{{0:{_settingsManager.DateTimeOffsetFormat}}}";
                 AppendAsString(string.Format(indexAndFormat, value));
             }
             else if(value is DateTime)
             {
-                var indexAndFormat = string.Format("{0}{1}{2}", "{0:", _settingsManager.DateTimeFormat, "}");
+                var indexAndFormat = $"{{0:{_settingsManager.DateTimeFormat}}}";
                 AppendAsString(string.Format(indexAndFormat, value));
             }
             else if(value is TimeSpan)
             {
                 AppendAsString(value.ToString());
             }
-            else if(value is Type)
+            else if(value is Type vType)
             {
-                AppendAsString(((Type) value).GetTypeAsString());
+                AppendAsString(vType.GetTypeAsString());
             }
             else if(type == typeof(string))
             {
