@@ -13,7 +13,7 @@ namespace SFJson.Conversion.Settings
 
         internal bool FormattedString
         {
-            get { return (SerializationSettings != null) ? SerializationSettings.FormattedString : false; }
+            get { return SerializationSettings?.FormattedString ?? false; }
         }
         
         /// <summary>
