@@ -9,6 +9,7 @@ using System.Text;
 using SFJson.Attributes;
 using SFJson.Conversion;
 using SFJson.Conversion.Settings;
+using SFJson.Exceptions;
 using SFJson.Utils;
 
 namespace SFJson.Tokenization.Tokens
@@ -70,13 +71,16 @@ namespace SFJson.Tokenization.Tokens
                 }
             }
 
+            if(determinedType == null)
+            {
+                throw new DeserializationException($"Type cannot be null at token {Name}", this);
+            }
             determinedType = CheckForBoundTypes(determinedType);
 
             if(determinedType.IsInterface)
             {
                 determinedType = DetermineTypeFromInterface(determinedType);
             }
-
             return determinedType;
         }
 

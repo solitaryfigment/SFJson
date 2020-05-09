@@ -10,7 +10,16 @@ namespace SFJson.Exceptions
     /// </summary>
     public class DeserializationException : Exception
     {
+        private string _message;
         public JsonToken Token { get; set; }
+
+        public override string Message
+        {
+            get
+            {
+                return $"{_message} -- {Token}{Token.Name}";
+            }
+        }
 
         public DeserializationException(string message, JsonToken token)
             : this(message, token, null)

@@ -42,8 +42,9 @@ namespace SFJson.Conversion
                         continue;
                     }
 
-                    tokenChild.SetupChildrenForType(list.GetType().GetElementType());
-                    list.Add(_elementConverter.Convert(tokenChild, list.GetType().GetElementType()));
+                    var elementType = list.GetType().GetElementType() ?? list.GetType().GetGenericArguments()[0];
+                    tokenChild.SetupChildrenForType(elementType);
+                    list.Add(_elementConverter.Convert(tokenChild, elementType));
                 }
             }
 
@@ -71,7 +72,11 @@ namespace SFJson.Conversion
 
         protected object GetValueOfChild(Type tokenType, Type childType, string childName)
         {
-            _token.SetupChildrenForType(tokenType);
+            if(tokenType != null)
+            {
+                _token.SetupChildrenForType(tokenType);
+            }
+
             var child = _token.Children.FirstOrDefault(c => c.Name == childName);
             Console.WriteLine(child);
             var customConverterAttribute = (CustomConverterAttribute)child?.MemberInfo?.GetCustomAttributes(typeof(CustomConverterAttribute), true)?.FirstOrDefault();

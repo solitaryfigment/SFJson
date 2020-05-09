@@ -57,6 +57,23 @@ namespace SFJsonTests
         }
 
         [Test]
+        public void ProfileTest()
+        {
+            var profile = new EntityProfile();
+            profile.EntityBehaviorProfiles = new List<EntityBehaviorProfile>();
+            profile.EntityBehaviorProfiles.Add(new WorldDragEntityBehaviorProfile
+            {
+                Type = EntityBehaviorTypes.WORLD_DRAG,
+                TargetLayers = new[] {"Ground"},
+                Test = 5
+            });
+            profile.EntityBehaviorProfiles.Add(new UIDragEntityBehaviorProfile());
+            
+            var profileStr = _serializer.Serialize(profile);
+            var dProfile = _deserializer.Deserialize<EntityProfile>(profileStr);
+        }
+
+        [Test]
         public void CanConvertUseCustomConverters()
         {
             var mainObj = new SimpleObjectWrapper
