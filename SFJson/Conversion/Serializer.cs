@@ -239,7 +239,7 @@ namespace SFJson.Conversion
             }
             foreach(var propertyInfo in propertyInfos)
             {
-                if(!(propertyInfo.CanWrite && propertyInfo.CanRead))
+                if(!(propertyInfo.CanWrite && propertyInfo.CanRead) || propertyInfo.GetIndexParameters().Any())
                 {
                     continue;
                 }
