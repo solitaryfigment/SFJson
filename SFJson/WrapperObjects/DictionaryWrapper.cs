@@ -122,22 +122,22 @@ namespace SFJson.WrapperObjects
         {
             get
             {
-                if(_dictionary != null)
+                if(_genericDictionary != null)
                 {
-                    return _dictionary[key];
+                    return _genericDictionary[(TKey)key];
                 }
 
-                return _genericDictionary[(TKey)key];
+                return _dictionary[(TKey)key];
             }
             set
             {
-                if(_dictionary != null)
+                if(_genericDictionary != null)
                 {
-                    _dictionary[key] = value;
+                    _genericDictionary[(TKey)key] = (TValue)value;
                     return;
                 }
 
-                _genericDictionary[(TKey)key] = (TValue)value;
+                _dictionary[key] = value;
             }
         }
 

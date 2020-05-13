@@ -65,10 +65,11 @@ namespace SFJsonTests
             {
                 Type = EntityBehaviorTypes.WORLD_DRAG,
                 TargetLayers = new[] {"Ground"},
-                Test = 5
+                Test = 5,
+                OffsetMap = new Dictionary<int, DragTargetOffset>()
             });
             profile.EntityBehaviorProfiles.Add(new UIDragEntityBehaviorProfile());
-            
+            ((WorldDragEntityBehaviorProfile)profile.EntityBehaviorProfiles[0]).OffsetMap = new Dictionary<int, DragTargetOffset>();
             var profileStr = _serializer.Serialize(profile);
             var dProfile = _deserializer.Deserialize<EntityProfile>(profileStr);
         }

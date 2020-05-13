@@ -138,19 +138,19 @@ namespace SFJson.Tokenization.Tokens
         protected bool IsGenericDictionary(object obj, Type type, out IDictionaryWrapper dictionaryWrapper)
         {
             dictionaryWrapper = null;
-            foreach(var interfaceType in type.GetInterfaces())
+            foreach(var interfaceType in obj.GetType().GetInterfaces())
             {
-                if(interfaceType.IsGenericType && typeof(IDictionary<,>).IsAssignableFrom(interfaceType.GetGenericTypeDefinition()))
+                if(interfaceType.IsGenericType && (interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
                 {
                     var genArgs = interfaceType.GenericTypeArguments;
-                    dictionaryWrapper = Serializer.CreateDictionaryWrapper(obj, interfaceType, genArgs[0], genArgs[1]);
+                    dictionaryWrapper = Serializer.CreateDictionaryWrapper(obj, type, genArgs[0], genArgs[1]);
                     return true;
                 }
-                else if (typeof(IDictionary).IsAssignableFrom(interfaceType))
-                {
-                    dictionaryWrapper = Serializer.CreateDictionaryWrapper(obj);
-                    return true;
-                }
+            }
+            if(typeof(IDictionary).IsAssignableFrom(type))
+            {
+                dictionaryWrapper = Serializer.CreateDictionaryWrapper(obj);
+                return true;
             }
 
             return false;

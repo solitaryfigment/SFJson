@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SFJson.Conversion;
 using SFJson.Conversion.Settings;
 using SFJson.Utils;
+using UnityEngine;
 
 namespace SFJsonTests
 {
@@ -21,6 +23,34 @@ namespace SFJsonTests
             _serializer = new Serializer();
         }
 
+        public class DictWrapper
+        {
+            public WorldDragEntityBehaviorProfile Profile;
+        }
+
+        [Test]
+        public void CanConvertDictionaryIntKey()
+        {
+            var str =
+                "{\"Id\":0,\"EntityBehaviorProfiles\":[{\"OffsetMap\":{8:{\"Offset\":{\"x\":0.5,\"y\":0.5,\"z\":0.5}}},\"Test\":5,\"TargetLayers\":[\"Ground\"],\"Type\":{\"Id\":2,\"Categories\":[\"World\",\"Permanent\",\"Interaction\"],\"Data\":{\"Id\":0,\"Values\":null}}},{\"TargetLayers\":[\"Grid\"],\"Type\":{\"Id\":4,\"Categories\":[\"UI\",\"Permanent\",\"Interaction\"],\"Data\":{\"Id\":0,\"Values\":null}}}]}";
+            var strDeserialized = Converter.Deserialize<EntityProfile>(str);
+            
+            // Assert.NotNull(strDeserialized);
+            // Assert.NotNull(strDeserialized);
+            // Assert.AreEqual(1, strDeserialized.Dict.Count);
+            //
+            // strDeserialized = _deserializer.Deserialize<DictWrapper>(serialized);
+            // Assert.NotNull(strDeserialized);
+            // Assert.NotNull(strDeserialized);
+            // Assert.AreEqual(1, strDeserialized.Dict.Count);
+            
+            // var strWithTypeDeserialized = _deserializer.Deserialize<ObjectWithDictionary>(strWithType);
+            // Assert.NotNull(strDeserialized);
+            // Assert.IsInstanceOf<ObjectWithDictionary>(strDeserialized);
+            // Assert.NotNull(strDeserialized);
+            // Assert.AreEqual(3, strDeserialized.Count);
+        }
+        
         [Test]
         public void CanDeserializeEmptyObjectIntoEmptyDictionary()
         {
@@ -140,6 +170,22 @@ namespace SFJsonTests
             dictionary.Add("Second", new bool[]{true, false});
             dictionary.Add("Third", new bool[]{false, false});
             var str = _serializer.Serialize(dictionary);
+            
+            Console.WriteLine(dictionary.GetType());
+            var inters  = dictionary.GetType().GetInterfaces();
+            
+            Console.WriteLine((typeof(IDictionary).IsAssignableFrom(dictionary.GetType())));
+
+            foreach(var type in inters)
+            {
+                if(type.IsGenericType)
+                {
+                    Console.WriteLine(type.GetGenericTypeDefinition());
+                    Console.WriteLine((typeof(IDictionary<,>)) == type.GetGenericTypeDefinition());
+                }
+
+            }
+            
             var deserialized = _deserializer.Deserialize<ADictionary>(str);
             
             Assert.AreEqual(dictionary, deserialized);

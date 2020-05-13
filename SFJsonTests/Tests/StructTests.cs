@@ -60,11 +60,15 @@ namespace SFJsonTests
             
             Assert.NotNull(strDeserialized);
             Assert.AreEqual(obj, strDeserialized);
+            Assert.AreEqual(obj.x, strDeserialized.x);
+            Assert.AreEqual(obj.y, strDeserialized.y);
             
             var strWithTypeDeserialized = _deserializer.Deserialize<Rect>(strWithType);
             
             Assert.NotNull(strWithTypeDeserialized);
             Assert.AreEqual(obj, strWithTypeDeserialized);
+            Assert.AreEqual(obj.x, strWithTypeDeserialized.x);
+            Assert.AreEqual(obj.y, strWithTypeDeserialized.y);
         }
     }
 }

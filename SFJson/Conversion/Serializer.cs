@@ -418,19 +418,19 @@ namespace SFJson.Conversion
         private bool IsGenericDictionary(object obj, Type type, out IDictionaryWrapper dictionaryWrapper)
         {
             dictionaryWrapper = null;
-            foreach(var interfaceType in type.GetInterfaces())
+            foreach(var interfaceType in obj.GetType().GetInterfaces())
             {
-                if(interfaceType.IsGenericType && typeof(IDictionary<,>).IsAssignableFrom(interfaceType.GetGenericTypeDefinition()))
+                if(interfaceType.IsGenericType && (interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
                 {
                     var genArgs = interfaceType.GenericTypeArguments;
-                    dictionaryWrapper = CreateDictionaryWrapper(obj, interfaceType, genArgs[0], genArgs[1]);
+                    dictionaryWrapper = CreateDictionaryWrapper(obj, type, genArgs[0], genArgs[1]);
                     return true;
                 }
-                else if (typeof(IDictionary).IsAssignableFrom(interfaceType))
-                {
-                    dictionaryWrapper = CreateDictionaryWrapper(obj);
-                    return true;
-                }
+            }
+            if(typeof(IDictionary).IsAssignableFrom(type))
+            {
+                dictionaryWrapper = CreateDictionaryWrapper(obj);
+                return true;
             }
 
             return false;

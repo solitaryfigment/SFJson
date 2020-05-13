@@ -11,6 +11,10 @@ namespace SFJsonTests
     {
         public readonly Vector3 Offset;
 
+        public DragTargetOffset()
+        {
+            Offset = new Vector3(0, 0, 0);
+        }
         public DragTargetOffset(float x = 0, float y = 0, float z = 0)
         {
             Offset = new Vector3(x, y, z);
@@ -18,29 +22,9 @@ namespace SFJsonTests
     }
 
     [Serializable]
-    public class LayerToDragTargetOffsetMap : Dictionary<int, DragTargetOffset>
+    public class LayerToDragTargetOffsetMap
     {
-        public new DragTargetOffset this[int key]
-        {
-            get
-            {
-                if(!TryGetValue(key, out var dragTargetOffset))
-                {
-                    dragTargetOffset = new DragTargetOffset();
-                    base[key] = dragTargetOffset;
-                }
-
-                return dragTargetOffset;
-            }
-            set
-            {
-                base[key] = value;
-            }
-        }
-
-        public LayerToDragTargetOffsetMap()
-        {
-        }
+        public Vector3 Vector;
     }
     
     [Serializable]
@@ -52,7 +36,7 @@ namespace SFJsonTests
     [Serializable]
     public class WorldDragEntityBehaviorProfile : DragEntityBehaviorProfile
     {
-        public LayerToDragTargetOffsetMap LayerToDragTargetOffsetMap;
+        public Dictionary<int, DragTargetOffset> OffsetMap;
         public int Test;
     }
     
