@@ -97,7 +97,7 @@ namespace SFJson.Tokenization.Tokens
             {
                 if(customConverter != null)
                 {
-                    propertyInfo.SetValue(obj, customConverter.Convert(child, propertyInfo.PropertyType), null);
+                    propertyInfo.SetValue(obj, customConverter.Deserialize(child, propertyInfo.PropertyType), null);
                 }
                 else
                 {
@@ -108,7 +108,7 @@ namespace SFJson.Tokenization.Tokens
             {
                 if(customConverter != null)
                 {
-                    fieldInfo.SetValue(obj, customConverter.Convert(child, fieldInfo.FieldType));
+                    fieldInfo.SetValue(obj, customConverter.Deserialize(child, fieldInfo.FieldType));
                 }
                 else
                 {

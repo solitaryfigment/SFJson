@@ -58,7 +58,7 @@ namespace SFJsonTests
     
     public class EntityBehaviorProfileConverter : CustomConverter
     {
-        public override object Convert()
+        public override object Deserialize()
         {
             var type = GetValueOfChild<EntityBehaviorType>(typeof(EntityBehaviorProfile), "Type");
             
@@ -75,11 +75,16 @@ namespace SFJsonTests
 
             return _token.GetValue(_defaultType);
         }
+
+        public override string Serialize(object obj)
+        {
+            return Converter.Serialize(obj);
+        }
     }
 
     public class EntityBehaviorTypeConverter : CustomConverter
     {
-        public override object Convert()
+        public override object Deserialize()
         {
             var id = _token.Children.FirstOrDefault(c => c.Name == "Id")?.GetValue<int>();
             
@@ -94,6 +99,11 @@ namespace SFJsonTests
             }
             
             return EntityBehaviorTypes.UI_HOVER;
+        }
+
+        public override string Serialize(object obj)
+        {
+            return Converter.Serialize(obj);
         }
     }
 
@@ -238,7 +248,7 @@ namespace SFJsonTests
 
     public class MyCustomConverter : CustomConverter
     {
-        public override object Convert()
+        public override object Deserialize()
         {
             Console.WriteLine(_token.JsonTokenType);
             var id = GetValueOfChild(typeof(ISimpleBaseObject), typeof(int), "BaseFieldInt");
@@ -257,6 +267,11 @@ namespace SFJsonTests
                     Console.WriteLine("D: " + i);
                     return _token.GetValue(_defaultType);
             }
+        }
+
+        public override string Serialize(object obj)
+        {
+            return Converter.Serialize(obj);
         }
     }
     

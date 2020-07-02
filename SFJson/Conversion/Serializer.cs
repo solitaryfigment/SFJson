@@ -120,7 +120,6 @@ namespace SFJson.Conversion
             _serialized.Append(Constants.NULL);
         }
         
-        
         private void SerializeList(IListWrapper list, int indentLevel)
         {
             var appendSeparator = false;
@@ -260,20 +259,29 @@ namespace SFJson.Conversion
 
         private bool SerializeMember(MemberInfo memberInfo, Type type, object value, bool appendSeparator, int indentLevel)
         {
-            var ignoreAttribute = (JsonIgnore) memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
+            var attributes = memberInfo.GetCustomAttributes(true);
+            var ignoreAttribute = (JsonIgnore) attributes.FirstOrDefault(a => a.GetType() == typeof(JsonIgnore));
             if(ignoreAttribute != null)
             {
                 return false;
             }
 
-            var attribute = (JsonNamedValue) memberInfo.GetCustomAttributes(true).FirstOrDefault(a => a.GetType() == typeof(JsonNamedValue));
+            var attribute = (JsonNamedValue) attributes.FirstOrDefault(a => a.GetType() == typeof(JsonNamedValue));
+            var customAttribute = (CustomConverter) attributes.FirstOrDefault(a => a.GetType() == typeof(CustomConverter));
             var memberName = attribute != null ? attribute.Name : memberInfo.Name;
             AppendSeparator(appendSeparator, indentLevel);
             AppendAsString(memberName);
             _serialized.Append(Constants.COLON);
             PrettyPrintSpace();
-            SerializeObject(type, value, indentLevel);
-            
+            if(customAttribute != null)
+            {
+                _serialized.Append(customAttribute.Serialize(value));
+            }
+            else
+            {
+                SerializeObject(type, value, indentLevel);
+            }
+
             return true;
         }
 

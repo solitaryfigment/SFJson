@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using SFJson.Attributes;
 using SFJson.Conversion.Settings;
 using SFJson.Tokenization.Tokens;
@@ -17,7 +18,7 @@ namespace SFJson.Conversion
             _elementConverter = new T();
         }
         
-        public override object Convert()
+        public override object Deserialize()
         {
             Console.WriteLine(_token.JsonTokenType);
 
@@ -44,11 +45,34 @@ namespace SFJson.Conversion
 
                     var elementType = list.GetType().GetElementType() ?? list.GetType().GetGenericArguments()[0];
                     tokenChild.SetupChildrenForType(elementType);
-                    list.Add(_elementConverter.Convert(tokenChild, elementType));
+                    list.Add(_elementConverter.Deserialize(tokenChild, elementType));
                 }
             }
 
             return list;
+        }
+
+        public override string Serialize(object obj)
+        {
+            var list = obj as IList;
+            if(list == null)
+            {
+                return null;
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{");
+            for(int i = 0; i < list.Count; i++)
+            {
+                sb.Append(_elementConverter.Serialize(list[i]));
+                if(i == list.Count - 1)
+                {
+                    sb.Append(",");
+                }
+            }
+            sb.Append("}");
+            
+            return sb.ToString();
         }
     }
 
@@ -57,11 +81,11 @@ namespace SFJson.Conversion
         protected JsonToken _token;
         protected Type _defaultType;
 
-        internal object Convert(JsonToken token, Type defaultType)
+        internal object Deserialize(JsonToken token, Type defaultType)
         {
             _token = token;
             _defaultType = defaultType;
-            return Convert();
+            return Deserialize();
         }
 
         protected T GetValueOfChild<T>(Type tokenType, string childName)
@@ -87,7 +111,7 @@ namespace SFJson.Conversion
                 Console.WriteLine("PropertyInfo");
                 if(customConverter != null)
                 {
-                    return customConverter.Convert(child, propertyInfo.PropertyType);
+                    return customConverter.Deserialize(child, propertyInfo.PropertyType);
                 }
                 return child.GetValue(propertyInfo.PropertyType);
             }
@@ -97,7 +121,7 @@ namespace SFJson.Conversion
                 Console.WriteLine("FieldInfo");
                 if(customConverter != null)
                 {
-                    return customConverter.Convert(child, fieldInfo.FieldType);
+                    return customConverter.Deserialize(child, fieldInfo.FieldType);
                 }
                 return child.GetValue(fieldInfo.FieldType);
             }
@@ -105,7 +129,8 @@ namespace SFJson.Conversion
             return child?.GetValue(childType);
         }
 
-        public abstract object Convert();
+        public abstract object Deserialize();
+        public abstract string Serialize(object obj);
     }
     
     /// <summary>
