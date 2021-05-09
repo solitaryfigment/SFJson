@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>$title$</title>
+        <authors>$authors$</authors>
+        <owners>$authors$</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>JSON Serialization framework</description>
+        <releaseNotes>$releaseNotes$</releaseNotes>
+        <copyright>Copyright 2020</copyright>
+        <tags>$tags$ $configuration$</tags>
+    </metadata>
+    <files>
+        <file src="bin/$configuration$/net4.7.1/*.dll" target="lib/net4.7.1/"/>
+        <file src="bin/$configuration$/netstandard2.1/*.dll" target="lib/netstandard2.1/"/>
+        <file src="bin/$configuration$/netstandard2.0/*.dll" target="lib/netstandard2.0/"/>
+<!--        <file src="bin/$configuration$/$tfm$/*.dll" target="lib" />-->
+        <file src="../README.md" target=""/>
+    </files>
+</package>
