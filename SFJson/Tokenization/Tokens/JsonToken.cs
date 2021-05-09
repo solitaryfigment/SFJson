@@ -232,7 +232,7 @@ namespace SFJson.Tokenization.Tokens
         protected object GetListValues(Type type, IListWrapper obj)
         {
             var list = Children.FirstOrDefault(c => c.Name == "$values");
-            var elementType = obj.ElementType;
+            var elementType = type.HasElementType ? type.GetElementType() : obj.ElementType;
             list = list ?? this;
             
             try

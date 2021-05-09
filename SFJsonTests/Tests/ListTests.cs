@@ -25,7 +25,7 @@ namespace SFJsonTests
         public void CanDeserializeEmptyObjectIntoEmptyList()
         {
             var str = "{\"List\":{}}";
-            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":{}}}";
+            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",\"$values\":{}}}";
             
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -47,7 +47,7 @@ namespace SFJsonTests
         public void CanDeserializeEmptyArrayIntoEmptyList()
         {
             var str = "{\"List\":[]}";
-            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[]}}";
+            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",\"$values\":[]}}";
             
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
@@ -79,7 +79,7 @@ namespace SFJsonTests
             Console.WriteLine(str);
             // Console.WriteLine(strWithType);
             Assert.AreEqual("[1,2,3,4,5]", str);
-            // Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]}}", strWithType);
+            // Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<List<int>>(str);
             Assert.NotNull(strDeserialized);
@@ -119,7 +119,7 @@ namespace SFJsonTests
             Console.WriteLine(str);
             // Console.WriteLine(strWithType);
             Assert.AreEqual("[1,2,3,4,5]", str);
-            // Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]}}", strWithType);
+            // Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<AList>(str);
             Assert.NotNull(strDeserialized);
@@ -157,7 +157,7 @@ namespace SFJsonTests
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"List\":[1,2,3,4,5]}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]}}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithList, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<ObjectWithList>(str);
             Assert.NotNull(strDeserialized);
@@ -210,7 +210,7 @@ namespace SFJsonTests
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"List\":[{\"PropBool\":true,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"PropBool\":false,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithListOfObjects, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[SFJsonTests.PrimitiveHolder, SFJsonTests]], mscorlib\",\"$values\":[{\"$type\":\"SFJsonTests.PrimitiveHolder, SFJsonTests\",\"PropBool\":true,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"$type\":\"SFJsonTests.PrimitiveHolder, SFJsonTests\",\"PropBool\":false,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]}}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTests.ObjectWithListOfObjects, SFJsonTests\",\"List\":{\"$type\":\"System.Collections.Generic.List`1[[SFJsonTests.PrimitiveHolder, SFJsonTests]], System.Private.CoreLib\",\"$values\":[{\"$type\":\"SFJsonTests.PrimitiveHolder, SFJsonTests\",\"PropBool\":true,\"PropDouble\":100.2,\"PropFloat\":1.2,\"PropInt\":26,\"PropString\":\"String\"},{\"$type\":\"SFJsonTests.PrimitiveHolder, SFJsonTests\",\"PropBool\":false,\"PropDouble\":100.1,\"PropFloat\":1.1,\"PropInt\":25,\"PropString\":\"String2\"}]}}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<ObjectWithListOfObjects>(str);
             Assert.NotNull(strDeserialized);

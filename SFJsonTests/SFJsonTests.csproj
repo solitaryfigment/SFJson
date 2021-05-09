@@ -1,112 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9778D7D7-CEEA-465D-8CE8-3FAC647D3ABD}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SFJsonTests</RootNamespace>
-    <AssemblyName>SFJsonTests</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <LangVersion>8</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
-      <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="TestLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\TestLib\Meow\lib\net472\TestLib.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\Applications\Unity\Unity.app\Contents\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestObjects\AbstractObject.cs" />
-    <Compile Include="TestObjects\ComplexObject.cs" />
-    <Compile Include="TestObjects\GenericObject.cs" />
-    <Compile Include="TestObjects\ObjectWithDictionary.cs" />
-    <Compile Include="TestObjects\ObjectWithEnum.cs" />
-    <Compile Include="TestObjects\ObjectWithIgnoredMembers.cs" />
-    <Compile Include="TestObjects\ObjectWithInterface.cs" />
-    <Compile Include="TestObjects\ObjectWithList.cs" />
-    <Compile Include="TestObjects\ObjectWithNestedNestedType.cs" />
-    <Compile Include="TestObjects\ObjectWithNestedType.cs" />
-    <Compile Include="TestObjects\PrimitiveHolder.cs" />
-    <Compile Include="TestObjects\PrimitiveHolderWithNameConversion.cs" />
-    <Compile Include="TestObjects\SelfReferencedSimpleObject.cs" />
-    <Compile Include="TestObjects\SimpleTestObject.cs" />
-    <Compile Include="TestObjects\SimpleTestObjectWithProperties.cs" />
-    <Compile Include="TestObjects\DateTimeObject.cs" />
-    <Compile Include="TestObjects\StructObject.cs" />
-    <Compile Include="Tests\AbstractTests.cs" />
-    <Compile Include="Tests\ArrayTests.cs" />
-    <Compile Include="Tests\CompatabilityTests.cs" />
-    <Compile Include="Tests\ComplexObjectTests.cs" />
-    <Compile Include="Tests\DictionaryErrorTests.cs" />
-    <Compile Include="Tests\DictionaryTests.cs" />
-    <Compile Include="Tests\ErrorTests.cs" />
-    <Compile Include="Tests\FileWatcherTest.cs" />
-    <Compile Include="Tests\IgnoreTests.cs" />
-    <Compile Include="Tests\InheritedTests.cs" />
-    <Compile Include="Tests\InterfaceTests.cs" />
-    <Compile Include="Tests\ListTests.cs" />
-    <Compile Include="Tests\BasicObjectTests.cs" />
-    <Compile Include="Tests\NameConversionTests.cs" />
-    <Compile Include="Tests\NestedObjectTests.cs" />
-    <Compile Include="Tests\GenericTests.cs" />
-    <Compile Include="Tests\StructTests.cs" />
-    <Compile Include="Tests\TimeObjectTests.cs" />
-    <Compile Include="Tests\TypeTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SFJson\SFJson.csproj">
-      <Project>{880aecae-eacd-4014-815d-cbb31dbb5a59}</Project>
-      <Name>SFJson</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+        <TargetFramework>net5.0</TargetFramework>
+
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.12.0\build\NUnit.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+    <ItemGroup>
+        <PackageReference Include="NUnit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SFJson\SFJson.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\..\..\..\Applications\Unity\Hub\Editor\2020.2.7f1\Unity.app\Contents\Managed\UnityEngine.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

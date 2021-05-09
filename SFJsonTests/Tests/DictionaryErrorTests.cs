@@ -20,7 +20,7 @@ namespace SFJsonTests
         public void NullKeyInDictionaryThrowsExpection()
         {
             var str = "{\"Dictionary\":{null:2,\"3\":4,\"5\":6}}";
-            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithDictionary, SFJsonTests\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib\",null:2,\"3\":4,\"5\":6}}";
+            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithDictionary, SFJsonTests\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.Int32, System.Private.CoreLib],[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",null:2,\"3\":4,\"5\":6}}";
 
             Assert.Throws<DeserializationException>(() =>
             {
@@ -37,7 +37,7 @@ namespace SFJsonTests
         public void SkipNullKeyInDictionaryWithSettings()
         {
             var str = "{\"Dictionary\":{null:2,\"3\":4,\"5\":6}}";
-            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithDictionary, SFJsonTests\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Int32, mscorlib]], mscorlib\",null:2,\"3\":4,\"5\":6}}";
+            var strWithType = "{\"$type\":\"SFJsonTests.ObjectWithDictionary, SFJsonTests\",\"Dictionary\":{\"$type\":\"System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",null:2,\"3\":4,\"5\":6}}";
             var deserializerSettings = new DeserializerSettings()
             {
                 SkipNullKeysInKeyValuedCollections = true

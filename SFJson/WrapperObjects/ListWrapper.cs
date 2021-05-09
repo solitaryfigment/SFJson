@@ -30,6 +30,11 @@ namespace SFJson.WrapperObjects
         public ListWrapper(IList list, bool notGeneric)
         {
             _list = list;
+            _genericList = new List<T>();
+            for(int i = 0; i < _list.Count; i++)
+            {
+                _genericList.Add(default);
+            }
         }
 
         public ListWrapper(IList<T> list)

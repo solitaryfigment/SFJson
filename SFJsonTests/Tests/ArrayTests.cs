@@ -41,7 +41,7 @@ namespace SFJsonTests
             if(!formatOutput)
             {
                 Assert.AreEqual("[1,2,3,4,5]", str);
-                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Queue`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[1,2,3,4,5]}", strWithType);
+                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Queue`1[[System.Int32, System.Private.CoreLib]], System.Collections\",\"$values\":[1,2,3,4,5]}", strWithType);
             }
 
             var strDeserialized = _deserializer.Deserialize<Queue<int>>(str);
@@ -127,7 +127,7 @@ namespace SFJsonTests
             if(!formatOutput)
             {
                 Assert.AreEqual("[5,4,3,2,1]", str);
-                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Stack`1[[System.Int32, mscorlib]], mscorlib\",\"$values\":[5,4,3,2,1]}", strWithType);
+                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Stack`1[[System.Int32, System.Private.CoreLib]], System.Collections\",\"$values\":[5,4,3,2,1]}", strWithType);
             }
 
             var strDeserialized = _deserializer.Deserialize<Stack<int>>(str);
@@ -163,14 +163,14 @@ namespace SFJsonTests
             _serializer = new Serializer();
         }
         [TestCase("{\"Array\":{}}")]
-        [TestCase("{\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":{}}}")]
+        [TestCase("{\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":{}}}")]
         [TestCase("{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{}}")]
-        [TestCase("{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":{}}}")]
+        [TestCase("{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":{}}}")]
         // TODO: format output 
         [TestCase("{\n\t\"Array\" : {\n\t}\n}")]
-        [TestCase("{\n\t\"Array\" : {\n\t\t\"$type\" : \"System.Int32[], mscorlib\",\n\t\t\"$values\":{\n\t\t}\n\t}\n}")]
+        [TestCase("{\n\t\"Array\" : {\n\t\t\"$type\" : \"System.Int32[], System.Private.CoreLib\",\n\t\t\"$values\":{\n\t\t}\n\t}\n}")]
         [TestCase("{\n\t\"$type\" : \"SFJsonTests.ObjectWithArray, SFJsonTests\",\n\t\"Array\" : {\n\t}\n}")]
-        [TestCase("{\n\t\"$type\" : \"SFJsonTests.ObjectWithArray, SFJsonTests\",\n\t\"Array\":{\n\t\t\"$type\" : \"System.Int32[], mscorlib\",\n\t\t\"$values\":{\n\t\t}\n\t}\n}")]
+        [TestCase("{\n\t\"$type\" : \"SFJsonTests.ObjectWithArray, SFJsonTests\",\n\t\"Array\":{\n\t\t\"$type\" : \"System.Int32[], System.Private.CoreLib\",\n\t\t\"$values\":{\n\t\t}\n\t}\n}")]
         
         public void CanDeserializeEmptyObjectIntoEmptyArray(string serializedForm)
         {
@@ -184,14 +184,14 @@ namespace SFJsonTests
         }
         
         [TestCase("{\"Array\":[]}")]
-        [TestCase("{\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[]}}")]
+        [TestCase("{\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":[]}}")]
         [TestCase("{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":[]}")]
-        [TestCase("{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[]}}")]
+        [TestCase("{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":[]}}")]
         // TODO: format output 
         [TestCase("{\n\t\"Array\" : [\n\t]\n}")]
-        [TestCase("{\n\t\"Array\" : {\n\t\t\"$type\" : \"System.Int32[], mscorlib\",\n\t\t\"$values\":[\n\t\t]\n\t}\n}")]
+        [TestCase("{\n\t\"Array\" : {\n\t\t\"$type\" : \"System.Int32[], System.Private.CoreLib\",\n\t\t\"$values\":[\n\t\t]\n\t}\n}")]
         [TestCase("{\n\t\"$type\" : \"SFJsonTests.ObjectWithArray, SFJsonTests\",\n\t\"Array\" : [\n\t]\n}")]
-        [TestCase("{\n\t\"$type\" : \"SFJsonTests.ObjectWithArray, SFJsonTests\",\n\t\"Array\":{\n\t\t\"$type\" : \"System.Int32[], mscorlib\",\n\t\t\"$values\":[\n\t\t]\n\t}\n}")]
+        [TestCase("{\n\t\"$type\" : \"SFJsonTests.ObjectWithArray, SFJsonTests\",\n\t\"Array\":{\n\t\t\"$type\" : \"System.Int32[], System.Private.CoreLib\",\n\t\t\"$values\":[\n\t\t]\n\t}\n}")]
         public void CanDeserializeEmptyArrayIntoEmptyArray(string serializedForm)
         {
             Console.WriteLine(serializedForm);
@@ -205,13 +205,13 @@ namespace SFJsonTests
         
         [TestCase(false, SerializationTypeHandle.None, "{\"Array\":[1,2,3,4,5]}")]
         [TestCase(false, SerializationTypeHandle.Objects, "{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":[1,2,3,4,5]}")]
-        [TestCase(false, SerializationTypeHandle.Collections, "{\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[1,2,3,4,5]}}")]
-        [TestCase(false, SerializationTypeHandle.All, "{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[1,2,3,4,5]}}")]
+        [TestCase(false, SerializationTypeHandle.Collections, "{\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}}")]
+        [TestCase(false, SerializationTypeHandle.All, "{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}}")]
         // TODO: format output 
         [TestCase(true, SerializationTypeHandle.None, "{\"Array\":[1,2,3,4,5]}")]
         [TestCase(true, SerializationTypeHandle.Objects, "{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":[1,2,3,4,5]}")]
-        [TestCase(true, SerializationTypeHandle.Collections, "{\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[1,2,3,4,5]}}")]
-        [TestCase(true, SerializationTypeHandle.All, "{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], mscorlib\",\"$values\":[1,2,3,4,5]}}")]
+        [TestCase(true, SerializationTypeHandle.Collections, "{\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}}")]
+        [TestCase(true, SerializationTypeHandle.All, "{\"$type\":\"SFJsonTests.ObjectWithArray, SFJsonTests\",\"Array\":{\"$type\":\"System.Int32[], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}}")]
         public void CanConvertObjectWithArray(bool formatOutput, SerializationTypeHandle serializationTypeHandle, string serializedForm)
         {
             var obj = new ObjectWithArray()

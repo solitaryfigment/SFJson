@@ -35,7 +35,7 @@ namespace SFJsonTests
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"GenericProp\":\"String\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTests.GenericObject`1[[System.String, mscorlib]], SFJsonTests\",\"GenericProp\":\"String\"}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTests.GenericObject`1[[System.String, System.Private.CoreLib]], SFJsonTests\",\"GenericProp\":\"String\"}", strWithType);
             
             var strDeserialized = _deserializer.Deserialize<GenericObject<string>>(str);
             Assert.NotNull(strDeserialized);
@@ -60,7 +60,7 @@ namespace SFJsonTests
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
             Assert.AreEqual("{\"GenericProp\":100}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTests.GenericObject`1[[System.Int32, mscorlib]], SFJsonTests\",\"GenericProp\":100}", strWithType);
+            Assert.AreEqual("{\"$type\":\"SFJsonTests.GenericObject`1[[System.Int32, System.Private.CoreLib]], SFJsonTests\",\"GenericProp\":100}", strWithType);
             
             
             var strDeserialized = _deserializer.Deserialize<GenericObject<int>>(str);

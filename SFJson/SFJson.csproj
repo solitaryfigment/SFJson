@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net4.7.2</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup Condition="!$(TargetFramework.StartsWith('net4'))">
       <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.2" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="SFBuilder.Dotnet" Version="1.0.0.3" />
+      <PackageReference Include="SFBuilder.Dotnet" Version="1.0.0.16" />
     </ItemGroup>
-    <Import Project="$(PkgSFBuilder_Dotnet)\build\SFBuilder.Dotnet.targets" Condition="Exists('$(PkgSFBuilder_Dotnet)\build\SFBuilder.Dotnet.targets')" />
+    <Import Project="$(NuGetPackageRoot)sfbuilder.dotnet/1.0.0.16/build/SFBuilder.Dotnet.targets" Condition="Exists('$(NuGetPackageRoot)sfbuilder.dotnet/1.0.0.16/build/SFBuilder.Dotnet.targets')" />
+
 </Project>

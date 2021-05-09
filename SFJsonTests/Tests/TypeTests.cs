@@ -90,8 +90,8 @@ namespace SFJsonTests
 
             Console.WriteLine(str);
             Console.WriteLine(strWithType);
-            Assert.AreEqual("{\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", str);
-            Assert.AreEqual("{\"$type\":\"SFJsonTests.TypeHolder, SFJsonTests\",\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], mscorlib]], mscorlib],[System.Collections.Generic.List`1[[System.String[], mscorlib]], mscorlib]], mscorlib\"}", strWithType);
+            Assert.AreEqual("{\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], System.Private.CoreLib]], System.Private.CoreLib],[System.Collections.Generic.List`1[[System.String[], System.Private.CoreLib]], System.Private.CoreLib]], System.Private.CoreLib\"}", str);
+            Assert.AreEqual("{\"$type\":\"SFJsonTests.TypeHolder, SFJsonTests\",\"PropType\":\"System.Collections.Generic.Dictionary`2[[System.Collections.Generic.Dictionary`2[[SFJson.Tokenization.Tokens.JsonTokenType, SFJson],[System.Int32[], System.Private.CoreLib]], System.Private.CoreLib],[System.Collections.Generic.List`1[[System.String[], System.Private.CoreLib]], System.Private.CoreLib]], System.Private.CoreLib\"}", strWithType);
 
             var strDeserialized = _deserializer.Deserialize<TypeHolder>(str);
             Assert.NotNull(strDeserialized);
@@ -134,8 +134,8 @@ namespace SFJsonTests
         [Test]
         public void ConvertsTypeWhichDoesNotExistToNull()
         {
-            var str = "{\"PropType\":\"TypeThatIsNotThere, mscorlib\"}";
-            var strWithType = "{\"$type\":\"SFJsonTests.TypeHolder, SFJsonTests\",\"PropType\":\"TypeThatIsNotThere, mscorlib\"}";
+            var str = "{\"PropType\":\"TypeThatIsNotThere, System.Private.CoreLib\"}";
+            var strWithType = "{\"$type\":\"SFJsonTests.TypeHolder, SFJsonTests\",\"PropType\":\"TypeThatIsNotThere, System.Private.CoreLib\"}";
 
             var strDeserialized = _deserializer.Deserialize<TypeHolder>(str);
             Assert.NotNull(strDeserialized);
