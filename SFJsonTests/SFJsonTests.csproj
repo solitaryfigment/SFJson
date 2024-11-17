@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-
+        <TargetFramework>net8</TargetFramework>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -17,8 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\..\..\..\Applications\Unity\Hub\Editor\2020.2.7f1\Unity.app\Contents\Managed\UnityEngine.dll</HintPath>
+      <Reference Include="UnityEngine">
+        <HintPath>..\..\..\..\..\Applications\Unity\Hub\Editor\6000.0.26f1\Unity.app\Contents\Managed\UnityEngine.dll</HintPath>
       </Reference>
     </ItemGroup>
 

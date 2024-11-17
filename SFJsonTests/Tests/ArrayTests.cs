@@ -41,7 +41,7 @@ namespace SFJsonTests
             if(!formatOutput)
             {
                 Assert.AreEqual("[1,2,3,4,5]", str);
-                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Queue`1[[System.Int32, System.Private.CoreLib]], System.Collections\",\"$values\":[1,2,3,4,5]}", strWithType);
+                Assert.AreEqual("{\"$type\":\"System.Collections.Generic.Queue`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib\",\"$values\":[1,2,3,4,5]}", strWithType);
             }
 
             var strDeserialized = _deserializer.Deserialize<Queue<int>>(str);

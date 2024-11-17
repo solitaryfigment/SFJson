@@ -25,7 +25,7 @@ namespace SFJson.Tokenization.Tokens
         public readonly List<JsonToken> Children = new List<JsonToken>();
         internal SettingsManager SettingsManager;
         internal MemberInfo MemberInfo;
-        
+
         protected Func<Type, object> OnNullValue;
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace SFJson.Tokenization.Tokens
         }
 
         /// <summary>
-        /// Converts the tokenized value to <paramref name="type"/>. 
+        /// Converts the tokenized value to <paramref name="type"/>.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="instance"></param>
@@ -55,7 +55,7 @@ namespace SFJson.Tokenization.Tokens
         public virtual void SetupChildrenForType(Type type)
         {
         }
-        
+
         protected Type DetermineType(Type type)
         {
             Type determinedType = type;
@@ -107,31 +107,32 @@ namespace SFJson.Tokenization.Tokens
                 list = list ?? this;
                 return Array.CreateInstance(elementType, list.Children.Count);
             }
-            
+
             var obj = Activator.CreateInstance(type, args);
             // instance.GetType().InvokeMember()
             // var methods = instance.GetType().GetMethods().Select(m => m.GetCustomAttributes(typeof(SerializeStep), false).Length > 0);
             return obj;
         }
-        
+
         protected bool IsGenericList(object obj, Type type, out IListWrapper listWrapper)
         {
             listWrapper = null;
             foreach(var interfaceType in type.GetInterfaces())
             {
-                if(interfaceType.IsGenericType && typeof(IList<>).IsAssignableFrom(interfaceType.GetGenericTypeDefinition()))
+                if(interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IList<>))
                 {
                     var genArgs = interfaceType.GenericTypeArguments;
                     listWrapper = Serializer.CreateListWrapper(obj, interfaceType, genArgs[0]);
                     return true;
                 }
-                else if (typeof(IList).IsAssignableFrom(interfaceType))
-                {
-                    listWrapper = Serializer.CreateListWrapper(obj);
-                    return true;
-                }
             }
-        
+
+            if(typeof(IList).IsAssignableFrom(type))
+            {
+                listWrapper = Serializer.CreateListWrapper(obj);
+                return true;
+            }
+
             return false;
         }
 
@@ -155,14 +156,14 @@ namespace SFJson.Tokenization.Tokens
 
             return false;
         }
-        
+
         private Type DetermineTypeFromInterface(Type type)
         {
             var genericTypes = type.GetGenericArguments();
             // Type dictionaryType
             // if(IsGenericDictionary(type))
             // {
-            //     
+            //
             // }
             if(!type.IsGenericType && type.Implements(typeof(IEnumerable)))
             {
@@ -179,7 +180,7 @@ namespace SFJson.Tokenization.Tokens
                 var listType = Type.GetType($"System.Collections.Generic.List`1[[{genericTypes[0].AssemblyQualifiedName}]]");
                 return listType ?? throw new Exception("List type could not be generated");
             }
-            
+
             if(genericTypes.Length == 2 && type.Implements(Type.GetType($"System.Collections.Generic.IDictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]")))
             {
                 var dictionaryType = Type.GetType($"System.Collections.Generic.Dictionary`2[[{genericTypes[0].AssemblyQualifiedName}],[{genericTypes[1].AssemblyQualifiedName}]]");
@@ -228,13 +229,13 @@ namespace SFJson.Tokenization.Tokens
         {
             return null;
         }
-        
+
         protected object GetListValues(Type type, IListWrapper obj)
         {
             var list = Children.FirstOrDefault(c => c.Name == "$values");
             var elementType = type.HasElementType ? type.GetElementType() : obj.ElementType;
             list = list ?? this;
-            
+
             try
             {
                 for(var i = 0; i < list.Children.Count; i++)
@@ -248,7 +249,7 @@ namespace SFJson.Tokenization.Tokens
                         obj.Add(list.Children[i].GetValue(elementType));
                     }
                 }
-        
+
                 return obj.List;
             }
             catch (NotSupportedException)
@@ -256,12 +257,12 @@ namespace SFJson.Tokenization.Tokens
                 if(obj.IsReadOnly)
                 {
                     IList thing = Array.CreateInstance(elementType, list.Children.Count);
-                
+
                     for(var i = 0; i < list.Children.Count; i++)
                     {
                         thing[i] = list.Children[i].GetValue(elementType);
                     }
-                
+
                     return CreateInstance(type, null, thing);
                 }
                 throw;
@@ -306,7 +307,7 @@ namespace SFJson.Tokenization.Tokens
             {
                 stringBuilder.Append($"\"{Name}\" : ");
             }
-            
+
             PrettyPrintControl(false, stringBuilder);
             for(var index = 0; index < Children.Count; index++)
             {

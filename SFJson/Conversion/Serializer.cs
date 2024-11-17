@@ -32,13 +32,13 @@ namespace SFJson.Conversion
             IDictionaryWrapper wrapper = (IDictionaryWrapper)genericWrapperConstructor?.Invoke(new []{dictionary});
             return wrapper;
         }
-        
+
         internal static IListWrapper CreateListWrapper(object list)
         {
             IListWrapper wrapper = new ListWrapper<object>((IList)list, true);
             return wrapper;
         }
-        
+
         internal static IListWrapper CreateListWrapper(object list, Type listType, Type elementType)
         {
             var wrapperType = typeof(ListWrapper<>).MakeGenericType(elementType);
@@ -46,7 +46,7 @@ namespace SFJson.Conversion
             IListWrapper wrapper = (IListWrapper)genericWrapperConstructor?.Invoke(new []{list});
             return wrapper;
         }
-        
+
         /// <summary>
         /// Converts an <c>object</c> to a JSON string.
         /// </summary>
@@ -113,13 +113,13 @@ namespace SFJson.Conversion
                 PrettyPrintNewLine();
                 PrettyPrintIndent(--indentLevel);
                 _serialized.Append(Constants.CLOSE_CURLY);
-                
+
                 return;
             }
 
             _serialized.Append(Constants.NULL);
         }
-        
+
         private void SerializeList(IListWrapper list, int indentLevel)
         {
             var appendSeparator = false;
@@ -160,7 +160,7 @@ namespace SFJson.Conversion
                     PrettyPrintIndent(--indentLevel);
                     _serialized.Append(Constants.CLOSE_BRACKET);
                 }
-                
+
                 return;
             }
 
@@ -207,7 +207,7 @@ namespace SFJson.Conversion
                     PrettyPrintIndent(--indentLevel);
                     _serialized.Append(Constants.CLOSE_BRACKET);
                 }
-                
+
                 return;
             }
 
@@ -297,7 +297,7 @@ namespace SFJson.Conversion
                 _serialized.Append('\t');
             }
         }
-        
+
         protected void PrettyPrintNewLine()
         {
             if(_settingsManager.FormattedString)
@@ -305,7 +305,7 @@ namespace SFJson.Conversion
                 _serialized.Append(Environment.NewLine);
             }
         }
-        
+
         protected void PrettyPrintSpace()
         {
             if(_settingsManager.FormattedString)
@@ -321,9 +321,9 @@ namespace SFJson.Conversion
                 _serialized.AppendFormat(Constants.NULL);
                 return;
             }
-            
+
             type = type.IsInterface ? value.GetType() : type;
-            
+
             if(type.IsEnum)
             {
                 AppendAsString(value.ToString());
@@ -401,7 +401,7 @@ namespace SFJson.Conversion
                 PrettyPrintIndent(indentLevel);
             }
         }
-        
+
         private bool IsGenericList(object obj, Type type, out IListWrapper listWrapper)
         {
             listWrapper = null;
@@ -422,7 +422,7 @@ namespace SFJson.Conversion
 
             return false;
         }
-        
+
         private bool IsGenericDictionary(object obj, Type type, out IDictionaryWrapper dictionaryWrapper)
         {
             dictionaryWrapper = null;
